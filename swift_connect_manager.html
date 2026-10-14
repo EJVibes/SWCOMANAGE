@@ -1,0 +1,1684 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Swift Connect — Transport Tycoon & Fleet Manager</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', sans-serif; background-color: #0b0f19; color: #e2e8f0; }
+    .mono { font-family: 'JetBrains Mono', monospace; }
+    .uk-plate {
+      background: linear-gradient(180deg, #facc15 0%, #eab308 100%);
+      color: #0f172a;
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      padding: 2px 8px;
+      border-radius: 4px;
+      border: 1px solid #ca8a04;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.4);
+      display: inline-block;
+      font-size: 0.8rem;
+    }
+    .uk-plate-ev {
+      border-left: 6px solid #16a34a;
+    }
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-track { background: #0f172a; }
+    ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #475569; }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+  <!-- TOP COMMAND BAR -->
+  <header class="bg-slate-900/95 border-b border-slate-800 sticky top-0 z-30 backdrop-blur">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-4">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-sky-500 to-indigo-600 flex items-center justify-center font-black text-white text-xl shadow-lg shadow-sky-500/20">
+          SC
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="font-extrabold text-lg tracking-tight text-white">SWIFT CONNECT</h1>
+            <span class="text-xs px-2 py-0.5 rounded-full bg-sky-500/10 text-sky-400 border border-sky-500/20 font-medium">OMSI 2 & Company Sim</span>
+          </div>
+          <p class="text-xs text-slate-400">Executive Fleet, Banking & Operations Portal</p>
+        </div>
+      </div>
+
+      <!-- LIVE HUD STATS -->
+      <div class="flex flex-wrap items-center gap-3 md:gap-6 bg-slate-950/80 border border-slate-800 px-4 py-2 rounded-xl">
+        <div>
+          <div class="text-[10px] uppercase tracking-wider text-slate-400 font-semibold">Sim Date</div>
+          <div id="hud-date" class="mono text-sm font-bold text-white">14/10/2026</div>
+        </div>
+        <div class="h-7 w-px bg-slate-800"></div>
+        <div>
+          <div class="text-[10px] uppercase tracking-wider text-slate-400 font-semibold">Company Bank Balance</div>
+          <div id="hud-bank" class="mono text-sm md:text-base font-extrabold text-emerald-400">£172,270,000</div>
+        </div>
+        <div class="h-7 w-px bg-slate-800"></div>
+        <div>
+          <div class="text-[10px] uppercase tracking-wider text-slate-400 font-semibold">Budget / Depot</div>
+          <div id="hud-depot-budget" class="mono text-sm font-bold text-sky-400">£11,484,667</div>
+        </div>
+        <div class="h-7 w-px bg-slate-800"></div>
+        <div>
+          <div class="text-[10px] uppercase tracking-wider text-slate-400 font-semibold">Net Daily Profit (After 25% Tax)</div>
+          <div id="hud-daily-net" class="mono text-sm font-bold text-amber-400">+£237,991/day</div>
+        </div>
+      </div>
+
+      <!-- SIMULATE NEXT DAY BUTTON -->
+      <div class="flex items-center gap-2">
+        <button onclick="advanceDay(1)" class="bg-emerald-600 hover:bg-emerald-500 active:scale-95 transition text-white font-bold text-xs md:text-sm px-4 py-2.5 rounded-xl shadow-lg shadow-emerald-600/20 flex items-center gap-2">
+          <span>▶ Simulate Next Day</span>
+        </button>
+        <button onclick="advanceDay(7)" class="bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold text-xs px-3 py-2.5 rounded-xl border border-slate-700 transition" title="Simulate 1 Week">
+          +7d
+        </button>
+        <button onclick="resetToSpreadsheetDefaults()" class="bg-slate-800 hover:bg-rose-950 hover:text-rose-300 text-slate-400 text-xs px-3 py-2.5 rounded-xl border border-slate-700 transition" title="Reset to original CSV values">
+          ↺ Reset
+        </button>
+      </div>
+    </div>
+
+    <!-- NAVIGATION TABS -->
+    <div class="max-w-7xl mx-auto px-4 flex overflow-x-auto border-t border-slate-800/80 gap-1 pt-1">
+      <button onclick="switchTab('dashboard')" id="tab-dashboard" class="tab-btn px-4 py-2.5 text-xs md:text-sm font-semibold border-b-2 border-sky-500 text-sky-400 whitespace-nowrap">
+        🏦 HQ & Banking Ledger
+      </button>
+      <button onclick="switchTab('depots')" id="tab-depots" class="tab-btn px-4 py-2.5 text-xs md:text-sm font-semibold border-b-2 border-transparent text-slate-400 hover:text-slate-200 whitespace-nowrap">
+        🏢 Depots & Operations (19)
+      </button>
+      <button onclick="switchTab('fleet')" id="tab-fleet" class="tab-btn px-4 py-2.5 text-xs md:text-sm font-semibold border-b-2 border-transparent text-slate-400 hover:text-slate-200 whitespace-nowrap">
+        🚌 Fleet Registry & OMSI 2 Liveries
+      </button>
+      <button onclick="switchTab('dealership')" id="tab-dealership" class="tab-btn px-4 py-2.5 text-xs md:text-sm font-semibold border-b-2 border-transparent text-slate-400 hover:text-slate-200 whitespace-nowrap">
+        🛒 Bus Dealership & Valuation
+      </button>
+      <button onclick="switchTab('workshop')" id="tab-workshop" class="tab-btn px-4 py-2.5 text-xs md:text-sm font-semibold border-b-2 border-transparent text-slate-400 hover:text-slate-200 whitespace-nowrap">
+        🔧 Bodyshop, Upgrades & Repairs
+      </button>
+      <button onclick="switchTab('fares')" id="tab-fares" class="tab-btn px-4 py-2.5 text-xs md:text-sm font-semibold border-b-2 border-transparent text-slate-400 hover:text-slate-200 whitespace-nowrap">
+        🎫 Regional Fare Calculator
+      </button>
+    </div>
+  </header>
+
+  <!-- NOTIFICATION TOAST -->
+  <div id="toast" class="fixed bottom-5 right-5 z-50 hidden bg-slate-900 border border-sky-500/40 text-white px-4 py-3 rounded-xl shadow-2xl text-sm flex items-center gap-3">
+    <span id="toast-icon" class="text-lg">✅</span>
+    <span id="toast-msg">Action completed!</span>
+  </div>
+
+  <!-- MAIN WORKSPACE -->
+  <main class="max-w-7xl w-full mx-auto px-4 py-6 flex-1 space-y-6">
+
+    <!-- ================= TAB 1: HQ & BANKING LEDGER ================= -->
+    <section id="view-dashboard" class="space-y-6">
+      <!-- KPI Summary Cards -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl">
+          <div class="text-xs text-slate-400 font-medium">Today's Gross Income</div>
+          <div id="kpi-income" class="mono text-2xl font-extrabold text-emerald-400 mt-1">£657,618</div>
+          <div class="text-[11px] text-slate-500 mt-1">Across 19 active depots & rail</div>
+        </div>
+        <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl">
+          <div class="text-xs text-slate-400 font-medium">Today's Operating Expenses</div>
+          <div id="kpi-expenses" class="mono text-2xl font-extrabold text-rose-400 mt-1">£340,296</div>
+          <div class="text-[11px] text-slate-500 mt-1">Staff, Fuel, Maint, Insurance & Rent</div>
+        </div>
+        <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl">
+          <div class="text-xs text-slate-400 font-medium">Today's Pre-Tax Profit</div>
+          <div id="kpi-profit" class="mono text-2xl font-extrabold text-sky-400 mt-1">£317,322</div>
+          <div id="kpi-after-tax" class="text-[11px] text-amber-400 font-medium mt-1">After 25% Corp Tax: £237,991</div>
+        </div>
+        <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl">
+          <div class="text-xs text-slate-400 font-medium">Active Fleet & Workshop Queue</div>
+          <div class="flex items-baseline gap-3 mt-1">
+            <span id="kpi-fleet-count" class="mono text-2xl font-extrabold text-white">531</span>
+            <span class="text-xs text-slate-400">Vehicles</span>
+          </div>
+          <div id="kpi-workshop-status" class="text-[11px] text-indigo-400 mt-1">0 vehicles currently in downtime</div>
+        </div>
+      </div>
+
+      <!-- Active Workshop Queue Banner (if any buses in downtime) -->
+      <div id="workshop-active-panel" class="hidden bg-indigo-950/40 border border-indigo-500/30 rounded-2xl p-4">
+        <div class="flex items-center justify-between mb-2">
+          <h3 class="text-sm font-bold text-indigo-300 flex items-center gap-2">🔧 Active Workshop Downtime Queue</h3>
+          <span class="text-xs text-indigo-400">Advances automatically when you click "Simulate Next Day"</span>
+        </div>
+        <div id="workshop-queue-list" class="grid grid-cols-1 md:grid-cols-3 gap-2"></div>
+      </div>
+
+      <!-- Banking Ledger & Manual Transaction Logger -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- New Transaction Form -->
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-4 h-fit">
+          <h2 class="text-base font-bold text-white flex items-center gap-2">➕ Record Bank Transaction</h2>
+          <p class="text-xs text-slate-400">Log custom income or expenses directly to the Swift Connect Company Bank Account.</p>
+          
+          <div>
+            <label class="block text-xs font-semibold text-slate-300 mb-1">Transaction Type</label>
+            <select id="tx-type" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white">
+              <option value="Expense">Expense (-£)</option>
+              <option value="Income">Income (+£)</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-slate-300 mb-1">Category</label>
+            <select id="tx-category" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white">
+              <option value="Vehicle Purchase">Vehicle Purchase</option>
+              <option value="Vehicle Sale">Vehicle Sale</option>
+              <option value="Repaint">Repaint & Livery</option>
+              <option value="Repair & Conversion">Repair & Conversion</option>
+              <option value="Depot Operations">Depot Operations</option>
+              <option value="Subsidy / Contract">Subsidy / Contract</option>
+              <option value="Other">Other (Specify in Notes)</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-slate-300 mb-1">Amount (£)</label>
+            <input id="tx-amount" type="number" step="0.01" placeholder="e.g. 151500" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white mono" />
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-slate-300 mb-1">Notes / Reference</label>
+            <input id="tx-notes" type="text" placeholder="e.g. Repaint 6x Hybrid StreetDecks" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white" />
+          </div>
+
+          <button onclick="addManualTransaction()" class="w-full bg-sky-600 hover:bg-sky-500 text-white font-bold py-2.5 rounded-xl text-sm transition shadow-lg shadow-sky-600/20">
+            Post Transaction to Ledger
+          </button>
+        </div>
+
+        <!-- Transaction History Table -->
+        <div class="lg:col-span-2 bg-slate-900 border border-slate-800 rounded-2xl p-5 flex flex-col">
+          <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
+            <div>
+              <h2 class="text-base font-bold text-white">📜 Company Banking Ledger</h2>
+              <p class="text-xs text-slate-400">Includes historical spreadsheet logs (2024–2026) and live game transactions</p>
+            </div>
+            <div class="flex gap-2">
+              <button onclick="exportSaveData()" class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-200 px-3 py-1.5 rounded-lg border border-slate-700">⬇ Export Save JSON</button>
+            </div>
+          </div>
+
+          <div class="overflow-x-auto max-h-[420px] overflow-y-auto border border-slate-800 rounded-xl">
+            <table class="w-full text-left border-collapse text-xs">
+              <thead class="bg-slate-950 text-slate-400 sticky top-0">
+                <tr>
+                  <th class="py-2.5 px-3">Date</th>
+                  <th class="py-2.5 px-3">Type</th>
+                  <th class="py-2.5 px-3">Category</th>
+                  <th class="py-2.5 px-3">Notes</th>
+                  <th class="py-2.5 px-3 text-right">Amount (£)</th>
+                </tr>
+              </thead>
+              <tbody id="ledger-tbody" class="divide-y divide-slate-800/70"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= TAB 2: DEPOTS & OPERATIONS ================= -->
+    <section id="view-depots" class="hidden space-y-6">
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5">
+        <div class="flex flex-wrap items-center justify-between gap-4 mb-4">
+          <div>
+            <h2 class="text-lg font-bold text-white">🏢 Depot Network & Daily Financial Performance</h2>
+            <p class="text-xs text-slate-400">Adjust allocated vehicle counts or daily rent to dynamically recalculate company-wide daily revenue and profit.</p>
+          </div>
+          <div class="flex items-center gap-4 bg-slate-950 px-4 py-2 rounded-xl border border-slate-800 text-xs">
+            <div>Total Allocated Vehicles: <span id="depot-total-buses" class="mono font-bold text-white">434</span></div>
+            <div>Total Daily Rent: <span id="depot-total-rent" class="mono font-bold text-amber-400">£6,626</span></div>
+          </div>
+        </div>
+
+        <div class="overflow-x-auto border border-slate-800 rounded-xl">
+          <table class="w-full text-left border-collapse text-xs md:text-sm">
+            <thead class="bg-slate-950 text-slate-400">
+              <tr>
+                <th class="py-3 px-4">Depot Name</th>
+                <th class="py-3 px-4 text-center">Assigned Vehicles</th>
+                <th class="py-3 px-4 text-right">Rev / Vehicle</th>
+                <th class="py-3 px-4 text-right">Daily Income</th>
+                <th class="py-3 px-4 text-right">Daily OpEx</th>
+                <th class="py-3 px-4 text-right">Daily Rent</th>
+                <th class="py-3 px-4 text-right">Daily Net Profit</th>
+              </tr>
+            </thead>
+            <tbody id="depots-tbody" class="divide-y divide-slate-800/70"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Regional Allocation Matrix from Bus Prices Sheet -->
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5">
+        <h3 class="text-base font-bold text-white mb-1">🗺️ Regional Fleet Valuation Breakdown (From Bus Prices Sheet)</h3>
+        <p class="text-xs text-slate-400 mb-4">Summary of your current active regional allocations across West Midlands, Notts & Derby, Shropshire, Worcestershire, Wales, Staffordshire, South London, Yard & Preservation.</p>
+        <div id="regional-summary-grid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3"></div>
+      </div>
+    </section>
+
+    <!-- ================= TAB 3: FLEET REGISTRY & OMSI 2 ================= -->
+    <section id="view-fleet" class="hidden space-y-6">
+      <!-- Filter & Add New Fleet Vehicle Bar -->
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-4">
+        <div class="flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <h2 class="text-lg font-bold text-white">🚌 Master Fleet Registry (2026)</h2>
+            <p class="text-xs text-slate-400">Search by Fleet ID (100–4506), UK Registration Plate, or Vehicle Type, and assign OMSI 2 Liveries.</p>
+          </div>
+          <div class="flex flex-wrap gap-2">
+            <input id="fleet-search" oninput="renderFleetTable()" type="text" placeholder="Search Fleet ID, Reg (e.g. YT26 EFA, OZZ 001) or Model..." class="bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs md:text-sm text-white w-72" />
+            <select id="fleet-cat-filter" onchange="renderFleetTable()" class="bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs md:text-sm text-white">
+              <option value="ALL">All Categories (531)</option>
+              <option value="Training">Driver Training (100–199)</option>
+              <option value="Mini/Midi">Mini / Midi (1000–1999)</option>
+              <option value="Single">Single Deck & EV (2000–2999)</option>
+              <option value="Decker">Double Decker & EV (3000–3999)</option>
+              <option value="Coach">Coach & Special (4000–4999)</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Quick Add Vehicle to Registry -->
+        <details class="bg-slate-950 border border-slate-800 rounded-xl p-3">
+          <summary class="text-xs font-bold text-sky-400 cursor-pointer select-none">➕ Register New Vehicle into Fleet Table</summary>
+          <div class="grid grid-cols-1 sm:grid-cols-5 gap-3 mt-3">
+            <input id="new-fleet-id" type="number" placeholder="Fleet ID (e.g. 3086)" class="bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white mono" />
+            <input id="new-fleet-reg" type="text" placeholder="Reg (e.g. MT75 OJL)" class="bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white mono uppercase" />
+            <input id="new-fleet-type" type="text" placeholder="Vehicle Type (e.g. Wright StreetDeck Ultroliner)" class="bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white sm:col-span-2" />
+            <button onclick="registerNewFleetBus()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-lg px-3 py-1.5 text-xs">Add to Fleet</button>
+          </div>
+        </details>
+
+        <div class="overflow-x-auto max-h-[540px] overflow-y-auto border border-slate-800 rounded-xl">
+          <table class="w-full text-left border-collapse text-xs">
+            <thead class="bg-slate-950 text-slate-400 sticky top-0 z-10">
+              <tr>
+                <th class="py-3 px-3">Fleet ID</th>
+                <th class="py-3 px-3">Registration</th>
+                <th class="py-3 px-3">Category</th>
+                <th class="py-3 px-3">Vehicle Model</th>
+                <th class="py-3 px-3">OMSI 2 Livery / Branding</th>
+                <th class="py-3 px-3">Drivetrain Specs</th>
+                <th class="py-3 px-3 text-right">Quick Action</th>
+              </tr>
+            </thead>
+            <tbody id="fleet-tbody" class="divide-y divide-slate-800/70"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= TAB 4: BUS DEALERSHIP & VALUATION ================= -->
+    <section id="view-dealership" class="hidden space-y-6">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- 18% Depreciation & VAT Calculator (From Bus Value Depreciation CSV) -->
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-4 h-fit">
+          <div class="flex items-center justify-between">
+            <h2 class="text-base font-bold text-white">📉 Used Bus Valuation & Trade Calculator</h2>
+            <span class="text-[11px] px-2 py-0.5 rounded bg-amber-500/10 text-amber-400 border border-amber-500/20">18% Annual Depr.</span>
+          </div>
+          <p class="text-xs text-slate-400">Matches your <code>Bus Value Depreciation</code> sheet formula: 18% compound annual depreciation from year of manufacture (base year 2026) + 20% VAT.</p>
+
+          <div>
+            <label class="block text-xs font-semibold text-slate-300 mb-1">Select Model from Catalogue</label>
+            <select id="calc-model-select" onchange="syncCalcModel()" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white"></select>
+          </div>
+
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs font-semibold text-slate-300 mb-1">Original Price (£)</label>
+              <input id="calc-orig-price" oninput="updateDepreciationCalc()" type="number" value="270000" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white mono" />
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-300 mb-1">Year of Manufacture</label>
+              <input id="calc-year" oninput="updateDepreciationCalc()" type="number" min="1975" max="2026" value="2026" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white mono" />
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs font-semibold text-slate-300 mb-1">Quantity</label>
+              <input id="calc-qty" oninput="updateDepreciationCalc()" type="number" min="1" max="100" value="1" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white mono" />
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-300 mb-1">Assign Region</label>
+              <select id="calc-region" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white">
+                <option value="West Midlands">West Midlands</option>
+                <option value="Notts & Derby">Notts & Derby</option>
+                <option value="Shropshire">Shropshire</option>
+                <option value="Worcestershire">Worcestershire</option>
+                <option value="Wales">Wales</option>
+                <option value="Staffordshire">Staffordshire</option>
+                <option value="South London">South London</option>
+                <option value="Yard">Yard</option>
+                <option value="Preservation">Preservation</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Output Box -->
+          <div class="bg-slate-950 border border-slate-800 rounded-xl p-4 space-y-2">
+            <div class="flex justify-between text-xs">
+              <span class="text-slate-400">Vehicle Age (in 2026):</span>
+              <span id="calc-age-out" class="mono font-bold text-white">0 yrs (Brand New)</span>
+            </div>
+            <div class="flex justify-between text-xs">
+              <span class="text-slate-400">Depreciated Value (Ex VAT):</span>
+              <span id="calc-depr-out" class="mono font-bold text-sky-400">£270,000</span>
+            </div>
+            <div class="flex justify-between text-sm border-t border-slate-800 pt-2">
+              <span class="text-slate-200 font-semibold">Total With 20% VAT:</span>
+              <span id="calc-vat-out" class="mono font-extrabold text-emerald-400">£324,000</span>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-2 pt-1">
+            <button onclick="executeBusTrade('BUY')" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2.5 rounded-xl text-xs transition shadow-lg shadow-emerald-600/20">
+              🛒 Buy for Fleet
+            </button>
+            <button onclick="executeBusTrade('SELL')" class="bg-amber-600 hover:bg-amber-500 text-white font-bold py-2.5 rounded-xl text-xs transition shadow-lg shadow-amber-600/20">
+              💷 Sell from Fleet
+            </button>
+          </div>
+        </div>
+
+        <!-- Complete 156-Model Bus Catalogue -->
+        <div class="lg:col-span-2 bg-slate-900 border border-slate-800 rounded-2xl p-5 flex flex-col">
+          <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
+            <div>
+              <h2 class="text-base font-bold text-white">📘 Official Swift Connect Vehicle Catalogue & Regional Holdings</h2>
+              <p class="text-xs text-slate-400">Click any model to load it into the Valuation & Purchase Calculator</p>
+            </div>
+            <div class="flex gap-2">
+              <input id="dealer-search" oninput="renderDealerCatalogue()" type="text" placeholder="Filter models (e.g. StreetDeck, Enviro400)..." class="bg-slate-950 border border-slate-700 rounded-xl px-3 py-1.5 text-xs text-white w-56" />
+              <label class="flex items-center gap-1.5 text-xs text-slate-300 cursor-pointer bg-slate-950 border border-slate-800 px-3 py-1.5 rounded-xl">
+                <input id="dealer-owned-only" onchange="renderDealerCatalogue()" type="checkbox" class="rounded" />
+                <span>Owned Only</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="overflow-x-auto max-h-[500px] overflow-y-auto border border-slate-800 rounded-xl">
+            <table class="w-full text-left border-collapse text-xs">
+              <thead class="bg-slate-950 text-slate-400 sticky top-0">
+                <tr>
+                  <th class="py-2.5 px-3">Vehicle Model</th>
+                  <th class="py-2.5 px-3 text-right">New List Value (£)</th>
+                  <th class="py-2.5 px-3 text-center">Owned Count</th>
+                  <th class="py-2.5 px-3">Regional Allocation</th>
+                  <th class="py-2.5 px-3 text-right">Total Fleet Value</th>
+                  <th class="py-2.5 px-3 text-right">Select</th>
+                </tr>
+              </thead>
+              <tbody id="dealer-tbody" class="divide-y divide-slate-800/70"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= TAB 5: BODYSHOP, UPGRADES & REPAIRS ================= -->
+    <section id="view-workshop" class="hidden space-y-6">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Left 2 Columns: Service Menus from Repaint_Costs.csv and Repair_Costs.csv -->
+        <div class="lg:col-span-2 space-y-6">
+          <!-- Repaint, Interior & Tech Installations -->
+          <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5">
+            <h2 class="text-base font-bold text-white mb-1">🎨 Bodyshop: Repaints, Interiors & Tech Installations</h2>
+            <p class="text-xs text-slate-400 mb-4">Official rates and vehicle downtime from <code>Swift_Connect_Company_Banking_Repaint_Costs.csv</code></p>
+            <div id="repaint-services-grid" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
+          </div>
+
+          <!-- Mechanical Repairs & EV/Hybrid Conversions -->
+          <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5">
+            <h2 class="text-base font-bold text-white mb-1">🔩 Engineering: Mechanical Repairs & Clean-Air Conversions</h2>
+            <p class="text-xs text-slate-400 mb-4">Official rates and downtime from <code>Swift_Connect_Company_Banking_Repair_Costs.csv</code></p>
+            <div id="repair-services-grid" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
+          </div>
+        </div>
+
+        <!-- Right Column: Interactive Work Order Builder -->
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-4 h-fit sticky top-28">
+          <h2 class="text-base font-bold text-white">📋 Workshop Work Order</h2>
+          <p class="text-xs text-slate-400">Select a vehicle class, service item, and quantity to deduct funds and schedule workshop downtime.</p>
+
+          <div>
+            <label class="block text-xs font-semibold text-slate-300 mb-1">1. Vehicle Category</label>
+            <select id="wo-class" onchange="populateWorkshopServices()" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white">
+              <option value="MINI/MIDI">MINI / MIDI (1000–1999)</option>
+              <option value="Single">Single Decker (2000–2999)</option>
+              <option value="Double Decker">Double Decker (3000–3999)</option>
+              <option value="Coach">Coach (4000–4999)</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-slate-300 mb-1">2. Workshop Job / Upgrade</label>
+            <select id="wo-service" onchange="updateWorkOrderQuote()" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white"></select>
+          </div>
+
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs font-semibold text-slate-300 mb-1">Vehicle Count</label>
+              <input id="wo-count" oninput="updateWorkOrderQuote()" type="number" min="1" max="50" value="1" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white mono" />
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-300 mb-1">Specific Fleet ID (Optional)</label>
+              <input id="wo-fleet-id" type="text" placeholder="e.g. 3077 or 6x StreetDecks" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white" />
+            </div>
+          </div>
+
+          <div class="bg-slate-950 border border-slate-800 rounded-xl p-4 space-y-2">
+            <div class="flex justify-between text-xs">
+              <span class="text-slate-400">Cost Per Vehicle:</span>
+              <span id="wo-unit-cost" class="mono font-bold text-white">£0</span>
+            </div>
+            <div class="flex justify-between text-xs">
+              <span class="text-slate-400">Downtime Per Vehicle:</span>
+              <span id="wo-downtime" class="mono font-bold text-amber-400">0 days</span>
+            </div>
+            <div class="flex justify-between text-sm border-t border-slate-800 pt-2">
+              <span class="text-slate-200 font-semibold">Total Work Order Cost:</span>
+              <span id="wo-total-cost" class="mono font-extrabold text-rose-400">£0</span>
+            </div>
+          </div>
+
+          <button onclick="authorizeWorkOrder()" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-2.5 rounded-xl text-xs transition shadow-lg shadow-indigo-600/20">
+            🔧 Authorize & Book Into Workshop
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= TAB 6: REGIONAL FARE CALCULATOR ================= -->
+    <section id="view-fares" class="hidden space-y-6">
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-4">
+        <div class="flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <h2 class="text-lg font-bold text-white">🎫 Regional Fare Tables & Per-Bus Revenue Simulator</h2>
+            <p class="text-xs text-slate-400">Edit ticket prices or estimated daily passenger numbers for any operating region from <code>Ticket_Prices.csv</code> to see live per-bus profit changes.</p>
+          </div>
+          <select id="fare-region-select" onchange="renderFareTable()" class="bg-slate-950 border border-slate-700 rounded-xl px-4 py-2 text-xs md:text-sm text-white font-semibold"></select>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div class="bg-slate-950 border border-slate-800 p-4 rounded-xl">
+            <div class="text-xs text-slate-400">Est. Daily Revenue (Per Bus)</div>
+            <div id="fare-rev-bus" class="mono text-xl font-extrabold text-emerald-400 mt-1">£1,081.05</div>
+          </div>
+          <div class="bg-slate-950 border border-slate-800 p-4 rounded-xl">
+            <div class="text-xs text-slate-400">Est. Daily OpEx (Staff, Fuel, Maint, Insur)</div>
+            <div id="fare-cost-bus" class="mono text-xl font-extrabold text-rose-400 mt-1">£713.00</div>
+          </div>
+          <div class="bg-slate-950 border border-slate-800 p-4 rounded-xl">
+            <div class="text-xs text-slate-400">Est. Daily Net Profit (Per Bus)</div>
+            <div id="fare-profit-bus" class="mono text-xl font-extrabold text-sky-400 mt-1">£368.05</div>
+          </div>
+        </div>
+
+        <div class="overflow-x-auto border border-slate-800 rounded-xl">
+          <table class="w-full text-left border-collapse text-xs md:text-sm">
+            <thead class="bg-slate-950 text-slate-400">
+              <tr>
+                <th class="py-3 px-4">Ticket Type</th>
+                <th class="py-3 px-4 text-right">Ticket Price (£)</th>
+                <th class="py-3 px-4 text-right">Est. Daily Passengers (Per Bus)</th>
+                <th class="py-3 px-4 text-right">Effective Daily Income (£)</th>
+              </tr>
+            </thead>
+            <tbody id="fares-tbody" class="divide-y divide-slate-800/70"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    // =========================================================================
+    // 1. REAL SPREADSHEET DATA (FROM UPLOADED CSVs)
+    // =========================================================================
+    const INITIAL_STATE = {
+      simDate: "2026-10-14",
+      bankBalance: 172270000,
+      workshopQueue: [],
+      transactions: [
+        { date: "2026-10-10", amount: -35500, type: "Expense", category: "Repaint", notes: "2x to eXpress" },
+        { date: "2026-10-01", amount: -354049, type: "Expense", category: "Vehicle Purchase", notes: "7x ADL Enviro200s" },
+        { date: "2026-09-26", amount: -1263810, type: "Expense", category: "Vehicle Purchase", notes: "3x BYD D9UR ADL Enviro200EV" },
+        { date: "2026-09-24", amount: -245198, type: "Expense", category: "Vehicle Purchase", notes: "3x ADL Enviro200s for DASH (+ Repaint & Repair)" },
+        { date: "2026-09-18", amount: -110375, type: "Expense", category: "Other", notes: "^ Repaint + Repair ^" },
+        { date: "2026-09-18", amount: -22353, type: "Expense", category: "Vehicle Purchase", notes: "6x ADL Enviro200 East Lancs Esteem" },
+        { date: "2026-09-14", amount: -33312.5, type: "Expense", category: "Repaint", notes: "Wrekin Connect" },
+        { date: "2026-09-07", amount: -1659870, type: "Expense", category: "Vehicle Purchase", notes: "6x Scania K280UB Higer Fencer f1s" },
+        { date: "2026-09-07", amount: -25675, type: "Expense", category: "Repaint", notes: "Fleet Livery Refresh" },
+        { date: "2026-09-07", amount: 66443.6, type: "Income", category: "Vehicle Sale", notes: "6x Scania K230UB ADL Enviro300" },
+        { date: "2026-09-05", amount: -2441810, type: "Expense", category: "Vehicle Purchase", notes: "5x Scania K280UB Higer Fencer f1s" },
+        { date: "2026-09-02", amount: -151500, type: "Expense", category: "Repaint", notes: "Repaint 6x Hybrid Streetdecks" },
+        { date: "2026-08-01", amount: -356954, type: "Expense", category: "Monthly Summary", notes: "August 2026 Transaction History" },
+        { date: "2026-07-01", amount: 43901000, type: "Income", category: "Monthly Summary", notes: "July 2026 Transaction History" },
+        { date: "2026-06-01", amount: -70527300, type: "Expense", category: "Monthly Summary", notes: "June 2026 Transaction History" },
+        { date: "2026-05-01", amount: -17552800, type: "Expense", category: "Monthly Summary", notes: "May 2026 Transaction History" },
+        { date: "2026-04-01", amount: -65013.7, type: "Expense", category: "Monthly Summary", notes: "April 2026 Transaction History" },
+        { date: "2026-03-01", amount: -2912140, type: "Expense", category: "Monthly Summary", notes: "March 2026 Transaction History" },
+        { date: "2026-02-01", amount: 2539510, type: "Income", category: "Monthly Summary", notes: "February 2026 Transaction History" },
+        { date: "2026-01-01", amount: -5273700, type: "Expense", category: "Monthly Summary", notes: "January 2026 Transaction History" },
+        { date: "2025-11-01", amount: 20000000, type: "Income", category: "Monthly Summary", notes: "November 2025 Transaction History" },
+        { date: "2024-07-01", amount: 58614600, type: "Income", category: "Monthly Summary", notes: "July 2024 Transaction History" }
+      ],
+      depots: [
+        { name: "Hadley", vehicles: 49, baseIncome: 50199.4, baseExpenses: 34517, rent: 742 },
+        { name: "Shifnal", vehicles: 3, baseIncome: 2315.64, baseExpenses: 2259, rent: 0 },
+        { name: "Bridgnorth", vehicles: 10, baseIncome: 12387.5, baseExpenses: 7530, rent: 207 },
+        { name: "Cossall", vehicles: 61, baseIncome: 81929.1, baseExpenses: 42353, rent: 0 },
+        { name: "Phoenix Park", vehicles: 5, baseIncome: 5405.25, baseExpenses: 3565, rent: 0 },
+        { name: "Elmers End", vehicles: 30, baseIncome: 49759.4, baseExpenses: 21490, rent: 500 },
+        { name: "Stoke", vehicles: 38, baseIncome: 33256.8, baseExpenses: 26414, rent: 400 },
+        { name: "Talbot Green", vehicles: 37, baseIncome: 94248.5, baseExpenses: 26681, rent: 0 },
+        { name: "Colwyn Bay", vehicles: 6, baseIncome: 8034.54, baseExpenses: 4918, rent: 207 },
+        { name: "Islas of Lincolnshire", vehicles: 17, baseIncome: 13193.7, baseExpenses: 12701, rent: 400 },
+        { name: "Willenhall", vehicles: 21, baseIncome: 25579.5, baseExpenses: 16513, rent: 871 },
+        { name: "Dudley", vehicles: 34, baseIncome: 65758.4, baseExpenses: 25002, rent: 871 },
+        { name: "Las Chumberas", vehicles: 3, baseIncome: 2486.1, baseExpenses: 835.2, rent: 0 },
+        { name: "Swift Connecting Railway", vehicles: 4, baseIncome: 33711.6, baseExpenses: 17600, rent: 1600 },
+        { name: "Wellington", vehicles: 13, baseIncome: 10555.4, baseExpenses: 9489, rent: 207 },
+        { name: "Cromer", vehicles: 30, baseIncome: 27963, baseExpenses: 21190, rent: 207 },
+        { name: "Fakenham", vehicles: 10, baseIncome: 9321, baseExpenses: 7063.33, rent: 207 },
+        { name: "Wrexham", vehicles: 19, baseIncome: 25442.7, baseExpenses: 15573.7, rent: 207 },
+        { name: "Cotes Park", vehicles: 44, baseIncome: 58919.9, baseExpenses: 36065.3, rent: 0 }
+      ],
+      busCatalogue: [
+        { model: "ADL Enviro100EV 8.5m", value: 360000, count: 0, regions: "" },
+        { model: "ADL Enviro200 10.8m", value: 186000, count: 4, regions: "WM:1, Worcs:2, Wales:1" },
+        { model: "ADL Enviro200 10.8m FL", value: 252000, count: 15, regions: "WM:7, N&D:6, Wales:1, Yard:1" },
+        { model: "ADL Enviro200 8.9m", value: 189000, count: 1, regions: "Shrop:1" },
+        { model: "ADL Enviro200 8.9m FL", value: 195000, count: 28, regions: "WM:8, Shrop:6, Wales:2, SLon:2, Yard:10" },
+        { model: "ADL Enviro200 East Lancs Esteem 10.7m", value: 216000, count: 1, regions: "WM:1" },
+        { model: "ADL Enviro200 MMC 10.8m", value: 270000, count: 59, regions: "WM:42, Wales:17" },
+        { model: "ADL Enviro200 MMC 11.5m", value: 312000, count: 14, regions: "Worcs:13, Yard:1" },
+        { model: "ADL Enviro200 MMC 8.9m", value: 249000, count: 4, regions: "Shrop:1, SLon:3" },
+        { model: "ADL Enviro200 MMC 9.7m", value: 261000, count: 8, regions: "WM:4, Shrop:4" },
+        { model: "ADL Enviro200EV 10.9m", value: 480000, count: 0, regions: "" },
+        { model: "ADL Enviro300 East Lancs Esteem 10.7m", value: 372000, count: 1, regions: "Wales:1" },
+        { model: "ADL Enviro400 10.9m", value: 450000, count: 26, regions: "WM:16, Worcs:4, Wales:1, Yard:5" },
+        { model: "ADL Enviro400 MMC 10.9m", value: 480000, count: 22, regions: "N&D:4, Wales:17, Yard:1" },
+        { model: "ADL Enviro400 MMC EV Conversion Kit", value: 200000, count: 2, regions: "Shrop:2" },
+        { model: "ADL Enviro400EV 10.8m", value: 552000, count: 1, regions: "WM:1 (LOAN)" },
+        { model: "ADL Enviro400H MMC 10.8m", value: 516000, count: 2, regions: "Shrop:1, Yard:1" },
+        { model: "Alexander Dennis Enviro500 MMC 12.8m", value: 672000, count: 3, regions: "Wales:3" },
+        { model: "BYD D8UR-DD ADL Enviro400EV 10.8m", value: 504000, count: 5, regions: "EV Fleet" },
+        { model: "BYD D9UR ADL Enviro200EV", value: 612000, count: 3, regions: "EV Fleet" },
+        { model: "DAF DB250 Alexander ALX400 10.5m", value: 240000, count: 1, regions: "WM:1" },
+        { model: "DAF SB120 Wright Cadet 9.4m", value: 147000, count: 5, regions: "Shrop:2, SLon:1, Pres:2" },
+        { model: "DAF/VDL SB200 Wright Commander 11.0m", value: 162000, count: 6, regions: "Shrop:2, Yard:1, Pres:3" },
+        { model: "Dennis Trident Alexander ALX400 10.2m", value: 420000, count: 1, regions: "WM:1" },
+        { model: "Leyland National 11.3m", value: 159000, count: 1, regions: "Shrop:1" },
+        { model: "Mercedes-Benz Citaro C2 10.6m", value: 330000, count: 6, regions: "Shrop:5, Yard:1" },
+        { model: "Mercedes-Benz Citaro O530 12.0m", value: 312000, count: 16, regions: "Single & Training" },
+        { model: "Mercedes-Benz eCitaro 10.6m", value: 480000, count: 5, regions: "Wales:1 + EV Fleet" },
+        { model: "Mercedes-Benz Sprinter City 516 CDI 7.4m", value: 80400, count: 16, regions: "Shrop:16" },
+        { model: "Mercedes-Benz Sprinter ECity 45 7.3m", value: 114000, count: 1, regions: "Shrop:1" },
+        { model: "Optare MetroCity 10.8m", value: 240000, count: 11, regions: "Staffs:9, Yard:2" },
+        { model: "Optare Solo 9.2m", value: 120000, count: 10, regions: "Shrop:3, Worcs:4, Yard:3" },
+        { model: "Optare Solo SR M970 9.7m Std Mer/Ele", value: 132000, count: 31, regions: "Shrop:15, Worcs:5, Yard:11" },
+        { model: "Optare Versa 11.1m", value: 153000, count: 36, regions: "WM:4, Shrop:9, Staffs:11, SLon:3, Yard:8, Pres:1" },
+        { model: "Optare Versa Hybrid 11.1m", value: 276000, count: 1, regions: "Shrop:1" },
+        { model: "Scania CN94UB OmniCity 11.9m", value: 180000, count: 8, regions: "Wales:8" },
+        { model: "Scania Fencer 10.8m / K280UB", value: 450000, count: 12, regions: "Single Fleet" },
+        { model: "Scania Irizar i6 12.9-14.1m", value: 360000, count: 6, regions: "Coach Fleet" },
+        { model: "Scania K230UB ADL Enviro300 12.0m", value: 178200, count: 6, regions: "Wales:6" },
+        { model: "Scania N230UB Optare Esteem 11.7m", value: 192000, count: 1, regions: "WM:1" },
+        { model: "Scania N250UD ADL Enviro400 MMC", value: 228000, count: 2, regions: "N&D:2" },
+        { model: "Scania N280UD ADL Enviro400 City CBG 10.9m", value: 240000, count: 4, regions: "Yard:4" },
+        { model: "Switch MetroCity EV 9.5m", value: 420000, count: 7, regions: "Staffs:7" },
+        { model: "VDL Citea LF-122 12.2m", value: 324000, count: 8, regions: "EV Fleet" },
+        { model: "VDL DB300 Wright Gemini 2 10.6m", value: 348000, count: 2, regions: "WM:1, Shrop:1" },
+        { model: "VDL SB200 Plaxton Centro 11.5m", value: 204000, count: 1, regions: "Shrop:1" },
+        { model: "VDL SB200 Wright Pulsar 11.5m", value: 204000, count: 5, regions: "WM:1, SLon:3, Pres:1" },
+        { model: "VDL SB200 Wright Pulsar 2 11.3m", value: 210000, count: 11, regions: "WM:2, Yard:9" },
+        { model: "VDL/DAF DB250 Wright Pulsar Gemini 10.6m", value: 360000, count: 5, regions: "WM:5" },
+        { model: "Volvo B10BLE Wright Renown 12.0m", value: 180000, count: 1, regions: "Pres:1" },
+        { model: "Volvo B5TL MCV eVoSeti 10.3/11.4m", value: 432000, count: 4, regions: "Decker Fleet" },
+        { model: "Volvo B5TL Wright Eclipse Gemini 3 10.3m", value: 396000, count: 8, regions: "WM:1 + Decker" },
+        { model: "Volvo B7RLE Plaxton Centro 11.5m", value: 168000, count: 1, regions: "WM:1" },
+        { model: "Volvo B7RLE Wright Eclipse 2 12.0m", value: 174000, count: 6, regions: "WM:5, Yard:1" },
+        { model: "Volvo B7RLE Wright Eclipse Urban 12.0m", value: 174000, count: 7, regions: "WM:2, SLon:5" },
+        { model: "Volvo B7TL Alexander ALX400 10.6m", value: 360000, count: 4, regions: "WM:1 + Decker" },
+        { model: "Volvo B7TL Wright Eclipse Gemini 10.6m", value: 360000, count: 1, regions: "WM:1" },
+        { model: "Volvo B8L MCV EvoSeti 12.8m", value: 456000, count: 11, regions: "Purple Line / Decker" },
+        { model: "Volvo B8R Plaxton Leopard", value: 300000, count: 6, regions: "Coach Fleet" },
+        { model: "Volvo B8RLE MCV eVoRa", value: 348000, count: 21, regions: "Single Fleet" },
+        { model: "Volvo B8RLE Wright Eclipse 3 12.4m", value: 180000, count: 28, regions: "WM:4 + Single" },
+        { model: "Volvo B9R Plaxton Panther 3", value: 324000, count: 3, regions: "Coach Fleet" },
+        { model: "Volvo B9TL Wright Eclipse Gemini 10.6m", value: 360000, count: 2, regions: "WM:1 + Decker" },
+        { model: "Volvo B9TL Wright Eclipse Gemini 2 10.6m", value: 235200, count: 7, regions: "Decker Fleet" },
+        { model: "Wright GB Hawk 12.0m", value: 396000, count: 7, regions: "WM:2 + Single" },
+        { model: "Wright GB Kite Electroliner", value: 528000, count: 12, regions: "EV Fleet" },
+        { model: "Wright StreetDeck Electroliner 10.9m", value: 600000, count: 4, regions: "Staffs:1 + EV" },
+        { model: "Wright StreetDeck Equipmake EV 10.9m", value: 600000, count: 16, regions: "WM:16" },
+        { model: "Wright StreetDeck Micro Hybrid", value: 480000, count: 6, regions: "Decker Fleet" },
+        { model: "Wright StreetDeck Ultroliner 10.9m", value: 420000, count: 16, regions: "N&D:8, SLon:3, Yard:5" },
+        { model: "Wright StreetLite DF Max 11.5m", value: 276000, count: 13, regions: "WM:4, Shrop:7, SLon:2" },
+        { model: "Wright StreetLite WF 9.5m", value: 240000, count: 6, regions: "SLon:6" },
+        { model: "Wrightbus Contour", value: 288000, count: 8, regions: "Coach Fleet" },
+        { model: "Yutong GT12 12.2m", value: 258000, count: 13, regions: "Coach Fleet" }
+      ]
+    };
+
+    // Workshop Pricing from Repaint_Costs.csv & Repair_Costs.csv
+    const WORKSHOP_CATALOGUE = {
+      "MINI/MIDI": [
+        { group: "Repaint & Body", name: "Exterior Livery Repaint", cost: 1387.5, days: 3 },
+        { group: "Repaint & Body", name: "Interior Decoration Refurb", cost: 1950, days: 4 },
+        { group: "Repaint & Body", name: "Seat Re-Upholstery", cost: 2850, days: 3 },
+        { group: "Tech Installation", name: "USB-A / USB-C Charging Ports", cost: 1125, days: 2 },
+        { group: "Tech Installation", name: "Passenger Wi-Fi", cost: 650, days: 2 },
+        { group: "Tech Installation", name: "Next Stop Announcement", cost: 900, days: 2 },
+        { group: "Tech Installation", name: "Next Stop LED Display", cost: 1550, days: 2 },
+        { group: "Repair & Conversion", name: "Panel Damage Repair", cost: 550, days: 2 },
+        { group: "Repair & Conversion", name: "Chassis Damage Repair", cost: 2000, days: 10 },
+        { group: "Repair & Conversion", name: "Rotten Chassis Rebuild", cost: 2350, days: 5 },
+        { group: "Repair & Conversion", name: "Engine Replacement / Major Fault", cost: 6000, days: 4 },
+        { group: "Repair & Conversion", name: "Gearbox / Transmission Replacement", cost: 4250, days: 2 },
+        { group: "Repair & Conversion", name: "Full Electric Conversion", cost: 127500, days: 18 },
+        { group: "Repair & Conversion", name: "Hybrid Conversion", cost: 52500, days: 11 },
+        { group: "Repair & Conversion", name: "Single Door Conversion (From Dual)", cost: 5750, days: 10 },
+        { group: "Repair & Conversion", name: "Air Conditioning Installation", cost: 3750, days: 2 }
+      ],
+      "Single": [
+        { group: "Repaint & Body", name: "Exterior Livery Repaint", cost: 1862.5, days: 4 },
+        { group: "Repaint & Body", name: "Interior Decoration Refurb", cost: 3100, days: 6 },
+        { group: "Repaint & Body", name: "Seat Re-Upholstery", cost: 4800, days: 5 },
+        { group: "Tech Installation", name: "USB-A / USB-C Charging Ports", cost: 1550, days: 2 },
+        { group: "Tech Installation", name: "Passenger Wi-Fi", cost: 650, days: 2 },
+        { group: "Tech Installation", name: "Next Stop Announcement", cost: 850, days: 2 },
+        { group: "Tech Installation", name: "Next Stop LED Display", cost: 1550, days: 2 },
+        { group: "Repair & Conversion", name: "Panel Damage Repair", cost: 850, days: 3 },
+        { group: "Repair & Conversion", name: "Chassis Damage Repair", cost: 3000, days: 10 },
+        { group: "Repair & Conversion", name: "Rotten Chassis Rebuild", cost: 3500, days: 7 },
+        { group: "Repair & Conversion", name: "Engine Replacement / Major Fault", cost: 8750, days: 5 },
+        { group: "Repair & Conversion", name: "Gearbox / Transmission Replacement", cost: 6750, days: 3 },
+        { group: "Repair & Conversion", name: "Full Electric Conversion", cost: 162500, days: 21 },
+        { group: "Repair & Conversion", name: "Hybrid Conversion", cost: 72500, days: 14 },
+        { group: "Repair & Conversion", name: "Single Door Conversion (From Dual)", cost: 5750, days: 10 },
+        { group: "Repair & Conversion", name: "Air Conditioning Installation", cost: 5250, days: 3 }
+      ],
+      "Double Decker": [
+        { group: "Repaint & Body", name: "Exterior Livery Repaint", cost: 2750, days: 5 },
+        { group: "Repaint & Body", name: "Interior Decoration Refurb", cost: 6250, days: 10 },
+        { group: "Repaint & Body", name: "Seat Re-Upholstery", cost: 8750, days: 10 },
+        { group: "Tech Installation", name: "USB-A / USB-C Charging Ports", cost: 3150, days: 4 },
+        { group: "Tech Installation", name: "Passenger Wi-Fi", cost: 850, days: 4 },
+        { group: "Tech Installation", name: "Next Stop Announcement", cost: 1250, days: 4 },
+        { group: "Tech Installation", name: "Next Stop LED Display", cost: 3000, days: 4 },
+        { group: "Repair & Conversion", name: "Panel Damage Repair", cost: 1200, days: 4 },
+        { group: "Repair & Conversion", name: "Chassis Damage Repair", cost: 4250, days: 15 },
+        { group: "Repair & Conversion", name: "Rotten Chassis Rebuild", cost: 5750, days: 14 },
+        { group: "Repair & Conversion", name: "Engine Replacement / Major Fault", cost: 11750, days: 7 },
+        { group: "Repair & Conversion", name: "Gearbox / Transmission Replacement", cost: 7500, days: 3 },
+        { group: "Repair & Conversion", name: "Full Electric Conversion", cost: 192500, days: 25 },
+        { group: "Repair & Conversion", name: "Hybrid Conversion", cost: 95000, days: 18 },
+        { group: "Repair & Conversion", name: "Single Door Conversion (From Dual)", cost: 5750, days: 10 },
+        { group: "Repair & Conversion", name: "Air Conditioning Installation", cost: 7500, days: 4 }
+      ],
+      "Coach": [
+        { group: "Repaint & Body", name: "Exterior Livery Repaint", cost: 2475, days: 5 },
+        { group: "Repaint & Body", name: "Interior Decoration Refurb", cost: 3900, days: 7 },
+        { group: "Repaint & Body", name: "Seat Re-Upholstery", cost: 9750, days: 8 },
+        { group: "Tech Installation", name: "USB-A / USB-C Charging Ports", cost: 2500, days: 3 },
+        { group: "Tech Installation", name: "Passenger Wi-Fi", cost: 775, days: 3 },
+        { group: "Tech Installation", name: "Next Stop Announcement", cost: 1050, days: 3 },
+        { group: "Tech Installation", name: "Next Stop LED Display", cost: 2000, days: 3 },
+        { group: "Repair & Conversion", name: "Panel Damage Repair", cost: 1650, days: 5 },
+        { group: "Repair & Conversion", name: "Chassis Damage Repair", cost: 5250, days: 15 },
+        { group: "Repair & Conversion", name: "Rotten Chassis Rebuild", cost: 4250, days: 10 },
+        { group: "Repair & Conversion", name: "Engine Replacement / Major Fault", cost: 14000, days: 6 },
+        { group: "Repair & Conversion", name: "Gearbox / Transmission Replacement", cost: 8500, days: 4 },
+        { group: "Repair & Conversion", name: "Full Electric Conversion", cost: 240000, days: 35 },
+        { group: "Repair & Conversion", name: "Hybrid Conversion", cost: 122500, days: 25 },
+        { group: "Repair & Conversion", name: "Air Conditioning Installation", cost: 10000, days: 5 }
+      ]
+    };
+
+    // Regional Fare Tables from Ticket_Prices.csv
+    const FARE_TABLES = {
+      "Notts & Derby (Purple Line / Robin Hood)": {
+        opExPerBus: 713.00,
+        tickets: [
+          { name: "Adult Single", price: 3.2, pax: 62, factor: 1 },
+          { name: "Purple Line Single", price: 3.0, pax: 26, factor: 1 },
+          { name: "Adult Short", price: 2.4, pax: 46, factor: 1 },
+          { name: "Child Single", price: 1.6, pax: 21, factor: 1 },
+          { name: "Adult Day", price: 6.8, pax: 36, factor: 1 },
+          { name: "Purple Line Rover", price: 5.8, pax: 13, factor: 1 },
+          { name: "Child Day", price: 4.2, pax: 9, factor: 1 },
+          { name: "Adult Weekly (÷7)", price: 25.0, pax: 6, factor: 1/7 },
+          { name: "Purple Line Week (÷7)", price: 22.0, pax: 3, factor: 1/7 },
+          { name: "Child Weekly (÷7)", price: 14.5, pax: 2, factor: 1/7 },
+          { name: "Adult Month (÷28)", price: 88.0, pax: 1, factor: 1/28 },
+          { name: "Child Month (÷28)", price: 56.0, pax: 0.2, factor: 1/28 },
+          { name: "Robin Hood Ticket", price: 3.0, pax: 16, factor: 1 },
+          { name: "Concessionary (Free Pass)", price: 1.7, pax: 58, factor: 1 },
+          { name: "Family/Group Day Saver", price: 16.0, pax: 5, factor: 1 },
+          { name: "Student Day", price: 4.8, pax: 12, factor: 1 }
+        ]
+      },
+      "Telford & Wrekin (Hadley / Wellington / PRH)": {
+        opExPerBus: 753.00,
+        tickets: [
+          { name: "Adult Single", price: 2.2, pax: 55, factor: 1 },
+          { name: "Adult Return", price: 3.8, pax: 25, factor: 1 },
+          { name: "Adult Day Saver", price: 4.5, pax: 20, factor: 1 },
+          { name: "Adult Weekly (÷7)", price: 16.5, pax: 4, factor: 1/7 },
+          { name: "Adult 4 Weekly (÷28)", price: 55.0, pax: 2, factor: 1/28 },
+          { name: "Child Single", price: 1.1, pax: 35, factor: 1 },
+          { name: "Child Return", price: 1.8, pax: 12, factor: 1 },
+          { name: "Child Day Saver", price: 2.2, pax: 18, factor: 1 },
+          { name: "ENCTS Concessionary", price: 1.8, pax: 85, factor: 1 },
+          { name: "Shopper Hopper Day", price: 3.2, pax: 15, factor: 1 },
+          { name: "Council Subsidy", price: 40.0, pax: 1, factor: 1 },
+          { name: "Tesco Subsidy", price: 25.0, pax: 1, factor: 1 },
+          { name: "PRH Hospital Return", price: 3.6, pax: 14, factor: 1 },
+          { name: "Wrekin Group Family Pass", price: 9.0, pax: 8, factor: 1 }
+        ]
+      },
+      "West Midlands & Black Country (Dudley / Willenhall / X807)": {
+        opExPerBus: 735.35,
+        tickets: [
+          { name: "Adult Single", price: 3.2, pax: 55, factor: 1 },
+          { name: "Adult Return", price: 5.0, pax: 30, factor: 1 },
+          { name: "Adult Short", price: 1.6, pax: 35, factor: 1 },
+          { name: "Child Single", price: 1.6, pax: 25, factor: 1 },
+          { name: "Child Return", price: 2.5, pax: 15, factor: 1 },
+          { name: "Adult Day", price: 5.5, pax: 45, factor: 1 },
+          { name: "Child Day", price: 2.75, pax: 15, factor: 1 },
+          { name: "Concessionary (Free Pass)", price: 1.85, pax: 95, factor: 1 },
+          { name: "nBus Ticket Acceptance", price: 2.0, pax: 75, factor: 1 },
+          { name: "Black Country Group Saver", price: 12.0, pax: 8, factor: 1 },
+          { name: "X807 Intercity Single", price: 16.0, pax: 22, factor: 1 },
+          { name: "X807 Intercity Return", price: 26.0, pax: 14, factor: 1 }
+        ]
+      },
+      "South London (Elmers End / TfL)": {
+        opExPerBus: 716.33,
+        tickets: [
+          { name: "Adult Single (Hopper)", price: 1.75, pax: 145, factor: 1 },
+          { name: "Adult Short", price: 1.75, pax: 40, factor: 1 },
+          { name: "Child Single", price: 0.85, pax: 65, factor: 1 },
+          { name: "Adult Day Cap", price: 5.25, pax: 90, factor: 1 },
+          { name: "Child Day", price: 2.6, pax: 35, factor: 1 },
+          { name: "TfL Reimbursement", price: 1.8, pax: 185, factor: 1 },
+          { name: "One Day Paper Bus Pass", price: 6.0, pax: 20, factor: 1 },
+          { name: "Freedom Pass / ENCTS Reimb.", price: 1.8, pax: 120, factor: 1 }
+        ]
+      },
+      "Wales & UT Coach (Talbot Green / Wrexham / Colwyn Bay)": {
+        opExPerBus: 721.10,
+        tickets: [
+          { name: "Adult Single", price: 4.6, pax: 40, factor: 1 },
+          { name: "Adult Return", price: 6.8, pax: 25, factor: 1 },
+          { name: "Adult Day", price: 7.5, pax: 25, factor: 1 },
+          { name: "UT Coach Single", price: 26.5, pax: 20, factor: 1 },
+          { name: "UT Coach Return", price: 45.0, pax: 12, factor: 1 },
+          { name: "UT Coach Short Commute", price: 10.0, pax: 14, factor: 1 },
+          { name: "UT Student Link Day", price: 7.8, pax: 32, factor: 1 },
+          { name: "Welsh Conc. (Free Pass)", price: 2.2, pax: 90, factor: 1 },
+          { name: "mytravelpass (16-21)", price: 1.0, pax: 42, factor: 1 },
+          { name: "Welsh Explorer Group Saver", price: 16.0, pax: 8, factor: 1 }
+        ]
+      },
+      "Swift Connecting Railway": {
+        opExPerBus: 4400.00,
+        tickets: [
+          { name: "End-to-End Single", price: 19.5, pax: 82, factor: 1 },
+          { name: "Local Hop Single", price: 3.8, pax: 165, factor: 1 },
+          { name: "Anytime Return", price: 28.0, pax: 72, factor: 1 },
+          { name: "Off-Peak Day Return", price: 15.0, pax: 145, factor: 1 },
+          { name: "Weekly Season (÷7)", price: 62.0, pax: 24, factor: 1/7 },
+          { name: "Monthly Season (÷28)", price: 225.0, pax: 12, factor: 1/28 },
+          { name: "Student Term Pass", price: 1.5, pax: 65, factor: 1 },
+          { name: "Senior Railcard", price: 9.8, pax: 88, factor: 1 },
+          { name: "GroupSaver Day Pass", price: 35.0, pax: 15, factor: 1 },
+          { name: "Standard Premium Upgrade", price: 24.0, pax: 18, factor: 1 }
+        ]
+      }
+    };
+
+    // OMSI 2 Repaint & Spec lookup from ALL_FLEET_IDS_2026_OMSI_2_Repaints.csv
+    const OMSI_SPECS = {
+      "ADL Enviro200": { livery: "Swift Connect / Driver Training", engine: "Cummins ISBe 4.5", gearbox: "Allison 2100 / Voith DIWA" },
+      "ADL Enviro200 FL": { livery: "Swift Connect / Wrekin Connect / Travel Telford", engine: "Cummins ISBe 4.5", gearbox: "Allison 2100 / Voith DIWA D854.5" },
+      "ADL Enviro200 MMC": { livery: "Swift Connect / Travel Telford", engine: "Cummins ISBe 4.5 / 6.7", gearbox: "Voith D824.6 / Allison 2100" },
+      "ADL Enviro400": { livery: "Swift Connect", engine: "Cummins ISBe 6.7", gearbox: "ZF Ecomat 5HP502" },
+      "ADL Enviro400 FL": { livery: "Swift Connect", engine: "Cummins ISBe 6.7", gearbox: "Voith DIWA D854.5E" },
+      "ADL Enviro400 MMC": { livery: "Swift Connect / Swift Express", engine: "Cummins ISB 6.7", gearbox: "ZF Ecolife 6HP1203B / Voith D854.6" },
+      "ADL Enviro400 MMC Kleandrive EV": { livery: "Swift Connect Electric (Zero Emissions)", engine: "Kleandrive EV", gearbox: "Direct Drive" },
+      "ADL Enviro500 MMC": { livery: "Swift Connect", engine: "Cummins ISL9", gearbox: "ZF EcoLife 6AP1700B" },
+      "Mercedes-Benz Citaro O530": { livery: "Swift Connect / Driver Training", engine: "MB OM 906hLA", gearbox: "ZF EcoLife 6AP1400B" },
+      "Optare Solo": { livery: "Swift Connect / Retro Swift", engine: "MB OM904LA / OM934", gearbox: "Allison 2000" },
+      "Optare Solo EV": { livery: "Swift Connect Electric", engine: "Magtec P144", gearbox: "EV Direct" },
+      "Scania N250UD ADL Enviro400 MMC": { livery: "Swift Connect / Swift Express", engine: "Scania DC09", gearbox: "ZF EcoLife 6AP1200B" },
+      "Scania N94UD OmniDekka": { livery: "Swift Connect Coach (Dual Door)", engine: "Scania DC09", gearbox: "ZF Ecomat 5HP592C" },
+      "VDL DB300 Wright Gemini 2": { livery: "Swift Connect Driver Training", engine: "Cummins ISBe 6.7", gearbox: "Voith DIWA D854.5" },
+      "VDL SB200 Wright Pulsar 2": { livery: "Swift Connect", engine: "Cummins ISBe 6.7", gearbox: "Voith DIWA D854.6" },
+      "Volvo B5TL MCV EvoSeti": { livery: "Swift Connect", engine: "Volvo D5K", gearbox: "ZF EcoLife 6AP1003B" },
+      "Volvo B5TL Wright Eclipse Gemini 3 Stealth": { livery: "Swift Connect", engine: "Volvo D5K", gearbox: "ZF EcoLife 6AP1003B" },
+      "Volvo B7TL Alexander ALX400": { livery: "Swift Connect Unbranded", engine: "Volvo D7C", gearbox: "Voith DIWA D864.3" },
+      "Volvo B8L MCV EvoSeti": { livery: "Swift Connecting the Purple Line", engine: "Volvo D8K", gearbox: "ZF EcoLife 6AP1620B / Voith 864.6" },
+      "Volvo B8RLE Wright Eclipse 3": { livery: "Swift Connect / Swift Express", engine: "Volvo D8K", gearbox: "ZF Ecolife 6AP1400C" },
+      "Volvo B9TL Wright Eclipse Gemini 2": { livery: "Swift Connect", engine: "Volvo D9C", gearbox: "ZF Ecomat 6HP592C" },
+      "Wright GB Hawk": { livery: "Swift Connect / Skyline 902 EMA-Derby", engine: "Daimler OM936", gearbox: "Voith DIWA D854.6" },
+      "Wright StreetDeck Micro Hybrid": { livery: "Swift Connect Unbranded", engine: "Daimler OM934LA", gearbox: "Voith DIWA.6 D854.6" },
+      "Wright StreetDeck NewPower EV": { livery: "Swift Connect Electric / R.I.P Ozzy Osbourne", engine: "Voith VEDS", gearbox: "EV Direct" },
+      "Wright StreetDeck Ultroliner": { livery: "Swift Connect / Purple Line / eXpress / Sixty-Seven", engine: "Cummins ISB 6.7", gearbox: "Voith DIWA.8 NXT" },
+      "Wright Streetlite DF": { livery: "Swift Connect", engine: "Cummins ISBe 4.5 / Daimler OM934", gearbox: "Voith DIWA D824.6" },
+      "Wright Streetlite DF Max": { livery: "Swift Connect", engine: "Cummins ISB 6.7", gearbox: "Voith DIWA D854.5" },
+      "Wright Streetlite WF": { livery: "Swift Connect", engine: "Cummins ISBe 4.5", gearbox: "Voith DIWA D824.5" }
+    };
+
+    // Compact Raw Fleet List from ALL_FLEET_IDS_2026 CSVs
+    const RAW_FLEET_CSV = `100,SK52 MMZ,DAF SB120 Wright Cadet
+101,YJ07 JWE,VDL SB200 Plaxton Centro
+102,CE62 NWD,Mercedes-Benz Citaro O530
+103,KX58 GVB,ADL Enviro200
+104,CE62 NXK,Mercedes-Benz Citaro O530
+105,SF16 HKA,ADL Enviro200 FL
+106,SN10 CEB,ADL Enviro200
+107,CE62 NXL,Mercedes-Benz Citaro O530
+108,YX58 DFG,Volvo B7RLE Plaxton Centro
+109,BX58 AOO,Volvo B7RLE Plaxton Centro
+150,BJ10 ALD,VDL DB300 Wright Gemini 2
+151,GN09 AZY,ADL Enviro400
+1000,MX10 DYA,ADL Enviro200
+1001,SN09 RYE,ADL Enviro200
+1002,SN09 RYJ,ADL Enviro200
+1009,YY14 GER,ADL Enviro200 FL
+1010,YY64 OBA,ADL Enviro200 FL
+1011,YY15 HAE,ADL Enviro200 FL
+1012,YX17 NST,ADL Enviro200 FL
+1026,SN19 SAW,ADL Enviro200 MMC
+1027,YX21 OVT,ADL Enviro200 MMC
+1028,JT18 MMH,ADL Enviro200 MMC
+1040,CN71 HFP,Mercedes-Benz Sprinter 516CDi
+1041,RV25 LDC,Mercedes-Benz Sprinter EVM Cityline
+1044,BX11 GWJ,Optare Solo
+1056,YJ14 BWA,Optare Solo SR
+1063,YJ26 CYD,Optare Solo SR
+1074,YD26 CYA,Optare Solo SR Slimline
+1077,SN18 UXA,Wright Streetlite WF
+1080,WF57 TYR,ADL Enviro200 East Lancs Esteem
+1800,YN10 AGW,Optare Solo EV
+2000,LX09 AZM,ADL Enviro200 East Lancs Esteem
+2001,YY14 LFD,ADL Enviro200 FL
+2005,YX22 EVH,ADL Enviro200 MMC
+2006,YY25 MKF,ADL Enviro200 MMC
+2014,AD26 DBM,ADL Enviro200 MMC
+2025,AW18 BZN,ADL Enviro200 MMC
+2036,YX74 YGA,ADL Enviro200 MMC
+2047,RX06 XFF,ADL Enviro300 East Lancs Esteem
+2048,YG52 CGZ,DAF SB120 Wright Cadet
+2049,BX14 WJJ,Mercedes-Benz Citaro O295
+2063,BF65 RGA,Mercedes-Benz Citaro O295K
+2067,CE62 NWC,Mercedes-Benz Citaro O530
+2080,YJ20 PJL,Optare MetroCity
+2089,GR12 BRW,Optare Solo
+2092,YJ14 AAF,Optare Tempo SR
+2098,YJ18 FXE,Optare Versa
+2110,YR10 BFV,Scania CN94UB OmniCity
+2113,SN14 ESE,Scania K230UB ADL Enviro300
+2115,CN73 BAD,Scania K280UB Higer Fencer f1
+2122,BL12 VXF,VDL SB200 Plaxton Centro
+2123,NK08 WUN,VDL SB200 Wright Pulsar
+2126,YJ14 CCD,VDL SB200 Wright Pulsar 2
+2142,BX56 JNS,Volvo B7RLE Wright Eclipse Urban
+2147,CN26 DVA,Volvo B8RLE MCV Evora
+2168,BU16 VRH,Volvo B8RLE Wright Eclipse 3
+2196,YX13 TDG,Wright Streetlite DF
+2201,CR74 DHC,Wright Streetlite DF Max
+2208,YJ17 CPR,Wright GB Hawk
+2210,SK26 FBF,Wright GB Hawk
+2215,SW76 FLA,Scania K280UB Higer Fencer f1
+2220,YK68 PMZ,ADL Enviro200 FL
+2700,MT26 EUS,Mercedes-Benz eCitaro
+2701,MT26 EUU,Mercedes-Benz eCitaro
+2705,YJ18 DHJ,Optare Solo SR EV
+2709,8840 NNT,VDL CItea SLF -122
+2717,YK75 YZG,Wright GB Kite Electroliner
+2729,DN24 KKY,BYD D9UR ADL Enviro200EV
+2730,DN24 KLA,BYD D9UR ADL Enviro200EV
+2731,DN24 KLC,BYD D9UR ADL Enviro200EV
+3000,SN13 DZA,ADL Enviro400
+3005,HF65 XYB,ADL Enviro400 FL
+3016,SG69 SGC,ADL Enviro400 MMC
+3021,YX75 JBU,ADL Enviro400 MMC
+3031,YX25 FSB,ADL Enviro400 MMC
+3037,YY16 HVH,ADL Enviro400H MMC
+3038,SN12 SSC,Scania N230UD ADL Enviro400 FL
+3040,YX20 YXH,Scania N250UD ADL Enviro400 MMC
+3042,BJ65 YXE,Volvo B5TL MCV EvoSeti
+3046,YH65 AYC,Volvo B5TL Wright Eclipse Gemini 3 Stealth
+3053,LU03 LXA,Volvo B7TL Alexander ALX400
+3057,YX20 AUF,Volvo B8L MCV EvoSeti
+3068,YJ08 EXN,Volvo B9TL Wright Eclipse Gemini
+3070,YJ14 ACA,Volvo B9TL Wright Eclipse Gemini 2
+3077,GL22 UTX,Wright StreetDeck Micro Hybrid
+3083,LV75 JVA,Wright StreetDeck Ultroliner
+3088,SK65 PWM,Wright StreetDeck Ultroliner
+3089,MT75 OJA,Wright StreetDeck Ultroliner
+3700,SY25 EGA,ADL Enviro400 MMC Kleandrive EV
+3702,SK25 TFG,ADL Enviro400EV
+3706,SN21 YND,BYD D8UR-DD ADL Enviro400EV
+3711,YX72 GXD,Wright StreetDeck Electroliner
+3715,SY73 TDA,Wright StreetDeck NewPower EV
+3719,OZZ 003,Wright StreetDeck NewPower EV
+3720,OZZ 002,Wright StreetDeck NewPower EV
+3721,OZZ 001,Wright StreetDeck NewPower EV
+3722,SV74 RDV,Wright StreetDeck NewPower EV
+4000,YT26 EFA,Scania K410EB6 Irizar i6
+4006,AT26 EJP,Volvo B8R Plaxton Leopard
+4012,YX73 MUX,Volvo B9R Plaxton Panther 3
+4015,YK75 WBJ,Yutong GT12
+4028,SW76 EHA,Wright Contour
+4500,YX24 PPL,ADL Enviro500 MMC
+4501,SN09 CDH,ADL Enviro500 MMC
+4502,SN09 CBZ,ADL Enviro500 MMC
+4503,JTH 756P,Leyland National
+4504,YJ56 WUX,Optare Solo
+4505,UJ55 UNP,Scania N94UD OmniDekka
+4506,BF67 GJU,Volvo B5TL Wright Eclipse Gemini 3`;
+
+    // =========================================================================
+    // 2. STATE INITIALIZATION & PERSISTENCE
+    // =========================================================================
+    let state = null;
+
+    function parseInitialFleet() {
+      return RAW_FLEET_CSV.split("\n").map(line => {
+        const [id, reg, type] = line.split(",");
+        const num = parseInt(id, 10);
+        let cat = "Single";
+        if (num < 200) cat = "Training";
+        else if (num < 2000) cat = "Mini/Midi";
+        else if (num >= 3000 && num < 4000) cat = "Decker";
+        else if (num >= 4000) cat = "Coach";
+        const spec = OMSI_SPECS[type] || {
+          livery: num >= 4000 ? "Swift Connect Coach" : (num >= 2700 && num < 2800) || num >= 3700 ? "Swift Connect Electric" : "Swift Connect Standard",
+          engine: "Euro VI Standard",
+          gearbox: "ZF EcoLife / Voith"
+        };
+        return { id: num, reg, type, cat, livery: spec.livery, engine: spec.engine, gearbox: spec.gearbox };
+      });
+    }
+
+    function loadState() {
+      const saved = localStorage.getItem("swift_connect_sim_v1");
+      if (saved) {
+        try {
+          state = JSON.parse(saved);
+          return;
+        } catch (e) { console.error(e); }
+      }
+      state = JSON.parse(JSON.stringify(INITIAL_STATE));
+      state.fleetRegistry = parseInitialFleet();
+      state.fares = JSON.parse(JSON.stringify(FARE_TABLES));
+      saveState();
+    }
+
+    function saveState() {
+      localStorage.setItem("swift_connect_sim_v1", JSON.stringify(state));
+    }
+
+    function resetToSpreadsheetDefaults() {
+      if (!confirm("Reset all balances, depots, and fleet logs back to your original spreadsheet state?")) return;
+      localStorage.removeItem("swift_connect_sim_v1");
+      loadState();
+      renderAll();
+      showToast("Reset to original spreadsheet data!", "🔄");
+    }
+
+    // =========================================================================
+    // 3. CORE CALCULATIONS & GAME LOOP
+    // =========================================================================
+    function formatGBP(val, decimals = 0) {
+      const sign = val < 0 ? "-" : "";
+      return sign + "£" + Math.abs(val).toLocaleString("en-GB", {
+        minimumFractionDigits: decimals,
+        maximumFractionDigits: decimals
+      });
+    }
+
+    function calculateDailyTotals() {
+      let totalIncome = 0;
+      let totalOpEx = 0;
+      let totalRent = 0;
+      let totalBuses = 0;
+
+      state.depots.forEach(d => {
+        const revPerBus = d.baseIncome / Math.max(1, INITIAL_STATE.depots.find(x => x.name === d.name)?.vehicles || d.vehicles);
+        const expPerBus = d.baseExpenses / Math.max(1, INITIAL_STATE.depots.find(x => x.name === d.name)?.vehicles || d.vehicles);
+        const inc = revPerBus * d.vehicles;
+        const exp = expPerBus * d.vehicles;
+        totalIncome += inc;
+        totalOpEx += exp;
+        totalRent += d.rent;
+        totalBuses += d.vehicles;
+      });
+
+      const totalExpenses = totalOpEx + totalRent;
+      const preTaxProfit = totalIncome - totalExpenses;
+      const afterTaxProfit = preTaxProfit > 0 ? preTaxProfit * 0.75 : preTaxProfit;
+
+      return { totalIncome, totalExpenses, totalRent, preTaxProfit, afterTaxProfit, totalBuses };
+    }
+
+    function advanceDay(days = 1) {
+      const daily = calculateDailyTotals();
+      const netGain = daily.afterTaxProfit * days;
+
+      // Advance date
+      const dt = new Date(state.simDate);
+      dt.setDate(dt.getDate() + days);
+      state.simDate = dt.toISOString().split("T")[0];
+
+      // Update Bank Balance
+      state.bankBalance += netGain;
+
+      // Progress workshop downtime queue
+      let completedJobs = 0;
+      state.workshopQueue.forEach(job => {
+        job.daysLeft -= days;
+        if (job.daysLeft <= 0) completedJobs++;
+      });
+      state.workshopQueue = state.workshopQueue.filter(job => job.daysLeft > 0);
+
+      // Log daily operating profit into ledger
+      state.transactions.unshift({
+        date: state.simDate,
+        amount: Math.round(netGain * 100) / 100,
+        type: netGain >= 0 ? "Income" : "Expense",
+        category: "Depot Operations",
+        notes: `${days}d Net Operating Profit across 19 Depots (After 25% Tax)`
+      });
+
+      saveState();
+      renderAll();
+      showToast(
+        `Simulated ${days} day(s): ${formatGBP(netGain)} added to Bank!` +
+        (completedJobs > 0 ? ` (${completedJobs} workshop job completed!)` : ""),
+        "📅"
+      );
+    }
+
+    // =========================================================================
+    // 4. UI RENDERING
+    // =========================================================================
+    function renderAll() {
+      const daily = calculateDailyTotals();
+      const [yyyy, mm, dd] = state.simDate.split("-");
+      document.getElementById("hud-date").textContent = `${dd}/${mm}/${yyyy}`;
+      document.getElementById("hud-bank").textContent = formatGBP(state.bankBalance);
+      document.getElementById("hud-depot-budget").textContent = formatGBP(state.bankBalance / 15);
+      document.getElementById("hud-daily-net").textContent = (daily.afterTaxProfit >= 0 ? "+" : "") + formatGBP(daily.afterTaxProfit) + "/day";
+
+      document.getElementById("kpi-income").textContent = formatGBP(daily.totalIncome);
+      document.getElementById("kpi-expenses").textContent = formatGBP(daily.totalExpenses);
+      document.getElementById("kpi-profit").textContent = formatGBP(daily.preTaxProfit);
+      document.getElementById("kpi-after-tax").textContent = `After 25% Corp Tax: ${formatGBP(daily.afterTaxProfit)}`;
+
+      const totalOwnedCatalogue = state.busCatalogue.reduce((acc, b) => acc + b.count, 0);
+      document.getElementById("kpi-fleet-count").textContent = Math.max(531, totalOwnedCatalogue);
+
+      const totalDowntimeBuses = state.workshopQueue.reduce((acc, j) => acc + j.count, 0);
+      document.getElementById("kpi-workshop-status").textContent =
+        totalDowntimeBuses > 0
+          ? `${totalDowntimeBuses} vehicle(s) currently in workshop downtime`
+          : "All vehicles operational (0 in downtime)";
+
+      renderWorkshopQueueBanner();
+      renderLedger();
+      renderDepots();
+      renderFleetTable();
+      renderDealerCatalogue();
+      renderFareTable();
+    }
+
+    function renderWorkshopQueueBanner() {
+      const panel = document.getElementById("workshop-active-panel");
+      const list = document.getElementById("workshop-queue-list");
+      if (!state.workshopQueue.length) {
+        panel.classList.add("hidden");
+        return;
+      }
+      panel.classList.remove("hidden");
+      list.innerHTML = state.workshopQueue.map(j => `
+        <div class="bg-slate-900/90 border border-indigo-500/30 rounded-xl p-3 flex items-center justify-between text-xs">
+          <div>
+            <div class="font-bold text-white">${j.count}x ${j.vehicleClass} — ${j.serviceName}</div>
+            <div class="text-slate-400">${j.ref || "Standard Workshop Bay"}</div>
+          </div>
+          <span class="mono px-2.5 py-1 rounded-lg bg-indigo-500/20 text-indigo-300 font-bold">${j.daysLeft}d left</span>
+        </div>
+      `).join("");
+    }
+
+    function renderLedger() {
+      const tbody = document.getElementById("ledger-tbody");
+      tbody.innerHTML = state.transactions.map(t => {
+        const isPos = t.amount >= 0;
+        return `
+          <tr class="hover:bg-slate-800/40">
+            <td class="py-2.5 px-3 mono text-slate-300 whitespace-nowrap">${t.date}</td>
+            <td class="py-2.5 px-3">
+              <span class="px-2 py-0.5 rounded text-[11px] font-semibold ${isPos ? 'bg-emerald-500/10 text-emerald-400' : 'bg-rose-500/10 text-rose-400'}">
+                ${t.type || (isPos ? 'Income' : 'Expense')}
+              </span>
+            </td>
+            <td class="py-2.5 px-3 text-slate-300">${t.category || 'Historical'}</td>
+            <td class="py-2.5 px-3 text-slate-400">${t.notes || '—'}</td>
+            <td class="py-2.5 px-3 mono font-bold text-right ${isPos ? 'text-emerald-400' : 'text-rose-400'}">
+              ${isPos ? '+' : ''}${formatGBP(t.amount, 2)}
+            </td>
+          </tr>
+        `;
+      }).join("");
+    }
+
+    function addManualTransaction() {
+      const type = document.getElementById("tx-type").value;
+      const category = document.getElementById("tx-category").value;
+      const rawAmount = parseFloat(document.getElementById("tx-amount").value);
+      const notes = document.getElementById("tx-notes").value.trim();
+
+      if (isNaN(rawAmount) || rawAmount <= 0) {
+        showToast("Please enter a valid positive amount (£).", "⚠️");
+        return;
+      }
+
+      const signedAmount = type === "Expense" ? -Math.abs(rawAmount) : Math.abs(rawAmount);
+      state.bankBalance += signedAmount;
+      state.transactions.unshift({
+        date: state.simDate,
+        amount: signedAmount,
+        type,
+        category,
+        notes: notes || category
+      });
+
+      document.getElementById("tx-amount").value = "";
+      document.getElementById("tx-notes").value = "";
+      saveState();
+      renderAll();
+      showToast(`Posted ${formatGBP(signedAmount)} to Company Ledger!`, "🏦");
+    }
+
+    // =========================================================================
+    // 5. DEPOTS & REGIONAL ALLOCATION
+    // =========================================================================
+    function renderDepots() {
+      const tbody = document.getElementById("depots-tbody");
+      const daily = calculateDailyTotals();
+      document.getElementById("depot-total-buses").textContent = daily.totalBuses;
+      document.getElementById("depot-total-rent").textContent = formatGBP(daily.totalRent);
+
+      tbody.innerHTML = state.depots.map((d, idx) => {
+        const orig = INITIAL_STATE.depots[idx] || d;
+        const revPerBus = d.baseIncome / Math.max(1, orig.vehicles);
+        const expPerBus = d.baseExpenses / Math.max(1, orig.vehicles);
+        const inc = revPerBus * d.vehicles;
+        const exp = expPerBus * d.vehicles;
+        const profit = inc - exp - d.rent;
+
+        return `
+          <tr class="hover:bg-slate-800/40">
+            <td class="py-2.5 px-4 font-semibold text-white">${d.name}</td>
+            <td class="py-2.5 px-4 text-center">
+              <div class="inline-flex items-center gap-1 bg-slate-950 border border-slate-700 rounded-lg px-1.5 py-0.5">
+                <button onclick="adjustDepotVehicles(${idx}, -1)" class="text-slate-400 hover:text-white px-1.5 font-bold">-</button>
+                <span class="mono font-bold text-sky-400 w-8 text-center">${d.vehicles}</span>
+                <button onclick="adjustDepotVehicles(${idx}, 1)" class="text-slate-400 hover:text-white px-1.5 font-bold">+</button>
+              </div>
+            </td>
+            <td class="py-2.5 px-4 mono text-right text-slate-400">${formatGBP(revPerBus, 2)}</td>
+            <td class="py-2.5 px-4 mono text-right text-emerald-400 font-medium">${formatGBP(inc, 2)}</td>
+            <td class="py-2.5 px-4 mono text-right text-rose-400">${formatGBP(exp, 2)}</td>
+            <td class="py-2.5 px-4 mono text-right text-amber-400">${formatGBP(d.rent, 0)}</td>
+            <td class="py-2.5 px-4 mono text-right font-bold ${profit >= 0 ? 'text-emerald-400' : 'text-rose-400'}">${formatGBP(profit, 2)}</td>
+          </tr>
+        `;
+      }).join("");
+
+      const regions = [
+        { name: "West Midlands", buses: 118, note: "Dudley & Willenhall" },
+        { name: "Shropshire", buses: 81, note: "Hadley, Wellington, Bridgnorth, Shifnal" },
+        { name: "Wales", buses: 56, note: "Talbot Green, Wrexham, Colwyn Bay" },
+        { name: "Notts & Derby", buses: 20, note: "Cossall, Phoenix Park, Cotes Park" },
+        { name: "Staffordshire", buses: 28, note: "Stoke Depot" },
+        { name: "Worcestershire", buses: 28, note: "Interurban Fleet" },
+        { name: "South London", buses: 28, note: "Elmers End TfL Operations" },
+        { name: "Yard / Float", buses: 64, note: "Reserve & Refurbishment Float" },
+        { name: "Preservation", buses: 8, note: "Heritage Fleet (ALX400, Renown, Cadet)" },
+        { name: "East Anglia & Lincs", buses: 57, note: "Cromer, Fakenham & Lincolnshire" }
+      ];
+      document.getElementById("regional-summary-grid").innerHTML = regions.map(r => `
+        <div class="bg-slate-950 border border-slate-800 p-3 rounded-xl">
+          <div class="text-xs font-bold text-white">${r.name}</div>
+          <div class="mono text-lg font-extrabold text-sky-400 mt-0.5">${r.buses} <span class="text-xs font-normal text-slate-400">units</span></div>
+          <div class="text-[11px] text-slate-500 mt-0.5">${r.note}</div>
+        </div>
+      `).join("");
+    }
+
+    function adjustDepotVehicles(idx, delta) {
+      const next = state.depots[idx].vehicles + delta;
+      if (next < 0) return;
+      state.depots[idx].vehicles = next;
+      saveState();
+      renderAll();
+    }
+
+    // =========================================================================
+    // 6. FLEET REGISTRY & OMSI 2 LIVERIES
+    // =========================================================================
+    function renderFleetTable() {
+      const q = (document.getElementById("fleet-search")?.value || "").toLowerCase();
+      const cat = document.getElementById("fleet-cat-filter")?.value || "ALL";
+      const tbody = document.getElementById("fleet-tbody");
+
+      const filtered = state.fleetRegistry.filter(v => {
+        if (cat !== "ALL" && v.cat !== cat) return false;
+        if (!q) return true;
+        return (
+          String(v.id).includes(q) ||
+          (v.reg || "").toLowerCase().includes(q) ||
+          (v.type || "").toLowerCase().includes(q) ||
+          (v.livery || "").toLowerCase().includes(q)
+        );
+      });
+
+      tbody.innerHTML = filtered.map(v => {
+        const isEV = (v.type || "").includes("EV") || (v.type || "").includes("Electroliner") || (v.type || "").includes("eCitaro") || (v.id >= 2700 && v.id < 2800) || (v.id >= 3700 && v.id < 3800);
+        return `
+          <tr class="hover:bg-slate-800/40">
+            <td class="py-2.5 px-3 mono font-bold text-sky-400">${v.id}</td>
+            <td class="py-2.5 px-3">
+              <span class="uk-plate ${isEV ? 'uk-plate-ev' : ''}">${v.reg || 'UNREG'}</span>
+            </td>
+            <td class="py-2.5 px-3">
+              <span class="px-2 py-0.5 rounded bg-slate-800 text-slate-300 text-[11px]">${v.cat}</span>
+            </td>
+            <td class="py-2.5 px-3 font-semibold text-white">${v.type}</td>
+            <td class="py-2.5 px-3 text-amber-300">${v.livery}</td>
+            <td class="py-2.5 px-3 text-slate-400">${v.engine} · ${v.gearbox}</td>
+            <td class="py-2.5 px-3 text-right">
+              <button onclick="changeVehicleLivery(${v.id})" class="text-xs bg-slate-800 hover:bg-sky-600 hover:text-white text-slate-300 px-2.5 py-1 rounded-lg transition">
+                🎨 Repaint
+              </button>
+            </td>
+          </tr>
+        `;
+      }).join("");
+    }
+
+    function changeVehicleLivery(fleetId) {
+      const bus = state.fleetRegistry.find(v => v.id === fleetId);
+      if (!bus) return;
+      const newLivery = prompt(
+        `Assign new OMSI 2 Livery for Fleet #${bus.id} (${bus.reg} - ${bus.type}):\n(Repaint cost of £1,862.50 will be logged to Company Bank)`,
+        bus.livery
+      );
+      if (!newLivery || newLivery.trim() === bus.livery) return;
+
+      bus.livery = newLivery.trim();
+      const cost = bus.cat === "Decker" ? 2750 : bus.cat === "Coach" ? 2475 : bus.cat === "Mini/Midi" ? 1387.5 : 1862.5;
+      state.bankBalance -= cost;
+      state.transactions.unshift({
+        date: state.simDate,
+        amount: -cost,
+        type: "Expense",
+        category: "Repaint",
+        notes: `Repaint Fleet #${bus.id} (${bus.reg}) to ${bus.livery}`
+      });
+
+      saveState();
+      renderAll();
+      showToast(`Fleet #${bus.id} repainted into "${bus.livery}" (-${formatGBP(cost, 2)})`, "🎨");
+    }
+
+    function registerNewFleetBus() {
+      const id = parseInt(document.getElementById("new-fleet-id").value, 10);
+      const reg = document.getElementById("new-fleet-reg").value.trim().toUpperCase();
+      const type = document.getElementById("new-fleet-type").value.trim();
+
+      if (!id || !reg || !type) {
+        showToast("Please fill in Fleet ID, Registration, and Vehicle Type.", "⚠️");
+        return;
+      }
+      let cat = "Single";
+      if (id < 200) cat = "Training";
+      else if (id < 2000) cat = "Mini/Midi";
+      else if (id >= 3000 && id < 4000) cat = "Decker";
+      else if (id >= 4000) cat = "Coach";
+
+      state.fleetRegistry.unshift({
+        id,
+        reg,
+        type,
+        cat,
+        livery: "Swift Connect Standard",
+        engine: "Euro VI",
+        gearbox: "ZF EcoLife"
+      });
+
+      document.getElementById("new-fleet-id").value = "";
+      document.getElementById("new-fleet-reg").value = "";
+      document.getElementById("new-fleet-type").value = "";
+      saveState();
+      renderFleetTable();
+      showToast(`Registered Fleet #${id} (${reg})!`, "🚌");
+    }
+
+    // =========================================================================
+    // 7. BUS DEALERSHIP & 18% DEPRECIATION CALCULATOR
+    // =========================================================================
+    function populateDealerSelect() {
+      const sel = document.getElementById("calc-model-select");
+      sel.innerHTML = state.busCatalogue.map((b, idx) =>
+        `<option value="${idx}">${b.model} — ${formatGBP(b.value)}</option>`
+      ).join("");
+    }
+
+    function syncCalcModel() {
+      const idx = parseInt(document.getElementById("calc-model-select").value, 10);
+      const item = state.busCatalogue[idx];
+      if (!item) return;
+      document.getElementById("calc-orig-price").value = item.value;
+      updateDepreciationCalc();
+    }
+
+    function selectCatalogueModel(idx) {
+      document.getElementById("calc-model-select").value = idx;
+      syncCalcModel();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function updateDepreciationCalc() {
+      const origPrice = parseFloat(document.getElementById("calc-orig-price").value) || 0;
+      const year = parseInt(document.getElementById("calc-year").value, 10) || 2026;
+      const qty = Math.max(1, parseInt(document.getElementById("calc-qty").value, 10) || 1);
+
+      const age = Math.max(0, 2026 - year);
+      // 18% compound annual depreciation formula
+      const unitDeprValue = origPrice * Math.pow(1 - 0.18, age);
+      const totalDepr = unitDeprValue * qty;
+      const totalWithVat = totalDepr * 1.20;
+
+      document.getElementById("calc-age-out").textContent = age === 0 ? "0 yrs (Brand New)" : `${age} yr(s)`;
+      document.getElementById("calc-depr-out").textContent = formatGBP(totalDepr, 2);
+      document.getElementById("calc-vat-out").textContent = formatGBP(totalWithVat, 2);
+      return { origPrice, year, qty, age, totalDepr, totalWithVat };
+    }
+
+    function executeBusTrade(mode) {
+      const idx = parseInt(document.getElementById("calc-model-select").value, 10);
+      const modelObj = state.busCatalogue[idx];
+      const region = document.getElementById("calc-region").value;
+      const calc = updateDepreciationCalc();
+
+      if (mode === "BUY") {
+        if (state.bankBalance < calc.totalWithVat) {
+          showToast("Insufficient Company Bank Funds for this purchase!", "🚫");
+          return;
+        }
+        state.bankBalance -= calc.totalWithVat;
+        modelObj.count += calc.qty;
+        modelObj.regions = modelObj.regions ? `${modelObj.regions}, ${region}:${calc.qty}` : `${region}:${calc.qty}`;
+
+        state.transactions.unshift({
+          date: state.simDate,
+          amount: -Math.round(calc.totalWithVat * 100) / 100,
+          type: "Expense",
+          category: "Vehicle Purchase",
+          notes: `${calc.qty}x ${modelObj.model} (${calc.year}) for ${region}`
+        });
+        showToast(`Purchased ${calc.qty}x ${modelObj.model} for ${formatGBP(calc.totalWithVat)}!`, "🛒");
+      } else {
+        if (modelObj.count < calc.qty) {
+          showToast(`You only own ${modelObj.count} of ${modelObj.model} to sell!`, "⚠️");
+          return;
+        }
+        state.bankBalance += calc.totalDepr;
+        modelObj.count -= calc.qty;
+
+        state.transactions.unshift({
+          date: state.simDate,
+          amount: Math.round(calc.totalDepr * 100) / 100,
+          type: "Income",
+          category: "Vehicle Sale",
+          notes: `Sold ${calc.qty}x ${modelObj.model} (${calc.year})`
+        });
+        showToast(`Sold ${calc.qty}x ${modelObj.model} for ${formatGBP(calc.totalDepr)}!`, "💷");
+      }
+
+      saveState();
+      renderAll();
+    }
+
+    function renderDealerCatalogue() {
+      const q = (document.getElementById("dealer-search")?.value || "").toLowerCase();
+      const ownedOnly = document.getElementById("dealer-owned-only")?.checked;
+      const tbody = document.getElementById("dealer-tbody");
+
+      tbody.innerHTML = state.busCatalogue.map((b, idx) => {
+        if (ownedOnly && b.count <= 0) return "";
+        if (q && !b.model.toLowerCase().includes(q) && !(b.regions || "").toLowerCase().includes(q)) return "";
+        const totalVal = b.value * b.count;
+        return `
+          <tr class="hover:bg-slate-800/40">
+            <td class="py-2.5 px-3 font-semibold text-white">${b.model}</td>
+            <td class="py-2.5 px-3 mono text-right text-sky-400">${formatGBP(b.value)}</td>
+            <td class="py-2.5 px-3 mono text-center font-bold ${b.count > 0 ? 'text-emerald-400' : 'text-slate-500'}">${b.count}</td>
+            <td class="py-2.5 px-3 text-slate-400">${b.regions || '—'}</td>
+            <td class="py-2.5 px-3 mono text-right text-slate-300">${formatGBP(totalVal)}</td>
+            <td class="py-2.5 px-3 text-right">
+              <button onclick="selectCatalogueModel(${idx})" class="text-xs bg-sky-600/20 hover:bg-sky-600 text-sky-300 hover:text-white border border-sky-500/30 px-2.5 py-1 rounded-lg transition">
+                Select
+              </button>
+            </td>
+          </tr>
+        `;
+      }).join("");
+    }
+
+    // =========================================================================
+    // 8. WORKSHOP (REPAINTS, UPGRADES & REPAIRS)
+    // =========================================================================
+    function populateWorkshopServices() {
+      const vClass = document.getElementById("wo-class").value;
+      const services = WORKSHOP_CATALOGUE[vClass] || [];
+      const sel = document.getElementById("wo-service");
+      sel.innerHTML = services.map((s, i) =>
+        `<option value="${i}">[${s.group}] ${s.name} — ${formatGBP(s.cost, 2)} (${s.days}d)</option>`
+      ).join("");
+      updateWorkOrderQuote();
+    }
+
+    function updateWorkOrderQuote() {
+      const vClass = document.getElementById("wo-class").value;
+      const idx = parseInt(document.getElementById("wo-service").value, 10) || 0;
+      const count = Math.max(1, parseInt(document.getElementById("wo-count").value, 10) || 1);
+      const service = (WORKSHOP_CATALOGUE[vClass] || [])[idx];
+      if (!service) return null;
+
+      const totalCost = service.cost * count;
+      document.getElementById("wo-unit-cost").textContent = formatGBP(service.cost, 2);
+      document.getElementById("wo-downtime").textContent = `${service.days} days`;
+      document.getElementById("wo-total-cost").textContent = formatGBP(totalCost, 2);
+      return { vClass, service, count, totalCost };
+    }
+
+    function authorizeWorkOrder() {
+      const quote = updateWorkOrderQuote();
+      if (!quote) return;
+      const ref = document.getElementById("wo-fleet-id").value.trim();
+
+      state.bankBalance -= quote.totalCost;
+      state.workshopQueue.push({
+        vehicleClass: quote.vClass,
+        serviceName: quote.service.name,
+        count: quote.count,
+        daysLeft: quote.service.days,
+        ref: ref || `${quote.count}x ${quote.vClass}`
+      });
+
+      state.transactions.unshift({
+        date: state.simDate,
+        amount: -quote.totalCost,
+        type: "Expense",
+        category: quote.service.group === "Repaint & Body" ? "Repaint" : "Repair & Conversion",
+        notes: `${quote.count}x ${quote.vClass}: ${quote.service.name}${ref ? ' (' + ref + ')' : ''}`
+      });
+
+      document.getElementById("wo-fleet-id").value = "";
+      saveState();
+      renderAll();
+      showToast(`Booked ${quote.count}x ${quote.vClass} for ${quote.service.name} (${formatGBP(quote.totalCost, 2)})`, "🔧");
+    }
+
+    function renderWorkshopCards() {
+      const repaintItems = [
+        { title: "Exterior Livery Repaint", rates: "Mini: £1,387.50 (3d) · Single: £1,862.50 (4d) · Decker: £2,750 (5d) · Coach: £2,475 (5d)" },
+        { title: "Interior Decoration Refurb", rates: "Mini: £1,950 (4d) · Single: £3,100 (6d) · Decker: £6,250 (10d) · Coach: £3,900 (7d)" },
+        { title: "Full Seat Re-Upholstery", rates: "Mini: £2,850 (3d) · Single: £4,800 (5d) · Decker: £8,750 (10d) · Coach: £9,750 (8d)" },
+        { title: "USB-A/C, Wi-Fi & Next Stop Tech", rates: "USB: £1,125–£3,150 · Wi-Fi: £650–£850 · Next Stop Audio/LED: £850–£3,000 (2–4d)" }
+      ];
+      document.getElementById("repaint-services-grid").innerHTML = repaintItems.map(item => `
+        <div class="bg-slate-950 border border-slate-800 p-3.5 rounded-xl">
+          <div class="text-xs font-bold text-sky-400">${item.title}</div>
+          <div class="text-xs text-slate-300 mt-1 leading-relaxed">${item.rates}</div>
+        </div>
+      `).join("");
+
+      const repairItems = [
+        { title: "Full Electric Zero-Emission Conversion", rates: "Mini: £127,500 (18d) · Single: £162,500 (21d) · Decker: £192,500 (25d) · Coach: £240,000 (35d)" },
+        { title: "Hybrid Drivetrain Conversion", rates: "Mini: £52,500 (11d) · Single: £72,500 (14d) · Decker: £95,000 (18d) · Coach: £122,500 (25d)" },
+        { title: "Engine & Gearbox Major Overhauls", rates: "Engine: £6,000–£14,000 (4–7d) · Gearbox: £4,250–£8,500 (2–4d)" },
+        { title: "Chassis, Panel & Single-Door Conversion", rates: "Panel: £550–£1,650 · Rotten Chassis: £2,350–£5,750 · Dual-to-Single Door: £5,750 (10d)" }
+      ];
+      document.getElementById("repair-services-grid").innerHTML = repairItems.map(item => `
+        <div class="bg-slate-950 border border-slate-800 p-3.5 rounded-xl">
+          <div class="text-xs font-bold text-amber-400">${item.title}</div>
+          <div class="text-xs text-slate-300 mt-1 leading-relaxed">${item.rates}</div>
+        </div>
+      `).join("");
+    }
+
+    // =========================================================================
+    // 9. REGIONAL FARE CALCULATOR
+    // =========================================================================
+    function populateFareRegions() {
+      const sel = document.getElementById("fare-region-select");
+      sel.innerHTML = Object.keys(state.fares).map(r => `<option value="${r}">${r}</option>`).join("");
+    }
+
+    function renderFareTable() {
+      const regionName = document.getElementById("fare-region-select")?.value || Object.keys(state.fares)[0];
+      const region = state.fares[regionName];
+      if (!region) return;
+
+      let totalRevPerBus = 0;
+      const tbody = document.getElementById("fares-tbody");
+      tbody.innerHTML = region.tickets.map((t, idx) => {
+        const dailyIncome = t.price * t.pax * t.factor;
+        totalRevPerBus += dailyIncome;
+        return `
+          <tr class="hover:bg-slate-800/40">
+            <td class="py-2.5 px-4 font-semibold text-white">${t.name}</td>
+            <td class="py-2.5 px-4 text-right">
+              <input type="number" step="0.10" value="${t.price}" onchange="updateFareItem('${regionName}', ${idx}, 'price', this.value)"
+                class="bg-slate-950 border border-slate-700 rounded-lg px-2 py-1 text-right mono text-xs text-sky-400 w-24" />
+            </td>
+            <td class="py-2.5 px-4 text-right">
+              <input type="number" step="1" value="${t.pax}" onchange="updateFareItem('${regionName}', ${idx}, 'pax', this.value)"
+                class="bg-slate-950 border border-slate-700 rounded-lg px-2 py-1 text-right mono text-xs text-amber-400 w-24" />
+            </td>
+            <td class="py-2.5 px-4 mono text-right font-bold text-emerald-400">${formatGBP(dailyIncome, 2)}</td>
+          </tr>
+        `;
+      }).join("");
+
+      const profitPerBus = totalRevPerBus - region.opExPerBus;
+      document.getElementById("fare-rev-bus").textContent = formatGBP(totalRevPerBus, 2);
+      document.getElementById("fare-cost-bus").textContent = formatGBP(region.opExPerBus, 2);
+      document.getElementById("fare-profit-bus").textContent = formatGBP(profitPerBus, 2);
+    }
+
+    function updateFareItem(regionName, idx, field, val) {
+      const num = parseFloat(val);
+      if (isNaN(num) || num < 0) return;
+      state.fares[regionName].tickets[idx][field] = num;
+      saveState();
+      renderFareTable();
+      showToast(`Updated ${state.fares[regionName].tickets[idx].name} in ${regionName}!`, "🎫");
+    }
+
+    // =========================================================================
+    // 10. NAVIGATION & UTILITIES
+    // =========================================================================
+    function switchTab(tabId) {
+      const tabs = ["dashboard", "depots", "fleet", "dealership", "workshop", "fares"];
+      tabs.forEach(t => {
+        document.getElementById(`view-${t}`).classList.toggle("hidden", t !== tabId);
+        const btn = document.getElementById(`tab-${t}`);
+        if (t === tabId) {
+          btn.className = "tab-btn px-4 py-2.5 text-xs md:text-sm font-semibold border-b-2 border-sky-500 text-sky-400 whitespace-nowrap";
+        } else {
+          btn.className = "tab-btn px-4 py-2.5 text-xs md:text-sm font-semibold border-b-2 border-transparent text-slate-400 hover:text-slate-200 whitespace-nowrap";
+        }
+      });
+    }
+
+    function exportSaveData() {
+      const blob = new Blob([JSON.stringify(state, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `swift_connect_save_${state.simDate}.json`;
+      a.click();
+    }
+
+    let toastTimer = null;
+    function showToast(msg, icon = "✅") {
+      const t = document.getElementById("toast");
+      document.getElementById("toast-msg").textContent = msg;
+      document.getElementById("toast-icon").textContent = icon;
+      t.classList.remove("hidden");
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => t.classList.add("hidden"), 3800);
+    }
+
+    // Initialize App on Load
+    window.addEventListener("DOMContentLoaded", () => {
+      loadState();
+      populateDealerSelect();
+      syncCalcModel();
+      populateWorkshopServices();
+      renderWorkshopCards();
+      populateFareRegions();
+      renderAll();
+    });
+  </script>
+</body>
+</html>
