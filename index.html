@@ -2749,7 +2749,7 @@
       renderFareTable();
     }
 
-    function fareTicketRow(t, regionName, idx, editable) {
+    function fareTicketRow(t, regionName, idx, editable, adjTitle) {
       const factor = t.factor || 1;
       const dailyIncome = t.price * t.pax * factor;
       const factorTag = factor === 1 ? "" : (factor === 1 / 7 ? "÷7" : (factor === 1 / 28 ? "÷28" : `×${factor}`));
@@ -2776,7 +2776,7 @@
                 class="bg-white border border-slate-300 rounded-lg px-2 py-1 text-right mono text-xs text-sky-700 w-24" />
             </td>
             <td class="py-2.5 px-4 text-right">
-              <input type="number" step="0.1" value="${t.pax}" onchange="updateFareItem('${regionName}', ${idx}, 'pax', this.value)"
+              <input type="number" step="0.1" value="${t.pax}" onchange="updateFareItem('${regionName}', ${idx}, 'pax', this.value)"${adjTitle ? ` title="${escAttr(adjTitle)}"` : ""}
                 class="bg-white border border-slate-300 rounded-lg px-2 py-1 text-right mono text-xs text-amber-700 w-24" />
             </td>
             <td class="py-2.5 px-4 mono text-right font-bold text-emerald-700">${formatGBP(dailyIncome, 2)}</td>
@@ -2799,10 +2799,15 @@
       let totalPax = 0;
       const tbody = document.getElementById("fares-tbody");
       if (isCompanyTable(regionName)) {
+        const factors = ticketFactorsForTickets(region.tickets, companyCompBench(region.companyCode), region.compAdjust !== false);
         tbody.innerHTML = region.tickets.map((t, idx) => {
           totalRevPerBus += t.price * t.pax * (t.factor || 1);
           totalPax += parseFloat(t.pax) || 0;
-          return fareTicketRow(t, regionName, idx, true);
+          const fi = factors[idx];
+          const title = fi && fi.factor !== 1 && fi.bench
+            ? `Rival ${fi.product} £${fi.bench} vs yours ${formatGBP(t.price, 2)} → demand ×${fi.factor.toFixed(3)}`
+            : (fi && fi.bench ? `Matches rival ${fi.product} £${fi.bench} — no adjustment` : "");
+          return fareTicketRow(t, regionName, idx, true, title);
         }).join("");
       } else {
         const members = zoneMemberCompanies(regionName);
@@ -2923,54 +2928,104 @@
     // =========================================================================
     const DEMAND_SEATS = { "Mini/Midi": 30, Single: 70, Decker: 95, Coach: 60, Training: 0, ETM: 0 };
 
-    // Researched rival single fares (£): England £3 cap, Telford £2 cap
-    // (BBC May 2026), TfL £1.75 hopper. Wales/coach are estimates. The API
-    // publishes no fares, so these seed the benchmark — editable per company.
-    const AREA_COMP_SINGLE = {
-      "Telford & Wrekin (Hadley / Wellington / PRH)": 2.00,
-      "Notts & Derby (Purple Line / Robin Hood)": 3.00,
-      "West Midlands & Black Country (Dudley / Willenhall / X807)": 3.00,
-      "South London (Elmers End / TfL)": 1.75,
-      "Wales & UT Coach (Talbot Green / Wrexham / Colwyn Bay)": 2.50,
-      "East Anglia (Cromer / Fakenham / Lincs)": 3.00,
-      "Swift Connecting Railway": null,
-      "Other Depots (Unzoned)": 3.00
+    // Researched rival benchmarks (£) per product. Telford council-published;
+    // TfL caps known; England £3 single cap; the rest operator-typical
+    // estimates. The API publishes no fares, so these seed the comparison —
+    // every field is overridable per company below.
+    const AREA_COMP = {
+      "Telford & Wrekin (Hadley / Wellington / PRH)": { single: 2.00, day: 4.00, weekly: 15.00, monthly: 50.00, childSingle: 1.00, childDay: 2.00, src: "Telford & Wrekin Council published fares" },
+      "Notts & Derby (Purple Line / Robin Hood)": { single: 3.00, day: 6.50, weekly: 21.00, monthly: 75.00, childSingle: 1.50, childDay: 3.00, src: "England £3 cap + operator-typical estimates" },
+      "West Midlands & Black Country (Dudley / Willenhall / X807)": { single: 3.00, day: 5.50, weekly: 18.00, monthly: 65.00, childSingle: 1.60, childDay: 2.75, src: "England £3 cap + operator-typical" },
+      "South London (Elmers End / TfL)": { single: 1.75, day: 5.25, weekly: 25.10, monthly: null, childSingle: 0.85, childDay: 2.60, src: "TfL caps + operator-typical" },
+      "Wales & UT Coach (Talbot Green / Wrexham / Colwyn Bay)": { single: 2.50, day: 5.00, weekly: 18.00, monthly: 65.00, childSingle: 1.50, childDay: 3.00, src: "estimates" },
+      "East Anglia (Cromer / Fakenham / Lincs)": { single: 3.00, day: 6.00, weekly: 20.00, monthly: 65.00, childSingle: 1.50, childDay: 3.00, src: "England £3 cap + estimates" },
+      "Swift Connecting Railway": { single: null, day: null, weekly: null, monthly: null, childSingle: null, childDay: null, src: "no benchmark" },
+      "Other Depots (Unzoned)": { single: 3.00, day: 6.00, weekly: 20.00, monthly: 65.00, childSingle: 1.50, childDay: 3.00, src: "England £3 cap + estimates" }
     };
+    const COMP_FIELDS = [["single", "Sgl"], ["day", "Day"], ["weekly", "Wk"], ["monthly", "Mth"], ["childSingle", "ChS"], ["childDay", "ChD"]];
     const FARE_ELASTICITY = -0.35; // short-run bus fare elasticity (Dargay/Hanly): 10% dearer ≈ 3.5% fewer pax
 
-    function companyCompPrice(code) {
-      const key = fareKeyForCompany(code);
-      const r = key && state.fares[key];
-      if (r && r.compPrice !== undefined && r.compPrice !== null && r.compPrice !== "") {
-        const n = parseFloat(r.compPrice);
-        if (!isNaN(n) && n > 0) return n;
-      }
-      const zb = AREA_COMP_SINGLE[companyZone(code)];
-      return (zb === undefined || zb === null) ? null : zb;
+    // Classify a ticket into a rival-benchmark product. Supported/subsidy
+    // tickets (free passes, reimbursements, council money) and group tickets
+    // have no like-for-like rival price, so they are never adjusted.
+    function ticketProduct(t) {
+      const name = String((t && t.name) || "");
+      const f = (t && t.factor) || 1;
+      if (/concession|encts|free pass|freedom|reimburse|subsidy|contract|scholar/i.test(name)) return "supported";
+      if (/group|family/i.test(name)) return "group";
+      const child = /child|kid|student|youth|\bu19\b|under 19|mytravelpass/i.test(name);
+      if (Math.abs(f - 1 / 7) < 1e-9) return child ? "childWeekly" : "weekly";
+      if (Math.abs(f - 1 / 28) < 1e-9) return child ? "childMonthly" : "monthly";
+      if (/return/i.test(name)) return "return";
+      if (/week/i.test(name)) return child ? "childWeekly" : "weekly";
+      if (/month|28.day|4.week/i.test(name)) return child ? "childMonthly" : "monthly";
+      if (/day|rover|cap|saver|pass|hopper/i.test(name)) return child ? "childDay" : "day";
+      return child ? "childSingle" : "single";
     }
 
-    function companyCompetition(code) {
+    function ticketBenchmark(bench, product) {
+      switch (product) {
+        case "single": return bench.single;
+        case "return": return bench.single ? bench.single * 2 : null;
+        case "day": return bench.day;
+        case "weekly": return bench.weekly;
+        case "monthly": return bench.monthly;
+        case "childSingle": return bench.childSingle;
+        case "childDay": return bench.childDay;
+        case "childWeekly": return bench.weekly ? bench.weekly * 0.5 : null;
+        case "childMonthly": return bench.monthly ? bench.monthly * 0.5 : null;
+        default: return null;
+      }
+    }
+
+    function companyCompBench(code) {
+      const key = fareKeyForCompany(code);
+      const stored = (key && state.fares[key] && state.fares[key].compBench) || {};
+      const area = AREA_COMP[companyZone(code)] || {};
+      const out = {};
+      COMP_FIELDS.forEach(([k]) => {
+        let v = stored[k];
+        if (v === undefined || v === null || v === "") {
+          if (k === "single") {
+            const legacy = key && state.fares[key] ? state.fares[key].compPrice : null;
+            v = (legacy !== null && legacy !== undefined && legacy !== "") ? legacy : area[k];
+          } else {
+            v = area[k];
+          }
+        }
+        const n = parseFloat(v);
+        out[k] = (!isNaN(n) && n > 0) ? n : null;
+      });
+      return out;
+    }
+
+    function ticketFactorsForTickets(tickets, bench, adjust) {
+      return (tickets || []).map(t => {
+        const product = ticketProduct(t);
+        const b = ticketBenchmark(bench, product);
+        const f = (adjust && b && t.price > 0) ? Math.pow(t.price / b, FARE_ELASTICITY) : 1;
+        return { product, bench: b, factor: f };
+      });
+    }
+
+    function companyTicketFactors(code) {
       const key = fareKeyForCompany(code);
       const region = key && state.fares[key];
       const tickets = (region && region.tickets) || [];
-      let rev = 0, pax = 0;
-      tickets.forEach(t => { rev += t.price * (parseFloat(t.pax) || 0) * (t.factor || 1); pax += parseFloat(t.pax) || 0; });
-      const yourAvg = pax > 0 ? rev / pax : 0;
-      const comp = companyCompPrice(code);
       const adjust = !region || region.compAdjust !== false;
-      const factor = (adjust && comp && yourAvg > 0) ? Math.pow(yourAvg / comp, FARE_ELASTICITY) : 1;
-      return { yourAvg, compPrice: comp, adjust, factor, competitors: (region && region.competitors) || [] };
+      return ticketFactorsForTickets(tickets, companyCompBench(code), adjust);
     }
 
-    function saveCompPrice(code, val) {
+    function saveCompBench(code, field, val) {
       const key = fareKeyForCompany(code);
       if (!key) return;
       const s = String(val || "").trim();
-      if (s === "") { delete state.fares[key].compPrice; }
+      state.fares[key].compBench = state.fares[key].compBench || {};
+      if (s === "") { delete state.fares[key].compBench[field]; }
       else {
         const n = parseFloat(s);
         if (isNaN(n) || n <= 0) { renderDemand(); return; }
-        state.fares[key].compPrice = Math.round(n * 100) / 100;
+        state.fares[key].compBench[field] = Math.round(n * 100) / 100;
       }
       saveState();
       renderDemand();
@@ -3097,17 +3152,18 @@
       const buses = companyBuses(code);
       if (!buses) { showToast("No buses found for this company — cannot spread per-bus pax.", "⚠️"); return; }
       if (!d.tripsPerDay) { showToast("No timetable data yet — fetch routes & timetables first.", "⚠️"); return; }
-      const comp = companyCompetition(code);
-      const perBus = d.paxPerDay / buses * comp.factor;
+      const factors = companyTicketFactors(code);
+      const avgF = factors.length ? factors.reduce((a, x) => a + x.factor, 0) / factors.length : 1;
+      const perBus = d.paxPerDay / buses;
       const weights = region.tickets.map(t => (parseFloat(t.pax) || 0) * t.price * (t.factor || 1));
       const totalW = weights.reduce((a, w) => a + w, 0);
       region.tickets.forEach((t, i) => {
         const share = totalW > 0 ? weights[i] / totalW : 1 / region.tickets.length;
-        t.pax = Math.round(perBus * share * 10) / 10;
+        t.pax = Math.round(perBus * share * factors[i].factor * 10) / 10;
       });
       saveState();
       renderAll();
-      showToast(`Applied forecast to ${region.tickets.length} ticket(s): ${perBus.toFixed(1)} pax/bus/day from ${d.tripsPerDay.toFixed(0)} trips × ~${d.seatsPerTrip.toFixed(0)} seats${comp.factor !== 1 ? ` ×${comp.factor.toFixed(3)} price-adjusted` : ""}!`, "✅");
+      showToast(`Applied forecast to ${region.tickets.length} ticket(s): ${perBus.toFixed(1)} pax/bus/day from ${d.tripsPerDay.toFixed(0)} trips × ~${d.seatsPerTrip.toFixed(0)} seats${avgF !== 1 ? `, price-adjusted avg ×${avgF.toFixed(3)} per ticket` : ""}!`, "✅");
     }
 
     function renderDemand() {
@@ -3126,15 +3182,17 @@
         const perBus = buses ? d.paxPerDay / buses : 0;
         const top = d.routes.slice().sort((a, b) => b.pax - a.pax).slice(0, 3)
           .map(r => `${escAttr(r.num || "?")} (${r.tripsPerDay.toFixed(0)}/day · ${Math.round(r.load * 100)}% ${escAttr(r.why)} → ${r.pax.toFixed(0)}/day)`).join(" · ");
-        const comp = companyCompetition(o.code);
-        const rivalNames = comp.competitors.length
-          ? escAttr(comp.competitors.map(c => c.name || c.code).slice(0, 6).join(", ")) + (comp.competitors.length > 6 ? ` +${comp.competitors.length - 6} more` : "")
+        const factors = companyTicketFactors(o.code);
+        const tickets = (region && region.tickets) || [];
+        const adjusted = factors.filter(x => x.factor !== 1).length;
+        const avgF = factors.length ? factors.reduce((a, x) => a + x.factor, 0) / factors.length : 1;
+        const benchEff = companyCompBench(o.code);
+        const stored = (region && region.compBench) || {};
+        const area = AREA_COMP[companyZone(o.code)] || {};
+        const adjust = !region || region.compAdjust !== false;
+        const rivalNames = (region && region.competitors && region.competitors.length)
+          ? escAttr(region.competitors.map(c => c.name || c.code).slice(0, 6).join(", ")) + (region.competitors.length > 6 ? ` +${region.competitors.length - 6} more` : "")
           : "not discovered yet — fetch data";
-        const priceLine = comp.compPrice && comp.yourAvg > 0
-          ? (comp.yourAvg <= comp.compPrice
-              ? `${Math.round((1 - comp.yourAvg / comp.compPrice) * 100)}% cheaper → demand ×${comp.factor.toFixed(3)}`
-              : `${Math.round((comp.yourAvg / comp.compPrice - 1) * 100)}% dearer → demand ×${comp.factor.toFixed(3)}`)
-          : (comp.compPrice ? "set ticket pax to compare" : "no area benchmark");
         return `<div class="bg-white border border-slate-200 rounded-md px-3 py-2.5 text-xs space-y-1.5">
           <div class="flex flex-wrap items-center justify-between gap-2">
             <span class="font-bold text-slate-900">${escAttr(o.name || o.code)} <span class="font-normal text-slate-400 mono">(${escAttr(o.code)})</span></span>
@@ -3143,9 +3201,14 @@
           <div class="text-slate-500">Routes: <b class="mono">${d.routes.length}</b> (${escAttr(d.coverage)}) · Trips/day: <b class="mono">${d.tripsPerDay.toFixed(1)}</b> · Seats/trip: <b class="mono">~${d.seatsPerTrip.toFixed(0)}</b> · Buses: <b class="mono">${buses}</b></div>
           <div class="text-slate-600">Predicted: <b class="mono text-sky-700">${d.paxPerDay.toFixed(1)}/day</b> (${perBus.toFixed(1)} pax/bus/day)${top ? ` · Top: <span class="mono">${top}</span>` : ""}</div>
           <div class="text-slate-600">Area rivals: <span class="mono">${rivalNames}</span></div>
+          <div class="text-slate-600">Rival benchmarks (£) — blank = area default <span class="text-slate-400">(${(area.src || "defaults")})</span>:
+            <span class="inline-grid grid-cols-3 sm:grid-cols-6 gap-1 mt-1">
+              ${COMP_FIELDS.map(([k, lab]) => `<label class="flex items-center gap-1 bg-white border border-slate-200 rounded-md px-1.5 py-1" title="${lab} rival price — empty reverts to area default (${area[k] !== undefined && area[k] !== null ? "£" + area[k] : "none"})"><span class="text-slate-400">${lab}</span><input type="number" step="0.05" min="0" value="${stored[k] !== undefined && stored[k] !== null && stored[k] !== "" ? stored[k] : ""}" placeholder="${area[k] !== undefined && area[k] !== null ? area[k] : "—"}" onchange="saveCompBench('${escAttr(o.code)}', '${k}', this.value)" class="mono text-xs w-14 text-right bg-transparent focus:outline-none" /></label>`).join("")}
+            </span>
+          </div>
           <div class="flex flex-wrap items-center gap-x-3 gap-y-1 text-slate-600">
-            <span>Your avg single: <b class="mono">${comp.yourAvg > 0 ? formatGBP(comp.yourAvg, 2) : "—"}</b> vs area <input type="number" step="0.05" min="0" value="${comp.compPrice !== null ? comp.compPrice : ""}" placeholder="area £" title="Rival benchmark single fare (£) — researched defaults, editable" onchange="saveCompPrice('${escAttr(o.code)}', this.value)" class="bg-white border border-slate-300 rounded-md px-2 py-0.5 mono text-xs w-20 text-right" /> → <b class="mono">${priceLine}</b></span>
-            <label class="flex items-center gap-1 cursor-pointer"><input type="checkbox" ${comp.adjust ? "checked" : ""} onchange="toggleCompAdjust('${escAttr(o.code)}', this.checked)" class="rounded" /><span>Adjust forecast for pricing</span></label>
+            <span>${tickets.length ? `${adjusted} of ${tickets.length} tickets price-adjusted (avg ×${avgF.toFixed(3)})` : "no tickets yet"}</span>
+            <label class="flex items-center gap-1 cursor-pointer"><input type="checkbox" ${adjust ? "checked" : ""} onchange="toggleCompAdjust('${escAttr(o.code)}', this.checked)" class="rounded" /><span>Adjust forecast for pricing</span></label>
           </div>
         </div>`;
       }).join("");
