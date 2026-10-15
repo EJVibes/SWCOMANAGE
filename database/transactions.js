@@ -1,0 +1,25 @@
+/* Swift Connect — database: transactions ledger seed */
+window.DB_SEED_TRANSACTIONS = [
+  { date: "2026-10-10", amount: -35500, type: "Expense", category: "Repaint", notes: "2x to eXpress" },
+  { date: "2026-10-01", amount: -354049, type: "Expense", category: "Vehicle Purchase", notes: "7x ADL Enviro200s" },
+  { date: "2026-09-26", amount: -1263810, type: "Expense", category: "Vehicle Purchase", notes: "3x BYD D9UR ADL Enviro200EV" },
+  { date: "2026-09-24", amount: -245198, type: "Expense", category: "Vehicle Purchase", notes: "3x ADL Enviro200s for DASH (+ Repaint & Repair)" },
+  { date: "2026-09-18", amount: -110375, type: "Expense", category: "Other", notes: "^ Repaint + Repair ^" },
+  { date: "2026-09-18", amount: -22353, type: "Expense", category: "Vehicle Purchase", notes: "6x ADL Enviro200 East Lancs Esteem" },
+  { date: "2026-09-14", amount: -33312.5, type: "Expense", category: "Repaint", notes: "Wrekin Connect" },
+  { date: "2026-09-07", amount: -1659870, type: "Expense", category: "Vehicle Purchase", notes: "6x Scania K280UB Higer Fencer f1s" },
+  { date: "2026-09-07", amount: -25675, type: "Expense", category: "Repaint", notes: "Fleet Livery Refresh" },
+  { date: "2026-09-07", amount: 66443.6, type: "Income", category: "Vehicle Sale", notes: "6x Scania K230UB ADL Enviro300" },
+  { date: "2026-09-05", amount: -2441810, type: "Expense", category: "Vehicle Purchase", notes: "5x Scania K280UB Higer Fencer f1s" },
+  { date: "2026-09-02", amount: -151500, type: "Expense", category: "Repaint", notes: "Repaint 6x Hybrid Streetdecks" },
+  { date: "2026-08-01", amount: -356954, type: "Expense", category: "Monthly Summary", notes: "August 2026 Transaction History" },
+  { date: "2026-07-01", amount: 43901000, type: "Income", category: "Monthly Summary", notes: "July 2026 Transaction History" },
+  { date: "2026-06-01", amount: -70527300, type: "Expense", category: "Monthly Summary", notes: "June 2026 Transaction History" },
+  { date: "2026-05-01", amount: -17552800, type: "Expense", category: "Monthly Summary", notes: "May 2026 Transaction History" },
+  { date: "2026-04-01", amount: -65013.7, type: "Expense", category: "Monthly Summary", notes: "April 2026 Transaction History" },
+  { date: "2026-03-01", amount: -2912140, type: "Expense", category: "Monthly Summary", notes: "March 2026 Transaction History" },
+  { date: "2026-02-01", amount: 2539510, type: "Income", category: "Monthly Summary", notes: "February 2026 Transaction History" },
+  { date: "2026-01-01", amount: -5273700, type: "Expense", category: "Monthly Summary", notes: "January 2026 Transaction History" },
+  { date: "2025-11-01", amount: 20000000, type: "Income", category: "Monthly Summary", notes: "November 2025 Transaction History" },
+  { date: "2024-07-01", amount: 58614600, type: "Income", category: "Monthly Summary", notes: "July 2024 Transaction History" }
+];

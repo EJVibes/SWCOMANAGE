@@ -1,0 +1,110 @@
+/* Swift Connect — database: raw fleet list (ALL_FLEET_IDS_2026 CSVs) */
+window.DB_SEED_FLEET_CSV = `100,SK52 MMZ,DAF SB120 Wright Cadet
+101,YJ07 JWE,VDL SB200 Plaxton Centro
+102,CE62 NWD,Mercedes-Benz Citaro O530
+103,KX58 GVB,ADL Enviro200
+104,CE62 NXK,Mercedes-Benz Citaro O530
+105,SF16 HKA,ADL Enviro200 FL
+106,SN10 CEB,ADL Enviro200
+107,CE62 NXL,Mercedes-Benz Citaro O530
+108,YX58 DFG,Volvo B7RLE Plaxton Centro
+109,BX58 AOO,Volvo B7RLE Plaxton Centro
+150,BJ10 ALD,VDL DB300 Wright Gemini 2
+151,GN09 AZY,ADL Enviro400
+1000,MX10 DYA,ADL Enviro200
+1001,SN09 RYE,ADL Enviro200
+1002,SN09 RYJ,ADL Enviro200
+1009,YY14 GER,ADL Enviro200 FL
+1010,YY64 OBA,ADL Enviro200 FL
+1011,YY15 HAE,ADL Enviro200 FL
+1012,YX17 NST,ADL Enviro200 FL
+1026,SN19 SAW,ADL Enviro200 MMC
+1027,YX21 OVT,ADL Enviro200 MMC
+1028,JT18 MMH,ADL Enviro200 MMC
+1040,CN71 HFP,Mercedes-Benz Sprinter 516CDi
+1041,RV25 LDC,Mercedes-Benz Sprinter EVM Cityline
+1044,BX11 GWJ,Optare Solo
+1056,YJ14 BWA,Optare Solo SR
+1063,YJ26 CYD,Optare Solo SR
+1074,YD26 CYA,Optare Solo SR Slimline
+1077,SN18 UXA,Wright Streetlite WF
+1080,WF57 TYR,ADL Enviro200 East Lancs Esteem
+1800,YN10 AGW,Optare Solo EV
+2000,LX09 AZM,ADL Enviro200 East Lancs Esteem
+2001,YY14 LFD,ADL Enviro200 FL
+2005,YX22 EVH,ADL Enviro200 MMC
+2006,YY25 MKF,ADL Enviro200 MMC
+2014,AD26 DBM,ADL Enviro200 MMC
+2025,AW18 BZN,ADL Enviro200 MMC
+2036,YX74 YGA,ADL Enviro200 MMC
+2047,RX06 XFF,ADL Enviro300 East Lancs Esteem
+2048,YG52 CGZ,DAF SB120 Wright Cadet
+2049,BX14 WJJ,Mercedes-Benz Citaro O295
+2063,BF65 RGA,Mercedes-Benz Citaro O295K
+2067,CE62 NWC,Mercedes-Benz Citaro O530
+2080,YJ20 PJL,Optare MetroCity
+2089,GR12 BRW,Optare Solo
+2092,YJ14 AAF,Optare Tempo SR
+2098,YJ18 FXE,Optare Versa
+2110,YR10 BFV,Scania CN94UB OmniCity
+2113,SN14 ESE,Scania K230UB ADL Enviro300
+2115,CN73 BAD,Scania K280UB Higer Fencer f1
+2122,BL12 VXF,VDL SB200 Plaxton Centro
+2123,NK08 WUN,VDL SB200 Wright Pulsar
+2126,YJ14 CCD,VDL SB200 Wright Pulsar 2
+2142,BX56 JNS,Volvo B7RLE Wright Eclipse Urban
+2147,CN26 DVA,Volvo B8RLE MCV Evora
+2168,BU16 VRH,Volvo B8RLE Wright Eclipse 3
+2196,YX13 TDG,Wright Streetlite DF
+2201,CR74 DHC,Wright Streetlite DF Max
+2208,YJ17 CPR,Wright GB Hawk
+2210,SK26 FBF,Wright GB Hawk
+2215,SW76 FLA,Scania K280UB Higer Fencer f1
+2220,YK68 PMZ,ADL Enviro200 FL
+2700,MT26 EUS,Mercedes-Benz eCitaro
+2701,MT26 EUU,Mercedes-Benz eCitaro
+2705,YJ18 DHJ,Optare Solo SR EV
+2709,8840 NNT,VDL CItea SLF -122
+2717,YK75 YZG,Wright GB Kite Electroliner
+2729,DN24 KKY,BYD D9UR ADL Enviro200EV
+2730,DN24 KLA,BYD D9UR ADL Enviro200EV
+2731,DN24 KLC,BYD D9UR ADL Enviro200EV
+3000,SN13 DZA,ADL Enviro400
+3005,HF65 XYB,ADL Enviro400 FL
+3016,SG69 SGC,ADL Enviro400 MMC
+3021,YX75 JBU,ADL Enviro400 MMC
+3031,YX25 FSB,ADL Enviro400 MMC
+3037,YY16 HVH,ADL Enviro400H MMC
+3038,SN12 SSC,Scania N230UD ADL Enviro400 FL
+3040,YX20 YXH,Scania N250UD ADL Enviro400 MMC
+3042,BJ65 YXE,Volvo B5TL MCV EvoSeti
+3046,YH65 AYC,Volvo B5TL Wright Eclipse Gemini 3 Stealth
+3053,LU03 LXA,Volvo B7TL Alexander ALX400
+3057,YX20 AUF,Volvo B8L MCV EvoSeti
+3068,YJ08 EXN,Volvo B9TL Wright Eclipse Gemini
+3070,YJ14 ACA,Volvo B9TL Wright Eclipse Gemini 2
+3077,GL22 UTX,Wright StreetDeck Micro Hybrid
+3083,LV75 JVA,Wright StreetDeck Ultroliner
+3088,SK65 PWM,Wright StreetDeck Ultroliner
+3089,MT75 OJA,Wright StreetDeck Ultroliner
+3700,SY25 EGA,ADL Enviro400 MMC Kleandrive EV
+3702,SK25 TFG,ADL Enviro400EV
+3706,SN21 YND,BYD D8UR-DD ADL Enviro400EV
+3711,YX72 GXD,Wright StreetDeck Electroliner
+3715,SY73 TDA,Wright StreetDeck NewPower EV
+3719,OZZ 003,Wright StreetDeck NewPower EV
+3720,OZZ 002,Wright StreetDeck NewPower EV
+3721,OZZ 001,Wright StreetDeck NewPower EV
+3722,SV74 RDV,Wright StreetDeck NewPower EV
+4000,YT26 EFA,Scania K410EB6 Irizar i6
+4006,AT26 EJP,Volvo B8R Plaxton Leopard
+4012,YX73 MUX,Volvo B9R Plaxton Panther 3
+4015,YK75 WBJ,Yutong GT12
+4028,SW76 EHA,Wright Contour
+4500,YX24 PPL,ADL Enviro500 MMC
+4501,SN09 CDH,ADL Enviro500 MMC
+4502,SN09 CBZ,ADL Enviro500 MMC
+4503,JTH 756P,Leyland National
+4504,YJ56 WUX,Optare Solo
+4505,UJ55 UNP,Scania N94UD OmniDekka
+4506,BF67 GJU,Volvo B5TL Wright Eclipse Gemini 3`;

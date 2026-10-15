@@ -1,0 +1,2195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Swift Connect — Operations Portal</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', sans-serif; background-color: #e9edf2; color: #1e293b; }
+    .mono { font-family: 'JetBrains Mono', monospace; }
+    .uk-plate {
+      background: linear-gradient(180deg, #facc15 0%, #eab308 100%);
+      color: #0f172a;
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      padding: 2px 8px;
+      border-radius: 4px;
+      border: 1px solid #ca8a04;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.4);
+      display: inline-block;
+      font-size: 0.8rem;
+    }
+    .uk-plate-ev {
+      border-left: 6px solid #16a34a;
+    }
+    .uk-plate { white-space: nowrap; }
+    .mbt-livery { width: 148px; height: 46px; border-radius: 6px; border: 1px solid rgba(0,0,0,.3); position: relative; overflow: hidden; background-size: cover; background-position: center; box-shadow: inset 0 -8px 12px rgba(0,0,0,.25); }
+    .mbt-livery span { position: absolute; left: 6px; bottom: 3px; font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 12px; }
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-track { background: #e2e8f0; }
+    ::-webkit-scrollbar-thumb { background: #b6c2cf; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+    /* ---- Boot splash ---- */
+    #splash-imgs .splash-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; opacity: 0; transform: scale(.94); transition: opacity .6s ease, transform .6s ease; }
+    #splash-imgs .splash-img.active { opacity: 1; transform: scale(1); }
+    #splash-title { opacity: 0; }
+    #splash-title.visible { opacity: 1; transition: opacity 1s ease; }
+    #splash.gone { opacity: 0; pointer-events: none; }
+    body.booting header, body.booting nav, body.booting main { opacity: 0; }
+    header, nav, main { transition: opacity .8s ease; }
+    /* ---- Dark mode (toggled via body.dark, preference persisted) ---- */
+    body.dark { background-color: #0b0f19; color: #e2e8f0; color-scheme: dark; }
+    body.dark .bg-white { background-color: #0f172a !important; }
+    body.dark .bg-white\/90 { background-color: rgba(15,23,42,.9) !important; }
+    body.dark .bg-slate-50 { background-color: #0a1120 !important; }
+    body.dark .bg-slate-100 { background-color: #1e293b !important; }
+    body.dark .text-slate-900 { color: #f8fafc !important; }
+    body.dark .text-slate-700 { color: #cbd5e1 !important; }
+    body.dark .text-slate-600 { color: #cbd5e1 !important; }
+    body.dark .text-slate-500 { color: #94a3b8 !important; }
+    body.dark .text-slate-300 { color: #cbd5e1 !important; }
+    body.dark .text-emerald-700 { color: #34d399 !important; }
+    body.dark .text-rose-700 { color: #fb7185 !important; }
+    body.dark .text-sky-700 { color: #38bdf8 !important; }
+    body.dark .text-sky-800 { color: #38bdf8 !important; }
+    body.dark .text-amber-700 { color: #fbbf24 !important; }
+    body.dark .text-indigo-700 { color: #818cf8 !important; }
+    body.dark .text-indigo-600 { color: #818cf8 !important; }
+    body.dark .text-blue-900 { color: #93c5fd !important; }
+    body.dark .border-slate-200 { border-color: #1e293b !important; }
+    body.dark .border-slate-300 { border-color: #334155 !important; }
+    body.dark .border-blue-800 { border-color: #3b82f6 !important; }
+    body.dark .border-indigo-200 { border-color: #4338ca !important; }
+    body.dark .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-color: #1e293b !important; }
+    body.dark .bg-emerald-50 { background-color: rgba(52,211,153,.12) !important; }
+    body.dark .bg-rose-50 { background-color: rgba(251,113,133,.12) !important; }
+    body.dark .bg-sky-50 { background-color: rgba(56,189,248,.14) !important; }
+    body.dark .bg-sky-100 { background-color: rgba(56,189,248,.14) !important; }
+    body.dark .bg-amber-50 { background-color: rgba(251,191,36,.12) !important; }
+    body.dark .bg-indigo-50 { background-color: rgba(129,140,248,.14) !important; }
+    body.dark .bg-indigo-100 { background-color: rgba(129,140,248,.14) !important; }
+    body.dark .hover\:bg-slate-100:hover { background-color: #1e293b !important; }
+    body.dark .hover\:bg-slate-200:hover { background-color: #334155 !important; }
+    body.dark .hover\:text-slate-900:hover { color: #f8fafc !important; }
+    body.dark .hover\:bg-rose-100:hover { background-color: #4c0519 !important; }
+    body.dark .hover\:text-rose-700:hover { color: #fda4af !important; }
+    body.dark .disabled\:bg-slate-100:disabled { background-color: #1e293b !important; }
+    body.dark .disabled\:text-slate-500:disabled { color: #64748b !important; }
+    body.dark nav { background-color: #0d1b33 !important; border-color: #1e293b !important; }
+    body.dark input::placeholder, body.dark textarea::placeholder { color: #64748b; }
+    body.dark select option { background-color: #0f172a; }
+    body.dark #theme-toggle { background-color: #1e293b !important; border-color: #475569 !important; color: #e2e8f0 !important; }
+    body.dark ::-webkit-scrollbar-track { background: #0f172a; }
+    body.dark ::-webkit-scrollbar-thumb { background: #334155; }
+    body.dark ::-webkit-scrollbar-thumb:hover { background: #475569; }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col booting">
+
+  <!-- BOOT SPLASH -->
+  <div id="splash" class="fixed inset-0 z-50 flex flex-col items-center justify-center gap-8 px-6 text-center" style="background-color:#0e2a52; transition: opacity .7s ease;">
+    <div id="splash-imgs" class="relative w-48 h-48 md:w-64 md:h-64">
+      <img src="icons/1.png" alt="" class="splash-img" />
+    </div>
+    <div id="splash-title" class="text-white font-extrabold tracking-tight text-4xl md:text-6xl">Operations Portal</div>
+    <div class="w-14 h-14 rounded-full border-4 border-slate-500 border-t-sky-400 animate-spin"></div>
+    <div id="splash-status" class="mono text-sm md:text-base text-slate-400">Starting…</div>
+    <button id="splash-enter" onclick="splashEnter()" class="hidden text-sm bg-sky-600 hover:bg-sky-500 text-white px-6 py-3 rounded-xl font-bold">Enter site →</button>
+  </div>
+
+  <!-- TOP COMMAND BAR -->
+  <header class="bg-[#0e2a52] border-b-4 border-amber-400">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-4">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-md bg-amber-400 flex items-center justify-center font-black text-[#0e2a52] text-xl">
+          SC
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="font-extrabold text-lg tracking-tight text-white">SWIFT CONNECT</h1>
+            <span class="text-xs px-2 py-0.5 rounded-full bg-white/10 text-slate-200 border border-white/20 font-medium">Operations Portal</span>
+          </div>
+          <p class="text-xs text-slate-300">Fleet, Depot & Revenue Operations</p>
+        </div>
+      </div>
+
+      <!-- LIVE HUD STATS -->
+      <div class="flex flex-wrap items-center gap-3 md:gap-6 bg-white/5 border border-white/15 px-4 py-2 rounded-md">
+        <div>
+          <div class="text-[10px] uppercase tracking-wider text-slate-300 font-semibold">Sim Date</div>
+          <div id="hud-date" class="mono text-sm font-bold text-white">14/10/2026</div>
+        </div>
+        <div class="h-7 w-px bg-white/15"></div>
+        <div>
+          <div class="text-[10px] uppercase tracking-wider text-slate-300 font-semibold">Company Bank Balance</div>
+          <div id="hud-bank" class="mono text-sm md:text-base font-extrabold text-emerald-400">£172,270,000</div>
+        </div>
+        <div class="h-7 w-px bg-white/15"></div>
+        <div>
+          <div class="text-[10px] uppercase tracking-wider text-slate-300 font-semibold">Budget / Depot</div>
+          <div id="hud-depot-budget" class="mono text-sm font-bold text-sky-400">£11,484,667</div>
+        </div>
+        <div class="h-7 w-px bg-white/15"></div>
+        <div>
+          <div class="text-[10px] uppercase tracking-wider text-slate-300 font-semibold">Net Daily Profit (After 25% Tax)</div>
+          <div id="hud-daily-net" class="mono text-sm font-bold text-amber-400">+£237,991/day</div>
+        </div>
+      </div>
+
+      <!-- DEV SIMULATION CONTROLS -->
+      <div class="flex items-center gap-2">
+        <button onclick="simulateOneDay()" title="DEV only: advance sim date by 1 day, credit daily net profit, and tick workshop downtime" class="text-xs font-bold bg-amber-400 hover:bg-amber-300 text-[#0e2a52] px-3 py-2 rounded-md shadow-sm whitespace-nowrap">⏩ Simulate +1 day <span class="font-medium">(DEV)</span></button>
+      </div>
+    </div>
+
+  </header>
+
+  <!-- NAVIGATION TABS -->
+  <nav class="bg-white border-b border-slate-200 sticky top-0 z-30">
+    <div class="max-w-7xl mx-auto px-4 flex overflow-x-auto gap-1">
+      <button onclick="switchTab('dashboard')" id="tab-dashboard" class="tab-btn px-4 py-2.5 text-xs md:text-sm font-semibold border-b-2 border-blue-800 text-blue-900 whitespace-nowrap">
+        HQ & Banking Ledger
+      </button>
+      <button onclick="switchTab('depots')" id="tab-depots" class="tab-btn px-4 py-2.5 text-xs md:text-sm font-semibold border-b-2 border-transparent text-slate-500 hover:text-slate-900 whitespace-nowrap">
+        Depots & Operations (19)
+      </button>
+      <button onclick="switchTab('fleet')" id="tab-fleet" class="tab-btn px-4 py-2.5 text-xs md:text-sm font-semibold border-b-2 border-transparent text-slate-500 hover:text-slate-900 whitespace-nowrap">
+        Fleet Registry & Liveries
+      </button>
+      <button onclick="switchTab('dealership')" id="tab-dealership" class="tab-btn px-4 py-2.5 text-xs md:text-sm font-semibold border-b-2 border-transparent text-slate-500 hover:text-slate-900 whitespace-nowrap">
+        Bus Dealership & Valuation
+      </button>
+      <button onclick="switchTab('workshop')" id="tab-workshop" class="tab-btn px-4 py-2.5 text-xs md:text-sm font-semibold border-b-2 border-transparent text-slate-500 hover:text-slate-900 whitespace-nowrap">
+        Bodyshop, Upgrades & Repairs
+      </button>
+      <button onclick="switchTab('fares')" id="tab-fares" class="tab-btn px-4 py-2.5 text-xs md:text-sm font-semibold border-b-2 border-transparent text-slate-500 hover:text-slate-900 whitespace-nowrap">
+        Regional Fare Calculator
+      </button>
+      <button onclick="switchTab('mybustimes')" id="tab-mybustimes" class="tab-btn px-4 py-2.5 text-xs md:text-sm font-semibold border-b-2 border-transparent text-slate-500 hover:text-slate-900 whitespace-nowrap">
+        🔗 MyBusTimes Sync
+      </button>
+    </div>
+  </nav>
+
+  <!-- NOTIFICATION TOAST -->
+  <div id="toast" class="fixed bottom-5 right-5 z-50 hidden bg-slate-900 border border-sky-500/40 text-white px-4 py-3 rounded-xl shadow-2xl text-sm flex items-center gap-3">
+    <span id="toast-icon" class="text-lg">✅</span>
+    <span id="toast-msg">Action completed!</span>
+  </div>
+
+  <!-- THEME TOGGLE -->
+  <button id="theme-toggle" onclick="toggleTheme()" title="Switch to dark mode" class="fixed bottom-5 left-5 z-40 w-11 h-11 rounded-full bg-white border border-slate-300 shadow-md text-slate-700 text-lg leading-none">☾</button>
+
+  <!-- MAIN WORKSPACE -->
+  <main class="max-w-7xl w-full mx-auto px-4 py-6 flex-1 space-y-6">
+
+    <!-- ================= TAB 1: HQ & BANKING LEDGER ================= -->
+    <section id="view-dashboard" class="space-y-6">
+      <!-- KPI Summary Cards -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="bg-white border border-slate-200 p-4 rounded-lg">
+          <div class="text-xs text-slate-500 font-medium">Today's Gross Income</div>
+          <div id="kpi-income" class="mono text-2xl font-extrabold text-emerald-700 mt-1">£657,618</div>
+          <div class="text-[11px] text-slate-500 mt-1">Across 19 active depots & rail</div>
+        </div>
+        <div class="bg-white border border-slate-200 p-4 rounded-lg">
+          <div class="text-xs text-slate-500 font-medium">Today's Operating Expenses</div>
+          <div id="kpi-expenses" class="mono text-2xl font-extrabold text-rose-700 mt-1">£340,296</div>
+          <div class="text-[11px] text-slate-500 mt-1">Staff, Fuel, Maint, Insurance & Rent</div>
+        </div>
+        <div class="bg-white border border-slate-200 p-4 rounded-lg">
+          <div class="text-xs text-slate-500 font-medium">Today's Pre-Tax Profit</div>
+          <div id="kpi-profit" class="mono text-2xl font-extrabold text-sky-700 mt-1">£317,322</div>
+          <div id="kpi-after-tax" class="text-[11px] text-amber-700 font-medium mt-1">After 25% Corp Tax: £237,991</div>
+        </div>
+        <div class="bg-white border border-slate-200 p-4 rounded-lg">
+          <div class="text-xs text-slate-500 font-medium">Active Fleet & Workshop Queue</div>
+          <div class="flex items-baseline gap-3 mt-1">
+            <span id="kpi-fleet-count" class="mono text-2xl font-extrabold text-slate-900">531</span>
+            <span class="text-xs text-slate-500">Vehicles</span>
+          </div>
+          <div id="kpi-workshop-status" class="text-[11px] text-indigo-600 mt-1">0 vehicles currently in downtime</div>
+        </div>
+      </div>
+
+      <!-- Active Workshop Queue Banner (if any buses in downtime) -->
+      <div id="workshop-active-panel" class="hidden bg-indigo-50 border border-indigo-200 rounded-lg p-4">
+        <div class="flex items-center justify-between mb-2">
+          <h3 class="text-sm font-bold text-indigo-700 flex items-center gap-2">Active Workshop Downtime Queue</h3>
+        </div>
+        <div id="workshop-queue-list" class="grid grid-cols-1 md:grid-cols-3 gap-2"></div>
+      </div>
+
+      <!-- Workshop Completed Alerts (replaces queue entries when jobs finish; dismissible) -->
+      <div id="workshop-completed-panel" class="hidden bg-emerald-50 border border-emerald-300 rounded-lg p-4">
+        <div class="flex items-center justify-between mb-2">
+          <h3 class="text-sm font-bold text-emerald-700 flex items-center gap-2">✅ Workshop Completed — Ready for Collection</h3>
+          <button onclick="dismissAllWorkshopCompleted()" class="text-[11px] font-semibold text-emerald-700 hover:underline">Dismiss all</button>
+        </div>
+        <div id="workshop-completed-list" class="grid grid-cols-1 md:grid-cols-3 gap-2"></div>
+      </div>
+
+      <!-- Banking Ledger & Manual Transaction Logger -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- New Transaction Form -->
+        <div class="bg-white border border-slate-200 rounded-lg p-5 space-y-4 h-fit">
+          <h2 class="text-base font-bold text-slate-900 flex items-center gap-2">Record Bank Transaction</h2>
+          <p class="text-xs text-slate-500">Log custom income or expenses directly to the Swift Connect Company Bank Account.</p>
+          
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">Transaction Type</label>
+            <select id="tx-type" class="w-full bg-white border border-slate-300 rounded-md px-3 py-2 text-sm text-slate-900">
+              <option value="Expense">Expense (-£)</option>
+              <option value="Income">Income (+£)</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">Category</label>
+            <select id="tx-category" class="w-full bg-white border border-slate-300 rounded-md px-3 py-2 text-sm text-slate-900">
+              <option value="Vehicle Purchase">Vehicle Purchase</option>
+              <option value="Vehicle Sale">Vehicle Sale</option>
+              <option value="Repaint">Repaint & Livery</option>
+              <option value="Repair & Conversion">Repair & Conversion</option>
+              <option value="Depot Operations">Depot Operations</option>
+              <option value="Subsidy / Contract">Subsidy / Contract</option>
+              <option value="Other">Other (Specify in Notes)</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">Amount (£)</label>
+            <input id="tx-amount" type="number" step="0.01" placeholder="e.g. 151500" class="w-full bg-white border border-slate-300 rounded-md px-3 py-2 text-sm text-slate-900 mono" />
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">Notes / Reference</label>
+            <input id="tx-notes" type="text" placeholder="e.g. Repaint 6x Hybrid StreetDecks" class="w-full bg-white border border-slate-300 rounded-md px-3 py-2 text-sm text-slate-900" />
+          </div>
+
+          <button onclick="addManualTransaction()" class="w-full bg-blue-800 hover:bg-blue-900 text-slate-900 font-bold py-2.5 rounded-md text-sm transition shadow-sm">
+            Post Transaction to Ledger
+          </button>
+        </div>
+
+        <!-- Transaction History Table -->
+        <div class="lg:col-span-2 bg-white border border-slate-200 rounded-lg p-5 flex flex-col">
+          <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
+            <div>
+              <h2 class="text-base font-bold text-slate-900">Company Banking Ledger</h2>
+              <p class="text-xs text-slate-500">Includes historical spreadsheet logs (2024–2026) and live game transactions</p>
+            </div>
+            <div class="flex flex-wrap items-center gap-2">
+              <span id="db-save-status" class="text-[11px] text-slate-500 mono">● Database connected (9 tables)</span>
+              <button onclick="exportSaveData()" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded-lg border border-slate-300">⬇ Export DB JSON</button>
+              <label class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded-lg border border-slate-300 cursor-pointer">⬆ Import DB<input id="db-import-input" type="file" accept="application/json" class="hidden" onchange="importDatabaseFile(this)" /></label>
+              <button onclick="resetDatabaseToSeeds()" class="text-xs bg-slate-100 hover:bg-rose-100 hover:text-rose-700 text-slate-500 px-3 py-1.5 rounded-lg border border-slate-300" title="Reload factory defaults from database/*.js seed files">↺ Reset from seeds</button>
+            </div>
+          </div>
+
+          <div class="overflow-x-auto max-h-[420px] overflow-y-auto border border-slate-200 rounded-md">
+            <table class="w-full text-left border-collapse text-xs">
+                <thead class="bg-slate-100 text-slate-600 sticky top-0">
+                <tr>
+                  <th class="py-2.5 px-3">Date</th>
+                  <th class="py-2.5 px-3">Type</th>
+                  <th class="py-2.5 px-3">Category</th>
+                  <th class="py-2.5 px-3">Notes</th>
+                  <th class="py-2.5 px-3 text-right">Amount (£)</th>
+                  <th class="py-2.5 px-3 text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="ledger-tbody" class="divide-y divide-slate-200"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= TAB 2: DEPOTS & OPERATIONS ================= -->
+    <section id="view-depots" class="hidden space-y-6">
+      <div class="bg-white border border-slate-200 rounded-lg p-5">
+        <div class="flex flex-wrap items-center justify-between gap-4 mb-4">
+          <div>
+            <h2 class="text-lg font-bold text-slate-900">Depot Network & Daily Financial Performance</h2>
+            <p class="text-xs text-slate-500">Adjust allocated vehicle counts or daily rent to dynamically recalculate company-wide daily revenue and profit.</p>
+          </div>
+          <div class="flex items-center gap-4 bg-white px-4 py-2 rounded-md border border-slate-200 text-xs">
+            <div>Total Allocated Vehicles: <span id="depot-total-buses" class="mono font-bold text-slate-900">434</span></div>
+            <div>Total Daily Rent: <span id="depot-total-rent" class="mono font-bold text-amber-700">£6,626</span></div>
+          </div>
+        </div>
+
+        <div class="overflow-x-auto border border-slate-200 rounded-md">
+          <table class="w-full text-left border-collapse text-xs md:text-sm">
+            <thead class="bg-slate-100 text-slate-600">
+              <tr>
+                <th class="py-3 px-4">Depot Name</th>
+                <th class="py-3 px-4 text-center">Assigned Vehicles</th>
+                <th class="py-3 px-4 text-right">Rev / Vehicle</th>
+                <th class="py-3 px-4 text-right">Daily Income</th>
+                <th class="py-3 px-4 text-right">Daily OpEx</th>
+                <th class="py-3 px-4 text-right">Daily Rent</th>
+                <th class="py-3 px-4 text-right">Daily Net Profit</th>
+              </tr>
+            </thead>
+            <tbody id="depots-tbody" class="divide-y divide-slate-200"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Regional Allocation Matrix from Bus Prices Sheet -->
+      <div class="bg-white border border-slate-200 rounded-lg p-5">
+        <h3 class="text-base font-bold text-slate-900 mb-1">Regional Fleet Valuation Breakdown (From Bus Prices Sheet)</h3>
+        <p class="text-xs text-slate-500 mb-4">Summary of your current active regional allocations across West Midlands, Notts & Derby, Shropshire, Worcestershire, Wales, Staffordshire, South London, Yard & Preservation.</p>
+        <div id="regional-summary-grid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3"></div>
+      </div>
+    </section>
+
+    <!-- ================= TAB 3: FLEET REGISTRY & LIVERIES ================= -->
+    <section id="view-fleet" class="hidden space-y-6">
+      <!-- Filter & Add New Fleet Vehicle Bar -->
+      <div class="bg-white border border-slate-200 rounded-lg p-5 space-y-4">
+        <div class="flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <h2 class="text-lg font-bold text-slate-900">Master Fleet Registry (2026)</h2>
+            <p class="text-xs text-slate-500">Search by Fleet ID (100–4506), UK Registration Plate, or Vehicle Type, and assign liveries.</p>
+            <p id="fleet-oos-note" class="text-[11px] text-slate-400"></p>
+          </div>
+          <div class="flex flex-wrap gap-2">
+            <input id="fleet-search" oninput="renderFleetTable()" type="text" placeholder="Search Fleet ID, Reg (e.g. YT26 EFA, OZZ 001) or Model..." class="bg-white border border-slate-300 rounded-md px-3 py-2 text-xs md:text-sm text-slate-900 w-72" />
+            <select id="fleet-cat-filter" onchange="renderFleetTable()" class="bg-white border border-slate-300 rounded-md px-3 py-2 text-xs md:text-sm text-slate-900">
+              <option value="ALL">All Categories (531)</option>
+              <option value="Training">Driver Training (100–199)</option>
+              <option value="Mini/Midi">Mini / Midi (1000–1999)</option>
+              <option value="Single">Single Deck & EV (2000–2999)</option>
+              <option value="Decker">Double Decker & EV (3000–3999)</option>
+              <option value="Coach">Coach & Special (4000–4999)</option>
+              <option value="ETM">Ticket Machines (ETM)</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Quick Add Vehicle to Registry -->
+        <details class="bg-white border border-slate-200 rounded-md p-3">
+          <summary class="text-xs font-bold text-sky-700 cursor-pointer select-none">Register New Vehicle into Fleet Table</summary>
+          <div class="grid grid-cols-1 sm:grid-cols-5 gap-3 mt-3">
+            <input id="new-fleet-id" type="number" placeholder="Fleet ID (e.g. 3086)" class="bg-white border border-slate-300 rounded-lg px-3 py-1.5 text-xs text-slate-900 mono" />
+            <input id="new-fleet-reg" type="text" placeholder="Reg (e.g. MT75 OJL)" class="bg-white border border-slate-300 rounded-lg px-3 py-1.5 text-xs text-slate-900 mono uppercase" />
+            <input id="new-fleet-type" type="text" placeholder="Vehicle Type (e.g. Wright StreetDeck Ultroliner)" class="bg-white border border-slate-300 rounded-lg px-3 py-1.5 text-xs text-slate-900 sm:col-span-2" />
+            <button onclick="registerNewFleetBus()" class="bg-emerald-700 hover:bg-emerald-800 text-white font-bold rounded-lg px-3 py-1.5 text-xs">Add to Fleet</button>
+          </div>
+        </details>
+
+        <div class="overflow-x-auto max-h-[540px] overflow-y-auto border border-slate-200 rounded-md">
+          <table class="w-full text-left border-collapse text-xs">
+            <thead class="bg-slate-100 text-slate-600 sticky top-0 z-10">
+              <tr>
+                <th class="py-3 px-3">Fleet ID</th>
+                <th class="py-3 px-3">Registration</th>
+                <th class="py-3 px-3">Category</th>
+                <th class="py-3 px-3">Vehicle Model</th>
+                <th class="py-3 px-3">Depot</th>
+                <th class="py-3 px-3">Livery</th>
+                <th class="py-3 px-3">Engine & Gearbox</th>
+                <th class="py-3 px-3 text-right">Quick Action</th>
+              </tr>
+            </thead>
+            <tbody id="fleet-tbody" class="divide-y divide-slate-200"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= TAB 4: BUS DEALERSHIP & VALUATION ================= -->
+    <section id="view-dealership" class="hidden space-y-6">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Variable Depreciation & VAT Calculator (From Bus Value Depreciation CSV) -->
+        <div class="bg-white border border-slate-200 rounded-lg p-5 space-y-4 h-fit">
+          <div class="flex items-center justify-between">
+            <h2 class="text-base font-bold text-slate-900">Used Bus Valuation & Trade Calculator</h2>
+            <span id="calc-rate-badge" class="text-[11px] px-2 py-0.5 rounded bg-amber-50 text-amber-700 border border-amber-500/20">—</span>
+          </div>
+          <p class="text-xs text-slate-500">Selling depreciates from year of manufacture (base year 2026) at a rolled annual rate for the vehicle's class/fuel. Buying pays a rolled % of original price for the vehicle's age band. Rates re-roll automatically on any change — or hit 🎲.</p>
+
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">Select Model from Catalogue</label>
+            <select id="calc-model-select" onchange="syncCalcModel()" class="w-full bg-white border border-slate-300 rounded-md px-3 py-2 text-xs text-slate-900"></select>
+          </div>
+
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs font-semibold text-slate-600 mb-1">Original Price (£)</label>
+              <input id="calc-orig-price" oninput="rerollTradeRates()" type="number" value="270000" class="w-full bg-white border border-slate-300 rounded-md px-3 py-2 text-xs text-slate-900 mono" />
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-600 mb-1">Year of Manufacture</label>
+              <input id="calc-year" oninput="rerollTradeRates()" type="number" min="1975" max="2026" value="2026" class="w-full bg-white border border-slate-300 rounded-md px-3 py-2 text-xs text-slate-900 mono" />
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs font-semibold text-slate-600 mb-1">Quantity</label>
+              <input id="calc-qty" oninput="updateDepreciationCalc()" type="number" min="1" max="100" value="1" class="w-full bg-white border border-slate-300 rounded-md px-3 py-2 text-xs text-slate-900 mono" />
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-600 mb-1">Assign Region</label>
+              <select id="calc-region" class="w-full bg-white border border-slate-300 rounded-md px-3 py-2 text-xs text-slate-900">
+                <option value="West Midlands">West Midlands</option>
+                <option value="Notts & Derby">Notts & Derby</option>
+                <option value="Shropshire">Shropshire</option>
+                <option value="Worcestershire">Worcestershire</option>
+                <option value="Wales">Wales</option>
+                <option value="Staffordshire">Staffordshire</option>
+                <option value="South London">South London</option>
+                <option value="Yard">Yard</option>
+                <option value="Preservation">Preservation</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Output Box -->
+          <div class="bg-white border border-slate-200 rounded-md p-4 space-y-2">
+            <div class="flex justify-between text-xs">
+              <span class="text-slate-500">Vehicle Age (in 2026):</span>
+              <span id="calc-age-out" class="mono font-bold text-slate-900">0 yrs (Brand New)</span>
+            </div>
+            <div class="flex justify-between text-xs">
+              <span class="text-slate-500">Sell Rate <span id="calc-sell-band" class="text-slate-400"></span>:</span>
+              <span id="calc-sell-rate-out" class="mono font-bold text-sky-700">—</span>
+            </div>
+            <div class="flex justify-between text-xs">
+              <span class="text-slate-500">Sell Value (Ex VAT):</span>
+              <span id="calc-depr-out" class="mono font-bold text-sky-700">£270,000</span>
+            </div>
+            <div class="flex justify-between text-xs">
+              <span class="text-slate-500">Buy Rate <span id="calc-buy-band" class="text-slate-400"></span>:</span>
+              <span id="calc-buy-rate-out" class="mono font-bold text-amber-700">—</span>
+            </div>
+            <div class="flex justify-between text-sm border-t border-slate-200 pt-2">
+              <span class="text-slate-700 font-semibold">Buy Price (Total):</span>
+              <span id="calc-vat-out" class="mono font-extrabold text-emerald-700">£324,000</span>
+            </div>
+            <button onclick="rerollTradeRates()" title="Roll fresh random sell & buy rates" class="w-full text-[11px] font-semibold text-slate-500 hover:text-slate-900 bg-slate-100 hover:bg-slate-200 rounded-md py-1.5 transition">🎲 Re-roll rates</button>
+          </div>
+
+          <div class="grid grid-cols-2 gap-2 pt-1">
+            <button onclick="executeBusTrade('BUY')" class="bg-emerald-700 hover:bg-emerald-800 text-slate-900 font-bold py-2.5 rounded-md text-xs transition shadow-sm">
+               Buy for Fleet
+            </button>
+            <button onclick="executeBusTrade('SELL')" class="bg-amber-600 hover:bg-amber-700 text-slate-900 font-bold py-2.5 rounded-md text-xs transition shadow-sm">
+               Sell from Fleet
+            </button>
+          </div>
+        </div>
+
+        <!-- Complete 156-Model Bus Catalogue -->
+        <div class="lg:col-span-2 bg-white border border-slate-200 rounded-lg p-5 flex flex-col">
+          <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
+            <div>
+              <h2 class="text-base font-bold text-slate-900">Official Swift Connect Vehicle Catalogue & Regional Holdings</h2>
+              <p class="text-xs text-slate-500">Owned counts are read live from the Fleet Registry. Click a column header to sort. Click any model to load it into the Valuation & Purchase Calculator</p>
+            </div>
+            <div class="flex gap-2">
+              <input id="dealer-search" oninput="renderDealerCatalogue()" type="text" placeholder="Filter models (e.g. StreetDeck, Enviro400)..." class="bg-white border border-slate-300 rounded-md px-3 py-1.5 text-xs text-slate-900 w-56" />
+              <label class="flex items-center gap-1.5 text-xs text-slate-600 cursor-pointer bg-white border border-slate-200 px-3 py-1.5 rounded-md">
+                <input id="dealer-owned-only" onchange="renderDealerCatalogue()" type="checkbox" class="rounded" />
+                <span>Owned Only</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="overflow-x-auto max-h-[500px] overflow-y-auto border border-slate-200 rounded-md">
+            <table class="w-full text-left border-collapse text-xs">
+              <thead class="bg-slate-100 text-slate-600 sticky top-0">
+                <tr>
+                  <th class="py-2.5 px-3 cursor-pointer select-none hover:text-slate-900" onclick="sortDealerBy('model')" title="Sort by model">Vehicle Model<span id="dealer-sort-model"></span></th>
+                  <th class="py-2.5 px-3 text-right cursor-pointer select-none hover:text-slate-900" onclick="sortDealerBy('value')" title="Sort by list value">New List Value (£)<span id="dealer-sort-value"></span></th>
+                  <th class="py-2.5 px-3 text-center cursor-pointer select-none hover:text-slate-900" onclick="sortDealerBy('owned')" title="Sort by owned count">Owned Count<span id="dealer-sort-owned"></span></th>
+                  <th class="py-2.5 px-3">Regional Allocation</th>
+                  <th class="py-2.5 px-3 text-right cursor-pointer select-none hover:text-slate-900" onclick="sortDealerBy('total')" title="Sort by fleet value">Total Fleet Value<span id="dealer-sort-total"></span></th>
+                  <th class="py-2.5 px-3 text-right">Select</th>
+                </tr>
+              </thead>
+              <tbody id="dealer-tbody" class="divide-y divide-slate-200"></tbody>
+            </table>
+          </div>
+          <div id="dealer-unmatched" class="text-[11px] text-slate-500 mt-2"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= TAB 5: BODYSHOP, UPGRADES & REPAIRS ================= -->
+    <section id="view-workshop" class="hidden space-y-6">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Left 2 Columns: Service Menus from Repaint_Costs.csv and Repair_Costs.csv -->
+        <div class="lg:col-span-2 space-y-6">
+          <!-- Repaint, Interior & Tech Installations -->
+          <div class="bg-white border border-slate-200 rounded-lg p-5">
+            <h2 class="text-base font-bold text-slate-900 mb-1">Bodyshop: Repaints, Interiors & Tech Installations</h2>
+            <p class="text-xs text-slate-500 mb-4">Official rates and vehicle downtime from <code>Swift_Connect_Company_Banking_Repaint_Costs.csv</code></p>
+            <div id="repaint-services-grid" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
+          </div>
+
+          <!-- Mechanical Repairs & EV/Hybrid Conversions -->
+          <div class="bg-white border border-slate-200 rounded-lg p-5">
+            <h2 class="text-base font-bold text-slate-900 mb-1">Engineering: Mechanical Repairs & Clean-Air Conversions</h2>
+            <p class="text-xs text-slate-500 mb-4">Official rates and downtime from <code>Swift_Connect_Company_Banking_Repair_Costs.csv</code></p>
+            <div id="repair-services-grid" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
+          </div>
+        </div>
+
+        <!-- Right Column: Interactive Work Order Builder -->
+        <div class="bg-white border border-slate-200 rounded-lg p-5 space-y-4 h-fit sticky top-28">
+          <h2 class="text-base font-bold text-slate-900">Workshop Work Order</h2>
+          <p class="text-xs text-slate-500">Select a vehicle class, one or more jobs, and the specific vehicles to deduct funds and schedule workshop downtime.</p>
+
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">1. Vehicle Category</label>
+            <select id="wo-class" onchange="onWorkshopClassChange()" class="w-full bg-white border border-slate-300 rounded-md px-3 py-2 text-xs text-slate-900">
+              <option value="MINI/MIDI">MINI / MIDI (1000–1999)</option>
+              <option value="Single">Single Decker (2000–2999)</option>
+              <option value="Double Decker">Double Decker (3000–3999)</option>
+              <option value="Coach">Coach (4000–4999)</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">2. Workshop Jobs / Upgrades <span class="font-normal text-slate-400">(multi-select)</span></label>
+            <select id="wo-service" multiple size="8" onchange="updateWorkOrderQuote()" class="w-full bg-white border border-slate-300 rounded-md px-3 py-2 text-xs text-slate-900"></select>
+            <div class="flex items-center justify-between mt-1.5">
+              <span class="text-[11px] text-slate-400">Hold Ctrl/Cmd to pick more than one.</span>
+              <span class="space-x-2">
+                <button type="button" onclick="selectAllWorkshopServices(true)" class="text-[11px] font-semibold text-indigo-700 hover:underline">Select all</button>
+                <button type="button" onclick="selectAllWorkshopServices(false)" class="text-[11px] font-semibold text-slate-500 hover:underline">Clear</button>
+              </span>
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">3. Specific Vehicles <span class="text-rose-700">*required</span> <span class="font-normal text-slate-400">(multi-select)</span></label>
+            <select id="wo-vehicles" multiple size="8" onchange="updateWorkOrderQuote()" class="w-full bg-white border border-slate-300 rounded-md px-3 py-2 text-xs text-slate-900 mono"></select>
+            <div class="flex items-center justify-between mt-1.5">
+              <span class="text-[11px] text-slate-400">Shows Fleet ID + reg for this class. Hold Ctrl/Cmd for more than one.</span>
+              <span class="space-x-2">
+                <button type="button" onclick="selectAllWorkshopVehicles(true)" class="text-[11px] font-semibold text-indigo-700 hover:underline">Select all</button>
+                <button type="button" onclick="selectAllWorkshopVehicles(false)" class="text-[11px] font-semibold text-slate-500 hover:underline">Clear</button>
+              </span>
+            </div>
+          </div>
+
+          <div class="bg-white border border-slate-200 rounded-md p-4 space-y-2">
+            <div class="flex justify-between text-xs">
+              <span class="text-slate-500">Jobs Selected:</span>
+              <span id="wo-jobs-count" class="mono font-bold text-slate-900">0</span>
+            </div>
+            <div class="flex justify-between text-xs">
+              <span class="text-slate-500">Vehicles Selected:</span>
+              <span id="wo-vehicles-count" class="mono font-bold text-slate-900">0</span>
+            </div>
+            <div class="flex justify-between text-xs">
+              <span class="text-slate-500">Cost Per Vehicle:</span>
+              <span id="wo-unit-cost" class="mono font-bold text-slate-900">£0</span>
+            </div>
+            <div class="flex justify-between text-xs">
+              <span class="text-slate-500">Downtime Per Vehicle:</span>
+              <span id="wo-downtime" class="mono font-bold text-amber-700">0 days</span>
+            </div>
+            <div class="flex justify-between text-sm border-t border-slate-200 pt-2">
+              <span class="text-slate-700 font-semibold">Total Work Order Cost:</span>
+              <span id="wo-total-cost" class="mono font-extrabold text-rose-700">£0</span>
+            </div>
+          </div>
+
+          <button onclick="authorizeWorkOrder()" class="w-full bg-indigo-700 hover:bg-indigo-800 text-slate-900 font-bold py-2.5 rounded-md text-xs transition shadow-sm">
+             Authorize & Book Into Workshop
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= TAB 6: REGIONAL FARE CALCULATOR ================= -->
+    <section id="view-fares" class="hidden space-y-6">
+      <div class="bg-white border border-slate-200 rounded-lg p-5 space-y-4">
+        <div class="flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <h2 class="text-lg font-bold text-slate-900">Regional Fare Tables & Per-Bus Revenue Simulator</h2>
+            <p class="text-xs text-slate-500">Edit ticket prices or estimated daily passenger numbers for any operating region from <code>Ticket_Prices.csv</code> to see live per-bus profit changes.</p>
+          </div>
+          <select id="fare-region-select" onchange="renderFareTable()" class="bg-white border border-slate-300 rounded-md px-4 py-2 text-xs md:text-sm text-slate-900 font-semibold"></select>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div class="bg-white border border-slate-200 p-4 rounded-md">
+            <div class="text-xs text-slate-500">Est. Daily Revenue (Per Bus)</div>
+            <div id="fare-rev-bus" class="mono text-xl font-extrabold text-emerald-700 mt-1">£1,081.05</div>
+          </div>
+          <div class="bg-white border border-slate-200 p-4 rounded-md">
+            <div class="text-xs text-slate-500">Est. Daily OpEx (Staff, Fuel, Maint, Insur)</div>
+            <div id="fare-cost-bus" class="mono text-xl font-extrabold text-rose-700 mt-1">£713.00</div>
+          </div>
+          <div class="bg-white border border-slate-200 p-4 rounded-md">
+            <div class="text-xs text-slate-500">Est. Daily Net Profit (Per Bus)</div>
+            <div id="fare-profit-bus" class="mono text-xl font-extrabold text-sky-700 mt-1">£368.05</div>
+          </div>
+        </div>
+
+        <div class="overflow-x-auto border border-slate-200 rounded-md">
+          <table class="w-full text-left border-collapse text-xs md:text-sm">
+            <thead class="bg-slate-100 text-slate-600">
+              <tr>
+                <th class="py-3 px-4">Ticket Type</th>
+                <th class="py-3 px-4 text-right">Ticket Price (£)</th>
+                <th class="py-3 px-4 text-right">Est. Daily Passengers (Per Bus)</th>
+                <th class="py-3 px-4 text-right">Effective Daily Income (£)</th>
+              </tr>
+            </thead>
+            <tbody id="fares-tbody" class="divide-y divide-slate-200"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= TAB 7: MYBUSTIMES LIVE SYNC ================= -->
+    <section id="view-mybustimes" class="hidden space-y-6">
+      <div class="bg-white border border-slate-200 rounded-lg p-5 space-y-4">
+        <div class="flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <h2 class="text-lg font-bold text-slate-900">🔗 MyBusTimes Live Fleet Sync</h2>
+            <p class="text-xs text-slate-500">Fetches <code>http://mybustimes.cc/api/operator/fleet/</code> filtered per Swift Connect operator ID, groups vehicles by their <code>depot</code> field into Depot Network, and fills Master Fleet Registry from fleet numbers. Operator names resolve via <code>http://mybustimes.cc/api/operator</code>.</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <span id="mbt-operator-count" class="text-[11px] text-slate-500">11 operators</span>
+            <span id="mbt-status" class="text-[11px] mono text-slate-500">Idle</span>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          <!-- Operators config -->
+          <div class="bg-white border border-slate-200 rounded-md p-4 space-y-3">
+            <h3 class="text-sm font-bold text-slate-900">1. Swift Connect operators <span class="text-[11px] font-normal text-slate-500">(individual database file: database/mybustimes-operators.js)</span></h3>
+            <div class="overflow-x-auto border border-slate-200 rounded-md max-h-[260px] overflow-y-auto">
+              <table class="w-full text-left border-collapse text-xs">
+                <thead class="bg-white text-slate-500 sticky top-0">
+                  <tr>
+                    <th class="py-2 px-3">Code</th>
+                    <th class="py-2 px-3">Operator name (from API)</th>
+                    <th class="py-2 px-3">ID</th>
+                    <th class="py-2 px-3">Slug</th>
+                    <th class="py-2 px-3">Depot hint</th>
+                    <th class="py-2 px-3"></th>
+                  </tr>
+                </thead>
+                <tbody id="mbt-operator-tbody" class="divide-y divide-slate-200"></tbody>
+              </table>
+            </div>
+            <div class="flex flex-wrap gap-2">
+              <input id="mbt-add-code" type="text" placeholder="Add operator code (e.g. SWSH)" class="bg-white border border-slate-300 rounded-lg px-3 py-1.5 text-xs text-slate-900 mono uppercase w-52" />
+              <button onclick="mbtAddOperator()" class="text-xs bg-blue-800 hover:bg-blue-900 text-slate-900 px-3 py-1.5 rounded-lg font-semibold">Add</button>
+              <button id="mbt-refresh-btn" onclick="mbtRefreshNames()" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded-lg border border-slate-300">Refresh names from API</button>
+              <button onclick="mbtResetOperators()" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-500 px-3 py-1.5 rounded-lg border border-slate-300">Reset to defaults</button>
+            </div>
+          </div>
+
+          <!-- Fetch + options -->
+          <div class="bg-white border border-slate-200 rounded-md p-4 space-y-3">
+            <h3 class="text-sm font-bold text-slate-900">2. Fetch & apply</h3>
+            <label class="flex items-center gap-2 text-xs text-slate-600 cursor-pointer">
+              <input id="mbt-opt-outofservice" type="checkbox" checked class="rounded" />
+              <span>Include out-of-service vehicles (in_service = false)</span>
+            </label>
+            <label class="flex items-center gap-2 text-xs text-slate-600 cursor-pointer">
+              <input id="mbt-opt-autocreate" type="checkbox" checked class="rounded" />
+              <span>Auto-create Depot Network rows for unknown depot names</span>
+            </label>
+            <label class="flex items-center gap-2 text-xs text-slate-600 cursor-pointer">
+              <input id="mbt-opt-zeromissing" type="checkbox" class="rounded" />
+              <span>Zero previously-synced depots with no vehicles in this fetch</span>
+            </label>
+            <div class="flex flex-wrap gap-2 pt-1">
+              <button id="mbt-fetch-btn" onclick="mbtFetchFleet()" class="text-xs bg-emerald-700 hover:bg-emerald-800 text-slate-900 px-4 py-2 rounded-lg font-bold">Fetch fleet from mybustimes</button>
+              <button id="mbt-fetch-apply-btn" onclick="mbtFetchAndApply()" class="text-xs bg-emerald-600 hover:bg-emerald-700 text-slate-900 px-4 py-2 rounded-lg font-bold" title="Fetch and immediately write depot counts + fleet entries (recommended)">Fetch & auto-update depots</button>
+              <button id="mbt-apply-btn" onclick="mbtApplyStaged()" disabled class="text-xs bg-indigo-700 hover:bg-indigo-800 disabled:bg-slate-100 disabled:text-slate-500 text-slate-900 px-4 py-2 rounded-lg font-bold">✔ Apply to Depots + Fleet Registry</button>
+              <button onclick="mbtClearStaged()" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-600 px-3 py-2 rounded-lg border border-slate-300">Clear</button>
+            </div>
+            <div id="mbt-last-sync" class="text-[11px] text-slate-500 mono">Not synced yet.</div>
+            <div id="mbt-log" class="bg-white border border-slate-200 rounded-md p-3 h-28 overflow-y-auto mono text-[11px] text-slate-600 space-y-1"></div>
+            <details class="bg-white border border-slate-200 rounded-md p-3">
+              <summary class="text-xs font-bold text-sky-700 cursor-pointer select-none">Fallback: paste fleet JSON (if the browser blocks api calls)</summary>
+              <p class="text-[11px] text-slate-500 mt-2">Open <code>mybustimes.cc/api/operator/fleet/?format=json&amp;operator=&lt;ID&gt;</code> in a browser tab, copy the response, paste below, then stage it.</p>
+              <textarea id="mbt-paste" rows="3" placeholder='Paste {"count":…, "results":[…]} or […] here…' class="w-full mt-2 bg-white border border-slate-300 rounded-lg px-3 py-2 text-[11px] mono text-slate-900"></textarea>
+              <button onclick="mbtUsePastedJson()" class="mt-2 text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded-lg border border-slate-300">Stage pasted JSON</button>
+            </details>
+          </div>
+        </div>
+
+        <!-- Preview -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          <div class="bg-white border border-slate-200 rounded-md p-4">
+            <h3 class="text-sm font-bold text-slate-900 mb-2">Depot preview → Depot Network & Daily Financial Performance</h3>
+            <div class="overflow-x-auto border border-slate-200 rounded-md max-h-[280px] overflow-y-auto">
+              <table class="w-full text-left border-collapse text-xs">
+                <thead class="bg-white text-slate-500 sticky top-0">
+                  <tr>
+                    <th class="py-2 px-3">API depot field</th>
+                    <th class="py-2 px-3">Matched local depot</th>
+                    <th class="py-2 px-3 text-right">Vehicles</th>
+                    <th class="py-2 px-3 text-right">Status</th>
+                  </tr>
+                </thead>
+                <tbody id="mbt-depot-preview-tbody" class="divide-y divide-slate-200"></tbody>
+              </table>
+            </div>
+          </div>
+          <div class="bg-white border border-slate-200 rounded-md p-4">
+            <h3 class="text-sm font-bold text-slate-900 mb-2">Fleet preview → Master Fleet Registry</h3>
+            <div class="overflow-x-auto border border-slate-200 rounded-md max-h-[280px] overflow-y-auto">
+              <table class="w-full text-left border-collapse text-xs">
+                <thead class="bg-white text-slate-500 sticky top-0">
+                  <tr>
+                    <th class="py-2 px-3">Fleet No</th>
+                    <th class="py-2 px-3">Reg</th>
+                    <th class="py-2 px-3">Type</th>
+                    <th class="py-2 px-3">Depot</th>
+                    <th class="py-2 px-3">Op</th>
+                  </tr>
+                </thead>
+                <tbody id="mbt-fleet-preview-tbody" class="divide-y divide-slate-200"></tbody>
+              </table>
+            </div>
+            <div id="mbt-fleet-more" class="text-[11px] text-slate-500 mt-2"></div>
+            <h3 class="text-sm font-bold text-slate-900 mt-4 mb-2">Per-operator fetch</h3>
+            <table class="w-full text-left border-collapse text-xs">
+              <thead class="bg-white text-slate-500">
+                <tr>
+                  <th class="py-2 px-3">Code</th>
+                  <th class="py-2 px-3">Operator</th>
+                  <th class="py-2 px-3 text-right">API total</th>
+                  <th class="py-2 px-3 text-right">Fetched</th>
+                </tr>
+              </thead>
+              <tbody id="mbt-perop-tbody" class="divide-y divide-slate-200"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Individual database files (seeds + persistence layer) -->
+  <script src="database/meta.js"></script>
+  <script src="database/transactions.js"></script>
+  <script src="database/depots.js"></script>
+  <script src="database/bus-catalogue.js"></script>
+  <script src="database/workshop-catalogue.js"></script>
+  <script src="database/fares.js"></script>
+  <script src="database/vehicle-specs.js"></script>
+  <script src="database/drivetrain-specs.js"></script>
+  <script src="database/fleet-raw.js"></script>
+  <script src="database/workshop-queue.js"></script>
+  <script src="database/workshop-completed.js"></script>
+  <script src="database/mybustimes-operators.js"></script>
+  <script src="database/db.js"></script>
+  <script src="database/mybustimes.js"></script>
+
+  <script>
+    // =========================================================================
+    // 1. DATABASE (individual files in database/ loaded via <script src> above)
+    // Seeds: meta, transactions, depots, bus-catalogue, workshop-catalogue,
+    //        fares, vehicle-specs, drivetrain-specs, fleet-raw, workshop-queue.
+    // Live writable DB: database/db.js (window.DB) backed by localStorage,
+    // so every write saves immediately. INITIAL_STATE / RAW_FLEET_CSV /
+    // VEHICLE_SPECS / WORKSHOP_CATALOGUE / FARE_TABLES are provided by db.js
+    // for backwards compatibility.
+    // =========================================================================
+
+    // =========================================================================
+    // 2. STATE INITIALIZATION & PERSISTENCE (write-through: every write saves)
+    // =========================================================================
+    let state = null;
+
+    function parseInitialFleet() {
+      var csv = window.DB_SEED_FLEET_CSV || window.RAW_FLEET_CSV || "";
+      var specs = window.DB_SEED_VEHICLE_SPECS || window.VEHICLE_SPECS || window.DB_SEED_OMSI_SPECS || window.OMSI_SPECS || {};
+      if (!csv) return [];
+      return csv.split("\n").map(function(line) {
+        var parts = line.split(",");
+        var id = parts[0], reg = parts[1], type = parts.slice(2).join(",");
+        var num = parseInt(id, 10);
+        var cat = "Single";
+        if (num < 200) cat = "Training";
+        else if (num < 2000) cat = "Mini/Midi";
+        else if (num >= 3000 && num < 4000) cat = "Decker";
+        else if (num >= 4000) cat = "Coach";
+        var spec = specs[type] || {
+          livery: num >= 4000 ? "Swift Connect Coach" : ((num >= 2700 && num < 2800) || num >= 3700 ? "Swift Connect Electric" : "Swift Connect Standard"),
+          engine: "Euro VI Standard",
+          gearbox: "ZF EcoLife / Voith"
+        };
+        return { id: num, reg: reg, type: type, cat: cat, livery: spec.livery, engine: spec.engine, gearbox: spec.gearbox };
+      });
+    }
+
+    function loadState() {
+      // Pulls live writable database (seeds on first run, localStorage after).
+      state = window.DB.loadAllState();
+      if (!Array.isArray(state.workshopCompleted)) state.workshopCompleted = [];
+    }
+
+    function saveState() {
+      // Write-through: every caller persists all tables immediately.
+      window.DB.saveAllState(state);
+    }
+
+
+    // =========================================================================
+    // 3. CORE CALCULATIONS & GAME LOOP
+    // =========================================================================
+    function formatGBP(val, decimals = 0) {
+      const sign = val < 0 ? "-" : "";
+      return sign + "£" + Math.abs(val).toLocaleString("en-GB", {
+        minimumFractionDigits: decimals,
+        maximumFractionDigits: decimals
+      });
+    }
+
+    // Today's calendar date in the United Kingdom (Europe/London), YYYY-MM-DD.
+    function getUKTodayString() {
+      try {
+        const s = new Date().toLocaleDateString("en-CA", { timeZone: "Europe/London" });
+        if (/^\d{4}-\d{2}-\d{2}$/.test(s)) return s;
+      } catch (e) {}
+      const d = new Date();
+      const pad = n => String(n).padStart(2, "0");
+      return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+    }
+
+    function calculateDailyTotals() {
+      let totalIncome = 0;
+      let totalOpEx = 0;
+      let totalRent = 0;
+      let totalBuses = 0;
+
+      state.depots.forEach(d => {
+        const revPerBus = d.baseIncome / Math.max(1, INITIAL_STATE.depots.find(x => x.name === d.name)?.vehicles || d.vehicles);
+        const expPerBus = d.baseExpenses / Math.max(1, INITIAL_STATE.depots.find(x => x.name === d.name)?.vehicles || d.vehicles);
+        const inc = revPerBus * d.vehicles;
+        const exp = expPerBus * d.vehicles;
+        totalIncome += inc;
+        totalOpEx += exp;
+        totalRent += d.rent;
+        totalBuses += d.vehicles;
+      });
+
+      const totalExpenses = totalOpEx + totalRent;
+      const preTaxProfit = totalIncome - totalExpenses;
+      const afterTaxProfit = preTaxProfit > 0 ? preTaxProfit * 0.75 : preTaxProfit;
+
+      return { totalIncome, totalExpenses, totalRent, preTaxProfit, afterTaxProfit, totalBuses };
+    }
+
+    // Advances the simulation by exactly one day: credits that day's net
+    // profit, posts it to the ledger, and ticks workshop downtime.
+    // Returns a summary; the caller handles save/render/notify.
+    function advanceOneDay() {
+      const daily = calculateDailyTotals();
+      const prevDate = state.simDate;
+      const parts = String(state.simDate).split("-").map(Number);
+      const dt = new Date(parts[0], parts[1] - 1, parts[2] + 1);
+      const pad = n => String(n).padStart(2, "0");
+      state.simDate = `${dt.getFullYear()}-${pad(dt.getMonth() + 1)}-${pad(dt.getDate())}`;
+
+      const net = daily.afterTaxProfit;
+      state.bankBalance += net;
+      state.transactions.unshift({
+        date: state.simDate,
+        amount: net,
+        type: net >= 0 ? "Income" : "Expense",
+        category: "Depot Operations",
+        notes: `Daily net profit for ${prevDate} (after 25% tax) — Inc ${formatGBP(daily.totalIncome, 2)} / Exp ${formatGBP(daily.totalExpenses, 2)}`
+      });
+
+      const done = [];
+      (state.workshopQueue || []).forEach(j => { j.daysLeft -= 1; });
+      state.workshopQueue = (state.workshopQueue || []).filter(j => {
+        if (j.daysLeft <= 0) { done.push(j); return false; }
+        return true;
+      });
+      if (done.length) {
+        if (!Array.isArray(state.workshopCompleted)) state.workshopCompleted = [];
+        done.forEach(j => state.workshopCompleted.unshift({
+          vehicleClass: j.vehicleClass,
+          serviceName: j.serviceName,
+          count: j.count,
+          ref: j.ref,
+          completedDate: state.simDate
+        }));
+      }
+      return { net, done: done.length };
+    }
+
+    // DEV ONLY manual trigger for advanceOneDay.
+    function simulateOneDay() {
+      const r = advanceOneDay();
+      saveState();
+      renderAll();
+      showToast(r.done
+        ? `Simulated +1 day → ${state.simDate}. ${r.done} workshop job(s) completed!`
+        : `Simulated +1 day → ${state.simDate} (${formatGBP(r.net, 2)} posted).`, "✅");
+    }
+
+    // Brings an out-of-date sim forward to today's UK date, posting each
+    // missed day's income (for the day prior) and ticking the workshop.
+    // Returns { days, totalNet, totalDone }. Never goes backwards.
+    function catchUpToToday() {
+      const summary = { days: 0, totalNet: 0, totalDone: 0 };
+      const today = getUKTodayString();
+      while (state.simDate < today && summary.days < 366) {
+        const r = advanceOneDay();
+        summary.days += 1;
+        summary.totalNet += r.net;
+        summary.totalDone += r.done;
+      }
+      return summary;
+    }
+
+    // =========================================================================
+    // 4. UI RENDERING
+    // =========================================================================
+    function renderAll() {
+      const daily = calculateDailyTotals();
+      const [yyyy, mm, dd] = state.simDate.split("-");
+      document.getElementById("hud-date").textContent = `${dd}/${mm}/${yyyy}`;
+      document.getElementById("hud-bank").textContent = formatGBP(state.bankBalance);
+      document.getElementById("hud-depot-budget").textContent = formatGBP(state.bankBalance / 15);
+      document.getElementById("hud-daily-net").textContent = (daily.afterTaxProfit >= 0 ? "+" : "") + formatGBP(daily.afterTaxProfit) + "/day";
+
+      document.getElementById("kpi-income").textContent = formatGBP(daily.totalIncome);
+      document.getElementById("kpi-expenses").textContent = formatGBP(daily.totalExpenses);
+      document.getElementById("kpi-profit").textContent = formatGBP(daily.preTaxProfit);
+      document.getElementById("kpi-after-tax").textContent = `After 25% Corp Tax: ${formatGBP(daily.afterTaxProfit)}`;
+
+      const totalOwnedCatalogue = computeOwnedCounts().counts.reduce((acc, c) => acc + c, 0);
+      document.getElementById("kpi-fleet-count").textContent = Math.max(531, totalOwnedCatalogue);
+
+      const totalDowntimeBuses = state.workshopQueue.reduce((acc, j) => acc + j.count, 0);
+      document.getElementById("kpi-workshop-status").textContent =
+        totalDowntimeBuses > 0
+          ? `${totalDowntimeBuses} vehicle(s) currently in workshop downtime`
+          : "All vehicles operational (0 in downtime)";
+
+      renderWorkshopQueueBanner();
+      renderWorkshopCompletedBanner();
+      renderLedger();
+      renderDepots();
+      renderFleetTable();
+      renderDealerCatalogue();
+      renderFareTable();
+      if (typeof renderMbtPanel === "function") { try { renderMbtPanel(); } catch (e) {} }
+    }
+
+    function renderWorkshopCompletedBanner() {
+      const panel = document.getElementById("workshop-completed-panel");
+      const list = document.getElementById("workshop-completed-list");
+      const done = state.workshopCompleted || [];
+      if (!done.length) {
+        panel.classList.add("hidden");
+        return;
+      }
+      panel.classList.remove("hidden");
+      list.innerHTML = done.map((j, idx) => `
+        <div class="bg-white/90 border border-emerald-300 rounded-md p-3 flex items-center justify-between gap-2 text-xs">
+          <div>
+            <div class="font-bold text-slate-900">✅ ${j.count}x ${j.vehicleClass} — ${j.serviceName}</div>
+            <div class="text-slate-500">Completed ${j.completedDate || state.simDate}${j.ref ? ` · ${j.ref}` : ""} — ready for collection</div>
+          </div>
+          <button onclick="dismissWorkshopCompleted(${idx})" class="mono px-2.5 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-bold whitespace-nowrap">Dismiss</button>
+        </div>
+      `).join("");
+    }
+
+    function dismissWorkshopCompleted(idx) {
+      (state.workshopCompleted || []).splice(idx, 1);
+      saveState();
+      renderAll();
+      showToast("Completion alert dismissed — vehicle back in service!", "✅");
+    }
+
+    function dismissAllWorkshopCompleted() {
+      state.workshopCompleted = [];
+      saveState();
+      renderAll();
+      showToast("All completion alerts dismissed!", "✅");
+    }
+
+    function renderWorkshopQueueBanner() {
+      const panel = document.getElementById("workshop-active-panel");
+      const list = document.getElementById("workshop-queue-list");
+      if (!state.workshopQueue.length) {
+        panel.classList.add("hidden");
+        return;
+      }
+      panel.classList.remove("hidden");
+      list.innerHTML = state.workshopQueue.map(j => `
+        <div class="bg-white/90 border border-indigo-200 rounded-md p-3 flex items-center justify-between text-xs">
+          <div>
+            <div class="font-bold text-slate-900">${j.count}x ${j.vehicleClass} — ${j.serviceName}</div>
+            <div class="text-slate-500">${j.ref || "Standard Workshop Bay"}</div>
+          </div>
+          <span class="mono px-2.5 py-1 rounded-lg bg-indigo-100 text-indigo-700 font-bold">${j.daysLeft}d left</span>
+        </div>
+      `).join("");
+    }
+
+    let editingTxIndex = -1;
+
+    function renderLedger() {
+      const tbody = document.getElementById("ledger-tbody");
+      tbody.innerHTML = state.transactions.map((t, idx) => {
+        if (idx === editingTxIndex) {
+          const absAmt = Math.abs(t.amount);
+          return `
+          <tr class="bg-amber-50">
+            <td class="py-2 px-2"><input id="edit-tx-date" type="date" value="${escAttr(t.date)}" class="bg-white border border-slate-300 rounded-md px-2 py-1 text-xs mono w-32" /></td>
+            <td class="py-2 px-2">
+              <select id="edit-tx-type" class="bg-white border border-slate-300 rounded-md px-2 py-1 text-xs">
+                <option value="Expense" ${t.type === "Expense" ? "selected" : ""}>Expense</option>
+                <option value="Income" ${t.type === "Income" ? "selected" : ""}>Income</option>
+              </select>
+            </td>
+            <td class="py-2 px-2"><input id="edit-tx-category" type="text" value="${escAttr(t.category)}" class="bg-white border border-slate-300 rounded-md px-2 py-1 text-xs w-32" /></td>
+            <td class="py-2 px-2"><input id="edit-tx-notes" type="text" value="${escAttr(t.notes)}" class="bg-white border border-slate-300 rounded-md px-2 py-1 text-xs w-full" /></td>
+            <td class="py-2 px-2 text-right"><input id="edit-tx-amount" type="number" step="0.01" min="0" value="${absAmt}" class="bg-white border border-slate-300 rounded-md px-2 py-1 text-xs mono text-right w-28" /></td>
+            <td class="py-2 px-2 text-right whitespace-nowrap">
+              <button onclick="saveLedgerEdit(${idx})" class="text-[11px] font-bold bg-emerald-600 hover:bg-emerald-700 text-white px-2 py-1 rounded-md">Save</button>
+              <button onclick="cancelLedgerEdit()" class="text-[11px] font-semibold bg-slate-100 hover:bg-slate-200 text-slate-600 px-2 py-1 rounded-md border border-slate-300">Cancel</button>
+            </td>
+          </tr>
+        `;
+        }
+        const isPos = t.amount >= 0;
+        return `
+          <tr class="hover:bg-slate-100">
+            <td class="py-2.5 px-3 mono text-slate-600 whitespace-nowrap">${t.date}</td>
+            <td class="py-2.5 px-3">
+              <span class="px-2 py-0.5 rounded text-[11px] font-semibold ${isPos ? 'bg-emerald-50 text-emerald-700' : 'bg-rose-50 text-rose-700'}">
+                ${t.type || (isPos ? 'Income' : 'Expense')}
+              </span>
+            </td>
+            <td class="py-2.5 px-3 text-slate-600">${t.category || 'Historical'}</td>
+            <td class="py-2.5 px-3 text-slate-500">${t.notes || '—'}</td>
+            <td class="py-2.5 px-3 mono font-bold text-right ${isPos ? 'text-emerald-700' : 'text-rose-700'}">
+              ${isPos ? '+' : ''}${formatGBP(t.amount, 2)}
+            </td>
+            <td class="py-2.5 px-3 text-right whitespace-nowrap">
+              <button onclick="editLedgerTransaction(${idx})" title="Edit this entry" class="text-[11px] font-semibold text-sky-700 hover:underline px-1">Edit</button>
+              <button onclick="deleteLedgerTransaction(${idx})" title="Remove this entry and reverse its balance effect" class="text-[11px] font-semibold text-rose-700 hover:underline px-1">Remove</button>
+            </td>
+          </tr>
+        `;
+      }).join("");
+    }
+
+    function editLedgerTransaction(idx) {
+      editingTxIndex = idx;
+      renderLedger();
+    }
+
+    function cancelLedgerEdit() {
+      editingTxIndex = -1;
+      renderLedger();
+    }
+
+    function saveLedgerEdit(idx) {
+      const old = state.transactions[idx];
+      if (!old) return;
+      const date = document.getElementById("edit-tx-date").value || old.date;
+      const type = document.getElementById("edit-tx-type").value;
+      const category = document.getElementById("edit-tx-category").value.trim() || old.category || "Other";
+      const notes = document.getElementById("edit-tx-notes").value.trim();
+      const rawAmount = parseFloat(document.getElementById("edit-tx-amount").value);
+      if (isNaN(rawAmount) || rawAmount <= 0) {
+        showToast("Please enter a valid positive amount (£).", "⚠️");
+        return;
+      }
+      const signedAmount = type === "Expense" ? -Math.abs(rawAmount) : Math.abs(rawAmount);
+      state.bankBalance -= old.amount;
+      state.bankBalance += signedAmount;
+      state.transactions[idx] = { date, amount: signedAmount, type, category, notes: notes || category };
+      editingTxIndex = -1;
+      saveState();
+      renderAll();
+      showToast(`Ledger entry updated (${formatGBP(signedAmount, 2)})!`, "✅");
+    }
+
+    function deleteLedgerTransaction(idx) {
+      const t = state.transactions[idx];
+      if (!t) return;
+      if (!confirm(`Remove this ledger entry?\n${t.date} — ${t.notes || t.category} (${formatGBP(t.amount, 2)})\nIts effect on the bank balance will be reversed.`)) return;
+      state.bankBalance -= t.amount;
+      state.transactions.splice(idx, 1);
+      if (editingTxIndex === idx) editingTxIndex = -1;
+      else if (editingTxIndex > idx) editingTxIndex -= 1;
+      saveState();
+      renderAll();
+      showToast("Ledger entry removed and balance adjusted!", "✅");
+    }
+
+    function addManualTransaction() {
+      const type = document.getElementById("tx-type").value;
+      const category = document.getElementById("tx-category").value;
+      const rawAmount = parseFloat(document.getElementById("tx-amount").value);
+      const notes = document.getElementById("tx-notes").value.trim();
+
+      if (isNaN(rawAmount) || rawAmount <= 0) {
+        showToast("Please enter a valid positive amount (£).", "✅");
+        return;
+      }
+
+      const signedAmount = type === "Expense" ? -Math.abs(rawAmount) : Math.abs(rawAmount);
+      state.bankBalance += signedAmount;
+      state.transactions.unshift({
+        date: state.simDate,
+        amount: signedAmount,
+        type,
+        category,
+        notes: notes || category
+      });
+
+      document.getElementById("tx-amount").value = "";
+      document.getElementById("tx-notes").value = "";
+      saveState();
+      renderAll();
+      showToast(`Posted ${formatGBP(signedAmount)} to Company Ledger!`, "✅");
+    }
+
+    // =========================================================================
+    // 5. DEPOTS & REGIONAL ALLOCATION
+    // =========================================================================
+    function renderDepots() {
+      const tbody = document.getElementById("depots-tbody");
+      const daily = calculateDailyTotals();
+      document.getElementById("depot-total-buses").textContent = daily.totalBuses;
+      document.getElementById("depot-total-rent").textContent = formatGBP(daily.totalRent);
+
+      tbody.innerHTML = state.depots.map((d, idx) => {
+        const orig = INITIAL_STATE.depots[idx] || d;
+        const revPerBus = d.baseIncome / Math.max(1, orig.vehicles);
+        const expPerBus = d.baseExpenses / Math.max(1, orig.vehicles);
+        const inc = revPerBus * d.vehicles;
+        const exp = expPerBus * d.vehicles;
+        const profit = inc - exp - d.rent;
+
+        return `
+          <tr class="hover:bg-slate-100">
+            <td class="py-2.5 px-4 font-semibold text-slate-900">${d.name}${d.source === "mybustimes" ? ' <span class="text-[10px] text-emerald-700 font-normal" title="Auto-synced from mybustimes">🔗</span>' : ""}</td>
+            <td class="py-2.5 px-4 text-center">
+              <div class="inline-flex items-center gap-1 bg-white border border-slate-300 rounded-lg px-1.5 py-0.5">
+                <button onclick="adjustDepotVehicles(${idx}, -1)" class="text-slate-500 hover:text-slate-900 px-1.5 font-bold">-</button>
+                <span class="mono font-bold text-sky-700 w-8 text-center">${d.vehicles}</span>
+                <button onclick="adjustDepotVehicles(${idx}, 1)" class="text-slate-500 hover:text-slate-900 px-1.5 font-bold">+</button>
+              </div>
+            </td>
+            <td class="py-2.5 px-4 mono text-right text-slate-500">${formatGBP(revPerBus, 2)}</td>
+            <td class="py-2.5 px-4 mono text-right text-emerald-700 font-medium">${formatGBP(inc, 2)}</td>
+            <td class="py-2.5 px-4 mono text-right text-rose-700">${formatGBP(exp, 2)}</td>
+            <td class="py-2.5 px-4 mono text-right text-amber-700">${formatGBP(d.rent, 0)}</td>
+            <td class="py-2.5 px-4 mono text-right font-bold ${profit >= 0 ? 'text-emerald-700' : 'text-rose-700'}">${formatGBP(profit, 2)}</td>
+          </tr>
+        `;
+      }).join("");
+
+      const regions = [
+        { name: "West Midlands", buses: 118, note: "Dudley & Willenhall" },
+        { name: "Shropshire", buses: 81, note: "Hadley, Wellington, Bridgnorth, Shifnal" },
+        { name: "Wales", buses: 56, note: "Talbot Green, Wrexham, Colwyn Bay" },
+        { name: "Notts & Derby", buses: 20, note: "Cossall, Phoenix Park, Cotes Park" },
+        { name: "Staffordshire", buses: 28, note: "Stoke Depot" },
+        { name: "Worcestershire", buses: 28, note: "Interurban Fleet" },
+        { name: "South London", buses: 28, note: "Elmers End TfL Operations" },
+        { name: "Yard / Float", buses: 64, note: "Reserve & Refurbishment Float" },
+        { name: "Preservation", buses: 8, note: "Heritage Fleet (ALX400, Renown, Cadet)" },
+        { name: "East Anglia & Lincs", buses: 57, note: "Cromer, Fakenham & Lincolnshire" }
+      ];
+      document.getElementById("regional-summary-grid").innerHTML = regions.map(r => `
+        <div class="bg-white border border-slate-200 p-3 rounded-md">
+          <div class="text-xs font-bold text-slate-900">${r.name}</div>
+          <div class="mono text-lg font-extrabold text-sky-700 mt-0.5">${r.buses} <span class="text-xs font-normal text-slate-500">units</span></div>
+          <div class="text-[11px] text-slate-500 mt-0.5">${r.note}</div>
+        </div>
+      `).join("");
+    }
+
+    function adjustDepotVehicles(idx, delta) {
+      const next = state.depots[idx].vehicles + delta;
+      if (next < 0) return;
+      state.depots[idx].vehicles = next;
+      saveState();
+      renderAll();
+    }
+
+    // =========================================================================
+    // 6. FLEET REGISTRY & LIVERIES
+    // =========================================================================
+    function escAttr(str) {
+      return String(str === undefined || str === null ? "" : str)
+        .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+    }
+
+    function getDrivetrain(typeName) {
+      const db = window.DB_SEED_DRIVETRAIN_SPECS || {};
+      return db[typeName] || { engine: "—", gearbox: "—", euro: "—", fuel: "—" };
+    }
+
+    function euroPill(euro) {
+      const e = String(euro || "—");
+      let cls = "bg-slate-100 text-slate-500";
+      if (/Zero emission/i.test(e)) cls = "bg-emerald-50 text-emerald-700";
+      else if (/Euro 6/.test(e)) cls = "bg-sky-100 text-sky-800";
+      else if (/Euro 5|Stage/.test(e)) cls = "bg-amber-50 text-amber-700";
+      else if (/Euro|Pre-Euro/.test(e)) cls = "bg-rose-50 text-rose-700";
+      return `<span class="inline-block px-2 py-0.5 rounded text-[11px] font-bold ${cls}">${e}</span>`;
+    }
+
+    function actionCell(v) {
+      if (v.cat === "ETM") {
+        return `<span class="text-slate-400">—</span>`;
+      }
+      return `<button onclick='changeVehicleLivery(${JSON.stringify(String(v.id))})' class="text-xs bg-slate-100 hover:bg-blue-800 hover:text-white text-slate-600 px-2.5 py-1 rounded-lg transition">
+                Repaint
+              </button>`;
+    }
+
+    function liveryCell(v) {
+      const name = v.livery || "—";
+      if (!v.liveryCssL) {
+        return `<span class="text-amber-700">${name}</span>`;
+      }
+      const bg = `background-color:${v.liveryColour || "#334155"};background-image:${v.liveryCssL};`;
+      const fg = v.liveryText || "#ffffff";
+      const stroke = v.liveryStroke || "rgba(0,0,0,.6)";
+      return `<div class="mbt-livery" style="${escAttr(bg)}" title="${escAttr(name)}">` +
+        `<span style="color:${escAttr(fg)};text-shadow:1px 1px 0 ${escAttr(stroke)},-1px 1px 0 ${escAttr(stroke)},1px -1px 0 ${escAttr(stroke)},-1px -1px 0 ${escAttr(stroke)};">${v.id}</span>` +
+        `</div><div class="text-amber-700 mt-1">${name}</div>`;
+    }
+
+    function renderFleetTable() {
+      const q = (document.getElementById("fleet-search")?.value || "").toLowerCase();
+      const cat = document.getElementById("fleet-cat-filter")?.value || "ALL";
+      const tbody = document.getElementById("fleet-tbody");
+
+      // Vehicles flagged Not In Service are kept in the database but hidden here.
+      const inService = state.fleetRegistry.filter(v => v.inService !== false);
+      const hiddenCount = state.fleetRegistry.length - inService.length;
+      const note = document.getElementById("fleet-oos-note");
+      if (note) {
+        note.textContent = hiddenCount > 0
+          ? `${hiddenCount} out-of-service vehicle(s) hidden from this list.`
+          : "";
+      }
+
+      const filtered = inService.filter(v => {
+        if (cat !== "ALL" && v.cat !== cat) return false;
+        if (!q) return true;
+        return (
+          String(v.id).toLowerCase().includes(q) ||
+          (v.reg || "").toLowerCase().includes(q) ||
+          (v.type || "").toLowerCase().includes(q) ||
+          (v.livery || "").toLowerCase().includes(q) ||
+          (v.depot || "").toLowerCase().includes(q) ||
+          (v.operatorCode || "").toLowerCase().includes(q)
+        );
+      });
+
+      tbody.innerHTML = filtered.map(v => {
+        const idNum = typeof v.id === "number" ? v.id : (/^\d+$/.test(String(v.id)) ? parseInt(v.id, 10) : null);
+        const isEV = (v.type || "").includes("EV") || (v.type || "").includes("Electroliner") || (v.type || "").includes("eCitaro") || (idNum !== null && ((idNum >= 2700 && idNum < 2800) || (idNum >= 3700 && idNum < 3800)));
+        const dt = getDrivetrain(v.type);
+        const engine = dt.engine !== "—" ? dt.engine : (v.engine || "—");
+        const gearbox = dt.gearbox !== "—" ? dt.gearbox : (v.gearbox || "—");
+        return `
+          <tr class="hover:bg-slate-100">
+            <td class="py-2.5 px-3 mono font-bold text-sky-700">${v.id}</td>
+            <td class="py-2.5 px-3 whitespace-nowrap">
+              <span class="uk-plate ${isEV ? 'uk-plate-ev' : ''}">${v.reg || 'UNREG'}</span>
+            </td>
+            <td class="py-2.5 px-3">
+              <span class="px-2 py-0.5 rounded bg-slate-100 text-slate-600 text-[11px]">${v.cat}</span>
+            </td>
+            <td class="py-2.5 px-3 font-semibold text-slate-900">${v.type}</td>
+            <td class="py-2.5 px-3 whitespace-nowrap text-slate-600">${v.depot || '<span class="text-slate-400">—</span>'}</td>
+            <td class="py-2.5 px-3">${liveryCell(v)}</td>
+            <td class="py-2.5 px-3">
+              <div class="font-semibold text-slate-900">${engine}</div>
+              <div class="text-slate-500">${gearbox}</div>
+              <div class="mt-1">${euroPill(dt.euro)}</div>
+            </td>
+            <td class="py-2.5 px-3 text-right">
+              ${actionCell(v)}
+            </td>
+          </tr>
+        `;
+      }).join("");
+    }
+
+    function changeVehicleLivery(fleetId) {
+      const bus = state.fleetRegistry.find(v => String(v.id) === String(fleetId));
+      if (!bus || bus.cat === "ETM") return;
+      const newLivery = prompt(
+        `Assign new livery for Fleet #${bus.id} (${bus.reg} - ${bus.type}):\n(Repaint cost of £1,862.50 will be logged to Company Bank)`,
+        bus.livery
+      );
+      if (!newLivery || newLivery.trim() === bus.livery) return;
+
+      bus.livery = newLivery.trim();
+      const cost = bus.cat === "Decker" ? 2750 : bus.cat === "Coach" ? 2475 : bus.cat === "Mini/Midi" ? 1387.5 : 1862.5;
+      state.bankBalance -= cost;
+      state.transactions.unshift({
+        date: state.simDate,
+        amount: -cost,
+        type: "Expense",
+        category: "Repaint",
+        notes: `Repaint Fleet #${bus.id} (${bus.reg}) to ${bus.livery}`
+      });
+
+      saveState();
+      renderAll();
+      showToast(`Fleet #${bus.id} repainted into "${bus.livery}" (-${formatGBP(cost, 2)})`, "✅");
+    }
+
+    function registerNewFleetBus() {
+      const id = parseInt(document.getElementById("new-fleet-id").value, 10);
+      const reg = document.getElementById("new-fleet-reg").value.trim().toUpperCase();
+      const type = document.getElementById("new-fleet-type").value.trim();
+
+      if (!id || !reg || !type) {
+        showToast("Please fill in Fleet ID, Registration, and Vehicle Type.", "✅");
+        return;
+      }
+      let cat = "Single";
+      if (id < 200) cat = "Training";
+      else if (id < 2000) cat = "Mini/Midi";
+      else if (id >= 3000 && id < 4000) cat = "Decker";
+      else if (id >= 4000) cat = "Coach";
+
+      state.fleetRegistry.unshift({
+        id,
+        reg,
+        type,
+        cat,
+        livery: "Swift Connect Standard",
+        engine: "Euro VI",
+        gearbox: "ZF EcoLife"
+      });
+
+      document.getElementById("new-fleet-id").value = "";
+      document.getElementById("new-fleet-reg").value = "";
+      document.getElementById("new-fleet-type").value = "";
+      saveState();
+      renderFleetTable();
+      showToast(`Registered Fleet #${id} (${reg})!`, "✅");
+    }
+
+    // =========================================================================
+    // 7. BUS DEALERSHIP & VARIABLE DEPRECIATION/VAT CALCULATOR
+    // =========================================================================
+    function populateDealerSelect() {
+      const sel = document.getElementById("calc-model-select");
+      sel.innerHTML = state.busCatalogue.map((b, idx) =>
+        `<option value="${idx}">${b.model} — ${formatGBP(b.value)}</option>`
+      ).join("");
+    }
+
+    function syncCalcModel() {
+      const idx = parseInt(document.getElementById("calc-model-select").value, 10);
+      const item = state.busCatalogue[idx];
+      if (!item) return;
+      document.getElementById("calc-orig-price").value = item.value;
+      rollSellRate();
+      rollBuyRate();
+      updateDepreciationCalc();
+    }
+
+    function selectCatalogueModel(idx) {
+      document.getElementById("calc-model-select").value = idx;
+      syncCalcModel();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    // ---- Used Bus Valuation: separate SELL (class/fuel depreciation) & BUY (age-band VAT) ----
+    // Rolled rates are locked per selection and only re-rolled on model/year
+    // change (or via the Re-roll button), so typing qty/price never reprices.
+    let calcSell = null; // { rate (% p.a.), band }
+    let calcBuy = null;  // { rate (% of original), band }
+
+    function sellBandForModel(model) {
+      const m = String(model || "");
+      if (/EV|Electric|Electroliner|eCitaro|Hybrid|ECity|BYD|Switch/.test(m))
+        return { label: "Electric / Hybrid", min: 8.3, max: 12.5 };
+      if (/Coach|Irizar|Leopard|Panther|Contour|GT12|Tourismo|Levante|Paragon|Elite|Jonckheere|Neoplan|Van Hool/.test(m))
+        return { label: "Coach", min: 10, max: 14.3 };
+      // Minibus = small-bus name or overall length under 8m (parsed numerically).
+      const lenMatch = m.match(/(\d+(?:\.\d+)?)\s*m\b/);
+      const lenM = lenMatch ? parseFloat(lenMatch[1]) : null;
+      if (/Sprinter|\bTransit\b|Mellor|Treo|Strata|\bEVM\b|Minibus/.test(m) || (lenM !== null && lenM < 8))
+        return { label: "Diesel Minibus", min: 15, max: 20 };
+      return { label: "Diesel Midi / Single / Decker", min: 6, max: 8.3 };
+    }
+
+    function buyBandForAge(age) {
+      if (age <= 5) return { label: "New–5 yrs", min: 75, max: 85 };
+      if (age <= 7) return { label: "6–7 yrs", min: 40, max: 55 };
+      return { label: "8 yrs+", min: 15, max: 25 };
+    }
+
+    const rollPct = (min, max) => Math.round((min + Math.random() * (max - min)) * 10) / 10;
+
+    function rollSellRate() {
+      const idx = parseInt(document.getElementById("calc-model-select").value, 10);
+      const item = state.busCatalogue[idx];
+      const band = sellBandForModel(item ? item.model : "");
+      calcSell = { rate: rollPct(band.min, band.max), band: band.label };
+    }
+
+    function rollBuyRate() {
+      const year = parseInt(document.getElementById("calc-year").value, 10) || 2026;
+      const age = Math.max(0, 2026 - year);
+      const band = buyBandForAge(age);
+      calcBuy = { rate: rollPct(band.min, band.max), band: band.label };
+    }
+
+    function rerollTradeRates() {
+      rollSellRate();
+      rollBuyRate();
+      updateDepreciationCalc();
+    }
+
+    function onCalcYearChange() {
+      rollBuyRate();
+      updateDepreciationCalc();
+    }
+
+    function updateDepreciationCalc() {
+      const origPrice = parseFloat(document.getElementById("calc-orig-price").value) || 0;
+      const year = parseInt(document.getElementById("calc-year").value, 10) || 2026;
+      const qty = Math.max(1, parseInt(document.getElementById("calc-qty").value, 10) || 1);
+
+      const age = Math.max(0, 2026 - year);
+      if (!calcSell) rollSellRate();
+      if (!calcBuy) rollBuyRate();
+      // SELL: compound annual depreciation at the rolled class/fuel rate.
+      const unitSellValue = origPrice * Math.pow(1 - calcSell.rate / 100, age);
+      const totalSell = unitSellValue * qty;
+      // BUY: rolled % of original price for the age band (VAT-inclusive).
+      const unitBuyPrice = origPrice * (calcBuy.rate / 100);
+      const totalBuy = unitBuyPrice * qty;
+
+      document.getElementById("calc-age-out").textContent = age === 0 ? "0 yrs (Brand New)" : `${age} yr(s)`;
+      document.getElementById("calc-sell-band").textContent = `(${calcSell.band})`;
+      document.getElementById("calc-sell-rate-out").textContent = `${calcSell.rate}% p.a.`;
+      document.getElementById("calc-depr-out").textContent = formatGBP(totalSell, 2);
+      document.getElementById("calc-buy-band").textContent = `(${calcBuy.band})`;
+      document.getElementById("calc-buy-rate-out").textContent = `${calcBuy.rate}% of new`;
+      document.getElementById("calc-vat-out").textContent = formatGBP(totalBuy, 2);
+      const badge = document.getElementById("calc-rate-badge");
+      if (badge) badge.textContent = `Sell ${calcSell.rate}% · Buy ${calcBuy.rate}%`;
+      return { origPrice, year, qty, age, totalSell, totalBuy };
+    }
+
+    function executeBusTrade(mode) {
+      const idx = parseInt(document.getElementById("calc-model-select").value, 10);
+      const modelObj = state.busCatalogue[idx];
+      const region = document.getElementById("calc-region").value;
+      const calc = updateDepreciationCalc();
+
+      if (mode === "BUY") {
+        if (state.bankBalance < calc.totalBuy) {
+          showToast("Insufficient Company Bank Funds for this purchase!", "🚫");
+          return;
+        }
+        state.bankBalance -= calc.totalBuy;
+        modelObj.count += calc.qty;
+        modelObj.regions = modelObj.regions ? `${modelObj.regions}, ${shortRegion(region)}:${calc.qty}` : `${shortRegion(region)}:${calc.qty}`;
+
+        const baseType = canonicalFleetType(modelObj.model);
+        for (let i = 0; i < calc.qty; i++) {
+          const nid = nextFleetIdNo();
+          state.fleetRegistry.push({
+            id: nid,
+            reg: "UNREG",
+            type: baseType,
+            cat: catForIdNum(nid),
+            livery: "Swift Connect Standard",
+            engine: "—",
+            gearbox: "—",
+            depot: region,
+            operatorCode: "",
+            operatorName: "",
+            inService: true
+          });
+        }
+
+        state.transactions.unshift({
+          date: state.simDate,
+          amount: -Math.round(calc.totalBuy * 100) / 100,
+          type: "Expense",
+          category: "Vehicle Purchase",
+          notes: `${calc.qty}x ${modelObj.model} (${calc.year}) for ${region} @ ${calcBuy.rate}%`
+        });
+        showToast(`Purchased ${calc.qty}x ${modelObj.model} for ${formatGBP(calc.totalBuy)}!`, "✅");
+      } else {
+        const ownedNow = computeOwnedCounts().counts[idx];
+        if (ownedNow < calc.qty) {
+          showToast(`You only own ${ownedNow} of ${modelObj.model} to sell!`, "✅");
+          return;
+        }
+        state.bankBalance += calc.totalSell;
+        modelObj.count -= calc.qty;
+
+        let toRemove = calc.qty;
+        for (let i = state.fleetRegistry.length - 1; i >= 0 && toRemove > 0; i--) {
+          const v = state.fleetRegistry[i];
+          if (v.cat !== "ETM" && matchCatalogueIndex(v.type) === idx) {
+            state.fleetRegistry.splice(i, 1);
+            toRemove--;
+          }
+        }
+
+        state.transactions.unshift({
+          date: state.simDate,
+          amount: Math.round(calc.totalSell * 100) / 100,
+          type: "Income",
+          category: "Vehicle Sale",
+          notes: `Sold ${calc.qty}x ${modelObj.model} (${calc.year}) @ ${calcSell.rate}% p.a.`
+        });
+        showToast(`Sold ${calc.qty}x ${modelObj.model} for ${formatGBP(calc.totalSell)}!`, "✅");
+      }
+
+      saveState();
+      renderAll();
+    }
+
+    let dealerSort = { key: null, dir: 1 };
+
+    function modelTokens(str) {
+      const noDims = String(str || "").replace(/\d+(\.\d+)?\s*m\b/gi, " ");
+      const aliased = noDims.toLowerCase().replace(/wrightbus/g, "wright");
+      return aliased.match(/[a-z]+|[0-9]+/g) || [];
+    }
+
+    function digitGroups(str) {
+      const t = String(str || "").replace(/\d+(\.\d+)?\s*m\b/gi, " ").toLowerCase();
+      return t.match(/[0-9]+/g) || [];
+    }
+
+    function matchCatalogueIndex(regType) {
+      const rt = modelTokens(regType);
+      if (!rt.length) return -1;
+      const rtSet = new Set(rt);
+      const rd = digitGroups(regType);
+      let best = -1, bestShared = 0, bestExtra = Infinity;
+      state.busCatalogue.forEach((b, idx) => {
+        const cd = digitGroups(b.model);
+        if (rd.length && (!cd.length || !rd.some(d => cd.includes(d)))) return; // conflicting model numbers
+        const ct = modelTokens(b.model);
+        const ctSet = new Set(ct);
+        let shared = 0;
+        rtSet.forEach(t => { if (ctSet.has(t)) shared++; });
+        if (shared < 2) return;
+        const extra = ct.length - shared;
+        if (shared > bestShared || (shared === bestShared && extra < bestExtra)) {
+          best = idx; bestShared = shared; bestExtra = extra;
+        }
+      });
+      return best;
+    }
+
+    function computeOwnedCounts() {
+      const counts = state.busCatalogue.map(() => 0);
+      const unmatched = {};
+      state.fleetRegistry.forEach(v => {
+        if (v.cat === "ETM") return;
+        const idx = matchCatalogueIndex(v.type);
+        if (idx >= 0) counts[idx]++;
+        else {
+          const k = v.type || "Unknown Type";
+          unmatched[k] = unmatched[k] || { count: 0 };
+          unmatched[k].count++;
+        }
+      });
+      return { counts, unmatched };
+    }
+
+    function canonicalFleetType(model) {
+      const stripped = String(model || "").replace(/\d+(\.\d+)?\s*m\b/gi, "").replace(/\s+/g, " ").trim();
+      const dt = window.DB_SEED_DRIVETRAIN_SPECS || {};
+      const a = new Set(modelTokens(stripped));
+      const rd = digitGroups(stripped);
+      let best = null, bestShared = 0;
+      Object.keys(dt).forEach(t => {
+        const cd = digitGroups(t);
+        if (rd.length && (!cd.length || !rd.some(d => cd.includes(d)))) return;
+        const b = new Set(modelTokens(t));
+        let shared = 0;
+        a.forEach(x => { if (b.has(x)) shared++; });
+        if (shared >= 3 && shared > bestShared) { best = t; bestShared = shared; }
+      });
+      return best || stripped;
+    }
+
+    function nextFleetIdNo() {
+      let mx = 0;
+      state.fleetRegistry.forEach(v => { if (typeof v.id === "number" && v.id > mx) mx = v.id; });
+      return mx + 1;
+    }
+
+    function catForIdNum(id) {
+      if (id < 200) return "Training";
+      if (id < 2000) return "Mini/Midi";
+      if (id >= 3000 && id < 4000) return "Decker";
+      if (id >= 4000) return "Coach";
+      return "Single";
+    }
+
+    function shortRegion(name) {
+      const map = { "West Midlands": "WM", "Notts & Derby": "N&D", "Shropshire": "Shrop", "Worcestershire": "Worcs", "Wales": "Wales", "Staffordshire": "Staffs", "South London": "SLon", "Yard": "Yard", "Preservation": "Pres" };
+      return map[name] || name;
+    }
+
+    function sortDealerBy(key) {
+      if (dealerSort.key === key) dealerSort.dir *= -1;
+      else dealerSort = { key, dir: key === "model" ? 1 : -1 };
+      renderDealerCatalogue();
+    }
+
+    function renderDealerCatalogue() {
+      const q = (document.getElementById("dealer-search")?.value || "").toLowerCase();
+      const ownedOnly = document.getElementById("dealer-owned-only")?.checked;
+      const tbody = document.getElementById("dealer-tbody");
+      const { counts, unmatched } = computeOwnedCounts();
+
+      let list = state.busCatalogue.map((b, idx) => ({ b, idx, owned: counts[idx], totalVal: b.value * counts[idx] }));
+      if (ownedOnly) list = list.filter(r => r.owned > 0);
+      if (q) list = list.filter(r => r.b.model.toLowerCase().includes(q) || (r.b.regions || "").toLowerCase().includes(q));
+
+      if (dealerSort.key) {
+        const d = dealerSort.dir;
+        list = list.slice().sort((x, y) => {
+          if (dealerSort.key === "model") return d * x.b.model.localeCompare(y.b.model);
+          if (dealerSort.key === "value") return d * (x.b.value - y.b.value);
+          if (dealerSort.key === "owned") return d * (x.owned - y.owned);
+          if (dealerSort.key === "total") return d * (x.totalVal - y.totalVal);
+          return 0;
+        });
+      }
+
+      const arrows = { model: "", value: "", owned: "", total: "" };
+      if (dealerSort.key) arrows[dealerSort.key] = dealerSort.dir === 1 ? " ▲" : " ▼";
+
+      tbody.innerHTML = list.map(r => {
+        const b = r.b, idx = r.idx;
+        return `
+          <tr class="hover:bg-slate-100">
+            <td class="py-2.5 px-3 font-semibold text-slate-900">${b.model}</td>
+            <td class="py-2.5 px-3 mono text-right text-sky-700">${formatGBP(b.value)}</td>
+            <td class="py-2.5 px-3 mono text-center font-bold ${r.owned > 0 ? 'text-emerald-700' : 'text-slate-500'}">${r.owned}</td>
+            <td class="py-2.5 px-3 text-slate-500">${b.regions || '—'}</td>
+            <td class="py-2.5 px-3 mono text-right text-slate-600">${formatGBP(r.totalVal)}</td>
+            <td class="py-2.5 px-3 text-right">
+              <button onclick="selectCatalogueModel(${idx})" class="text-xs bg-sky-100 hover:bg-blue-800 text-sky-800 hover:text-white border border-sky-500/30 px-2.5 py-1 rounded-lg transition">
+                Select
+              </button>
+            </td>
+          </tr>
+        `;
+      }).join("");
+
+      ["model", "value", "owned", "total"].forEach(k => {
+        const el = document.getElementById("dealer-sort-" + k);
+        if (el) el.textContent = arrows[k];
+      });
+
+      const unEl = document.getElementById("dealer-unmatched");
+      if (unEl) {
+        const keys = Object.keys(unmatched);
+        const totalUn = keys.reduce((a, k) => a + unmatched[k].count, 0);
+        unEl.textContent = keys.length
+          ? `${totalUn} fleet vehicle(s) across ${keys.length} type(s) could not be matched to a catalogue model and are excluded from Owned Counts: ` +
+            keys.sort((a, b) => unmatched[b].count - unmatched[a].count).slice(0, 8).map(k => `${k} (${unmatched[k].count})`).join(", ") +
+            (keys.length > 8 ? `, +${keys.length - 8} more` : "")
+          : "";
+      }
+    }
+
+    // =========================================================================
+    // 8. WORKSHOP (REPAINTS, UPGRADES & REPAIRS)
+    // =========================================================================
+    function onWorkshopClassChange() {
+      populateWorkshopServices();
+      populateWorkshopVehicles();
+    }
+
+    function populateWorkshopServices() {
+      const vClass = document.getElementById("wo-class").value;
+      const services = WORKSHOP_CATALOGUE[vClass] || [];
+      const sel = document.getElementById("wo-service");
+      sel.innerHTML = services.map((s, i) =>
+        `<option value="${i}">[${s.group}] ${s.name} — ${formatGBP(s.cost, 2)} (${s.days}d)</option>`
+      ).join("");
+      if (sel.options.length) sel.options[0].selected = true;
+      updateWorkOrderQuote();
+    }
+
+    // Maps work-order categories onto fleet-registry categories.
+    const WO_CLASS_TO_CAT = { "MINI/MIDI": "Mini/Midi", "Single": "Single", "Double Decker": "Decker", "Coach": "Coach" };
+
+    function getWorkshopVehicles(vClass) {
+      const inService = (state.fleetRegistry || []).filter(v => v.inService !== false);
+      let list = inService.filter(v => v.cat === WO_CLASS_TO_CAT[vClass]);
+      if (!list.length) {
+        const ranges = { "MINI/MIDI": [1000, 1999], "Single": [2000, 2999], "Double Decker": [3000, 3999], "Coach": [4000, 4999] };
+        const [lo, hi] = ranges[vClass] || [0, 999999];
+        list = inService.filter(v => { const n = parseInt(v.id, 10); return n >= lo && n <= hi; });
+      }
+      return list.slice().sort((a, b) => parseInt(a.id, 10) - parseInt(b.id, 10));
+    }
+
+    function populateWorkshopVehicles() {
+      const vClass = document.getElementById("wo-class").value;
+      const sel = document.getElementById("wo-vehicles");
+      if (!sel) return;
+      sel.innerHTML = getWorkshopVehicles(vClass).map(v =>
+        `<option value="${v.id}">${v.id} — ${v.reg || "UNREG"}</option>`
+      ).join("");
+      updateWorkOrderQuote();
+    }
+
+    function getSelectedWorkshopVehicles() {
+      const sel = document.getElementById("wo-vehicles");
+      if (!sel) return [];
+      const picked = Array.from(sel.selectedOptions || []).map(o => String(o.value));
+      const byId = {};
+      getWorkshopVehicles(document.getElementById("wo-class").value).forEach(v => { byId[String(v.id)] = v; });
+      return picked.map(id => byId[id]).filter(Boolean);
+    }
+
+    function selectAllWorkshopVehicles(select) {
+      const sel = document.getElementById("wo-vehicles");
+      Array.from(sel.options).forEach(o => { o.selected = !!select; });
+      updateWorkOrderQuote();
+    }
+
+    function getSelectedWorkshopServices() {
+      const vClass = document.getElementById("wo-class").value;
+      const services = WORKSHOP_CATALOGUE[vClass] || [];
+      const sel = document.getElementById("wo-service");
+      return Array.from(sel.selectedOptions || [])
+        .map(o => ({ index: parseInt(o.value, 10), service: services[parseInt(o.value, 10)] }))
+        .filter(x => x.service);
+    }
+
+    function selectAllWorkshopServices(select) {
+      const sel = document.getElementById("wo-service");
+      Array.from(sel.options).forEach(o => { o.selected = !!select; });
+      updateWorkOrderQuote();
+    }
+
+    function updateWorkOrderQuote() {
+      const vClass = document.getElementById("wo-class").value;
+      const selected = getSelectedWorkshopServices();
+      const vehicles = getSelectedWorkshopVehicles();
+      const jobsEl = document.getElementById("wo-jobs-count");
+      if (jobsEl) jobsEl.textContent = selected.length;
+      const vehEl = document.getElementById("wo-vehicles-count");
+      if (vehEl) vehEl.textContent = vehicles.length;
+      if (!selected.length || !vehicles.length) {
+        document.getElementById("wo-unit-cost").textContent = formatGBP(0, 2);
+        document.getElementById("wo-downtime").textContent = "0 days";
+        document.getElementById("wo-total-cost").textContent = formatGBP(0, 2);
+        return null;
+      }
+
+      const unitCost = selected.reduce((acc, x) => acc + x.service.cost, 0);
+      const totalDays = selected.reduce((acc, x) => acc + x.service.days, 0);
+      const totalCost = unitCost * vehicles.length;
+      document.getElementById("wo-unit-cost").textContent = formatGBP(unitCost, 2);
+      document.getElementById("wo-downtime").textContent = `${totalDays} days`;
+      document.getElementById("wo-total-cost").textContent = formatGBP(totalCost, 2);
+      return { vClass, selected, vehicles, count: vehicles.length, unitCost, totalDays, totalCost };
+    }
+
+    function authorizeWorkOrder() {
+      const servicesPicked = getSelectedWorkshopServices().length;
+      const vehiclesPicked = getSelectedWorkshopVehicles().length;
+      if (!servicesPicked) {
+        showToast("Please select at least one workshop job/upgrade.", "⚠️");
+        return;
+      }
+      if (!vehiclesPicked) {
+        showToast("Please select at least one specific vehicle (Fleet ID) for this work order.", "⚠️");
+        return;
+      }
+      const quote = updateWorkOrderQuote();
+      if (!quote) return;
+      const ids = quote.vehicles.map(v => String(v.id));
+      const ref = ids.join(", ");
+      const names = quote.selected.map(x => x.service.name).join(" + ");
+      const allRepaint = quote.selected.every(x => x.service.group === "Repaint & Body");
+
+      state.bankBalance -= quote.totalCost;
+      state.workshopQueue.push({
+        vehicleClass: quote.vClass,
+        serviceName: quote.selected.length > 1 ? `${quote.selected.length} jobs: ${names}` : names,
+        count: quote.count,
+        daysLeft: quote.totalDays,
+        ref: ref,
+        vehicleIds: ids
+      });
+
+      state.transactions.unshift({
+        date: state.simDate,
+        amount: -quote.totalCost,
+        type: "Expense",
+        category: allRepaint ? "Repaint" : "Repair & Conversion",
+        notes: `${quote.count}x ${quote.vClass}: ${names} (Fleet: ${ref})`
+      });
+
+      selectAllWorkshopVehicles(false);
+      saveState();
+      renderAll();
+      showToast(`Booked ${quote.count}x ${quote.vClass} [${ref}] for ${quote.selected.length} job(s): ${names} (${formatGBP(quote.totalCost, 2)})`, "✅");
+    }
+
+    function renderWorkshopCards() {
+      const repaintItems = [
+        { title: "Exterior Livery Repaint", rates: ["Mini: £1,387.50 (3d)", "Single: £1,862.50 (4d)", "Decker: £2,750 (5d)", "Coach: £2,475 (5d)"] },
+        { title: "Interior Decoration Refurb", rates: ["Mini: £1,950 (4d)", "Single: £3,100 (6d)", "Decker: £6,250 (10d)", "Coach: £3,900 (7d)"] },
+        { title: "Full Seat Re-Upholstery", rates: ["Mini: £2,850 (3d)", "Single: £4,800 (5d)", "Decker: £8,750 (10d)", "Coach: £9,750 (8d)"] },
+        { title: "USB-A/C, Wi-Fi & Next Stop Tech", rates: ["USB: £1,125–£3,150", "Wi-Fi: £650–£850", "Next Stop Audio/LED: £850–£3,000 (2–4d)"] }
+      ];
+      document.getElementById("repaint-services-grid").innerHTML = repaintItems.map(item => `
+        <div class="bg-white border border-slate-200 p-3.5 rounded-md">
+          <div class="text-xs font-bold text-sky-700">${item.title}</div>
+          <ul class="text-xs text-slate-600 mt-1.5 space-y-1 leading-relaxed list-disc pl-4">${item.rates.map(r => `<li>${r}</li>`).join("")}</ul>
+        </div>
+      `).join("");
+
+      const repairItems = [
+        { title: "Full Electric Zero-Emission Conversion", rates: ["Mini: £127,500 (18d)", "Single: £162,500 (21d)", "Decker: £192,500 (25d)", "Coach: £240,000 (35d)"] },
+        { title: "Hybrid Drivetrain Conversion", rates: ["Mini: £52,500 (11d)", "Single: £72,500 (14d)", "Decker: £95,000 (18d)", "Coach: £122,500 (25d)"] },
+        { title: "Engine & Gearbox Major Overhauls", rates: ["Engine: £6,000–£14,000 (4–7d)", "Gearbox: £4,250–£8,500 (2–4d)"] },
+        { title: "Chassis, Panel & Single-Door Conversion", rates: ["Panel: £550–£1,650", "Rotten Chassis: £2,350–£5,750", "Dual-to-Single Door: £5,750 (10d)"] }
+      ];
+      document.getElementById("repair-services-grid").innerHTML = repairItems.map(item => `
+        <div class="bg-white border border-slate-200 p-3.5 rounded-md">
+          <div class="text-xs font-bold text-amber-700">${item.title}</div>
+          <ul class="text-xs text-slate-600 mt-1.5 space-y-1 leading-relaxed list-disc pl-4">${item.rates.map(r => `<li>${r}</li>`).join("")}</ul>
+        </div>
+      `).join("");
+    }
+
+    // =========================================================================
+    // 9. REGIONAL FARE CALCULATOR
+    // =========================================================================
+    function populateFareRegions() {
+      const sel = document.getElementById("fare-region-select");
+      sel.innerHTML = Object.keys(state.fares).map(r => `<option value="${r}">${r}</option>`).join("");
+    }
+
+    function renderFareTable() {
+      const regionName = document.getElementById("fare-region-select")?.value || Object.keys(state.fares)[0];
+      const region = state.fares[regionName];
+      if (!region) return;
+
+      let totalRevPerBus = 0;
+      const tbody = document.getElementById("fares-tbody");
+      tbody.innerHTML = region.tickets.map((t, idx) => {
+        const dailyIncome = t.price * t.pax * t.factor;
+        totalRevPerBus += dailyIncome;
+        return `
+          <tr class="hover:bg-slate-100">
+            <td class="py-2.5 px-4 font-semibold text-slate-900">${t.name}</td>
+            <td class="py-2.5 px-4 text-right">
+              <input type="number" step="0.10" value="${t.price}" onchange="updateFareItem('${regionName}', ${idx}, 'price', this.value)"
+                class="bg-white border border-slate-300 rounded-lg px-2 py-1 text-right mono text-xs text-sky-700 w-24" />
+            </td>
+            <td class="py-2.5 px-4 text-right">
+              <input type="number" step="1" value="${t.pax}" onchange="updateFareItem('${regionName}', ${idx}, 'pax', this.value)"
+                class="bg-white border border-slate-300 rounded-lg px-2 py-1 text-right mono text-xs text-amber-700 w-24" />
+            </td>
+            <td class="py-2.5 px-4 mono text-right font-bold text-emerald-700">${formatGBP(dailyIncome, 2)}</td>
+          </tr>
+        `;
+      }).join("");
+
+      const profitPerBus = totalRevPerBus - region.opExPerBus;
+      document.getElementById("fare-rev-bus").textContent = formatGBP(totalRevPerBus, 2);
+      document.getElementById("fare-cost-bus").textContent = formatGBP(region.opExPerBus, 2);
+      document.getElementById("fare-profit-bus").textContent = formatGBP(profitPerBus, 2);
+    }
+
+    function updateFareItem(regionName, idx, field, val) {
+      const num = parseFloat(val);
+      if (isNaN(num) || num < 0) return;
+      state.fares[regionName].tickets[idx][field] = num;
+      saveState();
+      renderFareTable();
+      showToast(`Updated ${state.fares[regionName].tickets[idx].name} in ${regionName}!`, "✅");
+    }
+
+    // =========================================================================
+    // 10. NAVIGATION & UTILITIES
+    // =========================================================================
+    function switchTab(tabId) {
+      const tabs = ["dashboard", "depots", "fleet", "dealership", "workshop", "fares", "mybustimes"];
+      tabs.forEach(t => {
+        document.getElementById(`view-${t}`).classList.toggle("hidden", t !== tabId);
+        const btn = document.getElementById(`tab-${t}`);
+        if (t === tabId) {
+          btn.className = "tab-btn px-4 py-2.5 text-xs md:text-sm font-semibold border-b-2 border-blue-800 text-blue-900 whitespace-nowrap";
+        } else {
+          btn.className = "tab-btn px-4 py-2.5 text-xs md:text-sm font-semibold border-b-2 border-transparent text-slate-500 hover:text-slate-900 whitespace-nowrap";
+        }
+      });
+    }
+
+    function exportSaveData() {
+      const data = window.DB.exportAll();
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `swift_connect_db_${state.simDate}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+      showToast("Database exported (9 tables)!", "\u2b07");
+    }
+
+    function exportSingleTable(name) {
+      const data = window.DB.load(name);
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `swift_connect_${name}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    function resetDatabaseToSeeds() {
+      if (!confirm("Reload factory defaults from the individual database/*.js seed files? Unsaved edits will be lost.")) return;
+      state = window.DB.resetToSeeds();
+      populateDealerSelect();
+      syncCalcModel();
+      populateWorkshopServices();
+      populateWorkshopVehicles();
+      populateFareRegions();
+      renderAll();
+      showToast("Database reset to seed files!", "\u21ba");
+    }
+
+    function importDatabaseFile(input) {
+      const file = input && input.files && input.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function () {
+        try {
+          const data = JSON.parse(reader.result);
+          if (data.meta && data.transactions && data.depots) {
+            window.DB.save("meta", data.meta);
+            window.DB.save("transactions", data.transactions);
+            window.DB.save("depots", data.depots);
+            window.DB.save("busCatalogue", data.busCatalogue);
+            window.DB.save("fleetRegistry", data.fleetRegistry);
+            window.DB.save("fares", data.fares);
+            window.DB.save("workshopQueue", data.workshopQueue || []);
+            window.DB.save("workshopCompleted", data.workshopCompleted || []);
+            if (data.mbtOperators) window.DB.save("mbtOperators", data.mbtOperators);
+          } else if (data.simDate !== undefined && data.depots) {
+            window.DB.save("meta", { simDate: data.simDate, bankBalance: data.bankBalance });
+            if (data.transactions) window.DB.save("transactions", data.transactions);
+            window.DB.save("depots", data.depots);
+            if (data.busCatalogue) window.DB.save("busCatalogue", data.busCatalogue);
+            if (data.fleetRegistry) window.DB.save("fleetRegistry", data.fleetRegistry);
+            if (data.fares) window.DB.save("fares", data.fares);
+            if (data.workshopQueue) window.DB.save("workshopQueue", data.workshopQueue);
+            if (data.workshopCompleted) window.DB.save("workshopCompleted", data.workshopCompleted);
+            if (data.mbtOperators) window.DB.save("mbtOperators", data.mbtOperators);
+          } else {
+            showToast("Unrecognised database file format.", "\u26a0\ufe0f");
+            return;
+          }
+          loadState();
+          populateDealerSelect();
+          syncCalcModel();
+          populateWorkshopServices();
+      populateWorkshopVehicles();
+          populateFareRegions();
+          renderAll();
+          showToast("Database imported and saved!", "\u2b06");
+        } catch (e) {
+          console.error(e);
+          showToast("Import failed: invalid JSON.", "\u26a0\ufe0f");
+        } finally {
+          input.value = "";
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    let toastTimer = null;
+    function showToast(msg, icon = "✅") {
+      const t = document.getElementById("toast");
+      document.getElementById("toast-msg").textContent = msg;
+      document.getElementById("toast-icon").textContent = icon;
+      t.classList.remove("hidden");
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => t.classList.add("hidden"), 3800);
+    }
+
+    // =========================================================================
+    // 11. THEME (light default, dark mode toggle, preference persisted)
+    // =========================================================================
+    function initTheme() {
+      let t = null;
+      try { t = localStorage.getItem("sc_theme"); } catch (e) {}
+      if (!t && window.matchMedia && matchMedia("(prefers-color-scheme: dark)").matches) t = "dark";
+      if (t === "dark") document.body.classList.add("dark");
+      updateThemeBtn();
+    }
+
+    function toggleTheme() {
+      const dark = document.body.classList.toggle("dark");
+      try { localStorage.setItem("sc_theme", dark ? "dark" : "light"); } catch (e) {}
+      updateThemeBtn();
+    }
+
+    function updateThemeBtn() {
+      const b = document.getElementById("theme-toggle");
+      if (!b) return;
+      const dark = document.body.classList.contains("dark");
+      b.textContent = dark ? "☀" : "☾";
+      b.title = dark ? "Switch to light mode" : "Switch to dark mode";
+    }
+
+    // =========================================================================
+    // 12. BOOT SPLASH + MYBUSTIMES AUTOSYNC
+    // =========================================================================
+    let splashDone = false;
+
+    function splashSetStatus(t) {
+      const el = document.getElementById("splash-status");
+      if (el) el.textContent = t;
+    }
+
+    function splashEnter() {
+      if (splashDone) return;
+      splashDone = true;
+      if (window._splashCycle) clearInterval(window._splashCycle);
+      document.body.classList.remove("booting");
+      const sp = document.getElementById("splash");
+      if (sp) {
+        sp.classList.add("gone");
+        setTimeout(() => sp.remove(), 800);
+      }
+    }
+
+    function bootSplash() {
+      // Single image fades in at the start.
+      const img = document.querySelector("#splash-imgs .splash-img");
+      if (typeof requestAnimationFrame === "function") {
+        requestAnimationFrame(() => requestAnimationFrame(() => img?.classList.add("active")));
+      } else if (img) {
+        img.classList.add("active");
+      }
+
+      // "Operations Portal" fades in a second later (1s fade via CSS).
+      setTimeout(() => document.getElementById("splash-title")?.classList.add("visible"), 1000);
+
+      // Failsafe: never trap the user behind the splash.
+      setTimeout(() => {
+        if (!splashDone) {
+          splashSetStatus("Taking too long — you can enter with saved data.");
+          document.getElementById("splash-enter")?.classList.remove("hidden");
+        }
+      }, 30000);
+
+      // Autosync, then reveal the page.
+      let params = null;
+      try { params = new URLSearchParams(location.search); } catch (e) {}
+      if ((params && params.get("bootsync") === "0") || typeof MBT === "undefined" || typeof MBT.fetchAllOperators !== "function") {
+        splashSetStatus("Auto-sync skipped — using saved data.");
+        setTimeout(splashEnter, 1400);
+        return;
+      }
+      let ids = [];
+      try { ids = MBT.getOperators().map(o => o.id).filter(Boolean); } catch (e) {}
+      if (!ids.length) {
+        splashSetStatus("No operators configured — using saved data.");
+        setTimeout(splashEnter, 1400);
+        return;
+      }
+      splashSetStatus("Contacting mybustimes…");
+      MBT.fetchAllOperators(ids, (msg) => splashSetStatus(msg)).then((res) => {
+        if (!res.vehicles.length) {
+          splashSetStatus("Sync returned no vehicles — using saved data.");
+          document.getElementById("splash-enter")?.classList.remove("hidden");
+          setTimeout(splashEnter, 2500);
+          return;
+        }
+        splashSetStatus(`Applying ${res.vehicles.length} vehicles…`);
+        try {
+          const s = MBT.applySync(res.vehicles, { includeOutOfService: true, autoCreateDepots: true, zeroMissingDepots: false, switchToDepots: false });
+          splashSetStatus(`Synced ${s.vehiclesFetched} vehicles · ${s.depotsTouched} depots updated.`);
+        } catch (e) {
+          splashSetStatus("Apply failed — using saved data.");
+        }
+        setTimeout(splashEnter, 900);
+      }).catch(() => {
+        splashSetStatus("Sync failed (network blocked?) — using saved data.");
+        document.getElementById("splash-enter")?.classList.remove("hidden");
+        setTimeout(splashEnter, 4000);
+      });
+    }
+
+    // Initialize App on Load
+    window.addEventListener("DOMContentLoaded", () => {
+      initTheme();
+      loadState();
+      // Anchor the sim to today's UK date: post any missed days' income
+      // (each for the day prior) and tick the workshop forward.
+      const catchup = catchUpToToday();
+      if (catchup.days > 0) saveState();
+      populateDealerSelect();
+      syncCalcModel();
+      populateWorkshopServices();
+      populateWorkshopVehicles();
+      renderWorkshopCards();
+      populateFareRegions();
+      renderAll();
+      if (catchup.days > 0) {
+        const [yyyy, mm, dd] = state.simDate.split("-");
+        showToast(`Overnight income posted for ${catchup.days} day(s): ${formatGBP(catchup.totalNet, 2)} — sim date now ${dd}/${mm}/${yyyy}.`, "✅");
+      }
+      bootSplash();
+      // Automatic midnight rollover: while the app is open, post each new
+      // UK day's income (for the day prior) as soon as it begins.
+      setInterval(() => {
+        if (getUKTodayString() > state.simDate) {
+          const c = catchUpToToday();
+          if (c.days > 0) {
+            saveState();
+            renderAll();
+            showToast(`Midnight rollover: posted ${formatGBP(c.totalNet, 2)} for ${c.days} day(s).`, "✅");
+          }
+        }
+      }, 30000);
+    });
+  </script>
+</body>
+</html>

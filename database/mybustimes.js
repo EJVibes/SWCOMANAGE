@@ -1,0 +1,874 @@
+/* =========================================================================
+ * Swift Connect — MyBusTimes live sync engine (window.MBT)
+ * Sources:
+ *   Operators: https://mybustimes.cc/api/operator/?operator_code=<CODE>
+ *   Fleet:     https://mybustimes.cc/api/operator/fleet/?operator=<ID>
+ *
+ * What it does:
+ *   1. Fetches every vehicle for the configured Swift Connect operators
+ *      (paginated, filtered per-operator by numeric operator ID).
+ *   2. Groups vehicles by their `depot` field -> feeds the Depot Network
+ *      table (Depot Network & Daily Financial Performance) automatically.
+ *   3. Maps every vehicle (fleet_number / reg / type) -> Master Fleet
+ *      Registry entries.
+ * Writes go through the app's state + saveState() so they persist via DB.
+ * ========================================================================= */
+(function () {
+  "use strict";
+
+  var API_BASE = "https://mybustimes.cc/api";
+  var PAGE_LIMIT = 100;
+  var LS_SYNC_KEY = "sc_db_v2_mbt_sync";
+  var LS_ALIAS_KEY = "sc_db_v2_mbt_aliases";
+  var UNALLOCATED = "Unallocated";
+
+  function clone(o) { return JSON.parse(JSON.stringify(o)); }
+
+  function normalize(s) {
+    return String(s === undefined || s === null ? "" : s)
+      .toLowerCase().trim().replace(/\s+/g, " ");
+  }
+
+  function normalizeReg(s) {
+    return String(s || "").toUpperCase().replace(/[\s\-_.]/g, "");
+  }
+
+  function parseFleetId(fleetNumber) {
+    var raw = String(fleetNumber === undefined || fleetNumber === null ? "" : fleetNumber).trim();
+    if (/^\d+$/.test(raw)) {
+      var n = parseInt(raw, 10);
+      return { id: n, idNum: n, raw: raw };
+    }
+    return { id: raw, idNum: null, raw: raw };
+  }
+
+  /* ---------------- operators ---------------- */
+
+  function seedOperators() {
+    return clone(window.DB_SEED_MBT_OPERATORS || []);
+  }
+
+  function getOperators() {
+    var seeds = seedOperators();
+    var stored = null;
+    try {
+      if (window.DB && window.DB.load) {
+        var v = window.DB.load("mbtOperators");
+        if (Array.isArray(v)) stored = v;
+      }
+    } catch (e) { console.error("[MBT] operator load failed", e); }
+    if (!stored) {
+      try {
+        var raw = localStorage.getItem("sc_db_v2_mbt_operators");
+        if (raw) stored = JSON.parse(raw);
+      } catch (e2) {}
+    }
+    if (!stored) return seeds;
+    // Merge: pick up newly-seeded operators and backfill new fields (e.g. fallbackDepot).
+    var byCode = {};
+    stored.forEach(function (o) { byCode[o.code] = o; });
+    var changed = false;
+    seeds.forEach(function (s) {
+      var cur = byCode[s.code];
+      if (!cur) { stored.push(clone(s)); changed = true; return; }
+      ["id", "name", "slug", "depotHint", "fallbackDepot"].forEach(function (k) {
+        if (cur[k] === undefined && s[k] !== undefined) { cur[k] = clone(s[k]); changed = true; }
+      });
+      // Migrate the old shared Yard fallback: Retrofit Yard is now its own location.
+      if (cur.code === "SWRY" && cur.fallbackDepot === "Yard") { cur.fallbackDepot = "Retrofit Yard"; changed = true; }
+    });
+    if (changed) saveOperators(stored);
+    return stored;
+  }
+
+  function saveOperators(list) {
+    try {
+      if (window.DB && window.DB.save) window.DB.save("mbtOperators", list);
+      else localStorage.setItem("sc_db_v2_mbt_operators", JSON.stringify(list));
+    } catch (e) { console.error("[MBT] operator save failed", e); }
+  }
+
+  function resetOperators() {
+    var s = seedOperators();
+    saveOperators(s);
+    return s;
+  }
+
+  function fetchJson(url) {
+    return fetch(url, { headers: { "Accept": "application/json" } }).then(function (res) {
+      if (!res.ok) throw new Error("HTTP " + res.status + " for " + url);
+      return res.json();
+    });
+  }
+
+  function refreshOperatorNames(onProgress) {
+    var ops = getOperators();
+    var chain = Promise.resolve();
+    var updated = [];
+    ops.forEach(function (op) {
+      chain = chain.then(function () {
+        if (onProgress) onProgress("Resolving " + op.code + "…");
+        return fetchJson(API_BASE + "/operator/?format=json&limit=10&operator_code=" + encodeURIComponent(op.code))
+          .then(function (d) {
+            var r = (d.results || [])[0];
+            if (r) {
+              op.id = r.id;
+              op.name = r.operator_name || op.name;
+              op.slug = r.operator_slug || op.slug;
+              updated.push(op.code);
+            }
+          })
+          .catch(function (e) { console.warn("[MBT] resolve failed for " + op.code, e); });
+      });
+    });
+    return chain.then(function () {
+      saveOperators(ops);
+      return { operators: ops, updated: updated };
+    });
+  }
+
+  function addOperatorByCode(code) {
+    code = String(code || "").trim().toUpperCase();
+    if (!code) return Promise.reject(new Error("Enter an operator code (e.g. SWSH)."));
+    return fetchJson(API_BASE + "/operator/?format=json&limit=10&operator_code=" + encodeURIComponent(code))
+      .then(function (d) {
+        var r = (d.results || [])[0];
+        if (!r) throw new Error("No mybustimes operator found for code " + code);
+        var ops = getOperators();
+        var existing = ops.filter(function (o) { return o.code === code || o.id === r.id; })[0];
+        var entry = {
+          code: r.operator_code || code,
+          id: r.id,
+          name: r.operator_name,
+          slug: r.operator_slug,
+          depotHint: (existing && existing.depotHint) || []
+        };
+        if (existing) {
+          ops[ops.indexOf(existing)] = entry;
+        } else {
+          ops.push(entry);
+        }
+        saveOperators(ops);
+        return entry;
+      });
+  }
+
+  /* ---------------- depot aliases (API depot name -> local depot) ----------------
+   * Stored as { "<normalized api name>": "<local depot name>" | null }.
+   * null means "explicitly create a new depot row". Used by matchDepots. */
+
+  function getAliases() {
+    try {
+      var raw = localStorage.getItem(LS_ALIAS_KEY);
+      return raw ? JSON.parse(raw) : {};
+    } catch (e) { return {}; }
+  }
+
+  function setAlias(apiDepot, localNameOrNull) {
+    var a = getAliases();
+    var key = normalize(apiDepot);
+    if (localNameOrNull === "" || localNameOrNull === undefined) delete a[key];
+    else a[key] = localNameOrNull;
+    try { localStorage.setItem(LS_ALIAS_KEY, JSON.stringify(a)); } catch (e) {}
+    return a;
+  }
+
+  /* ---------------- fleet fetching ---------------- */
+
+  function fetchOperatorFleet(operatorId, onPage) {
+    var out = [];
+    var url = API_BASE + "/operator/fleet/?format=json&limit=" + PAGE_LIMIT + "&operator=" + encodeURIComponent(operatorId);
+    function step() {
+      return fetchJson(url).then(function (d) {
+        var rows = d.results || [];
+        out = out.concat(rows);
+        if (onPage) onPage(rows.length, d.count, url);
+        if (d.next) {
+          url = d.next.replace(/^http:/, "https:");
+          if (url.indexOf("format=json") === -1) url += (url.indexOf("?") === -1 ? "?" : "&") + "format=json";
+          return step();
+        }
+        return { vehicles: out, total: d.count };
+      });
+    }
+    return step();
+  }
+
+  function fetchAllOperators(ids, onProgress) {
+    var ops = getOperators().filter(function (o) { return ids.indexOf(o.id) !== -1; });
+    var all = [];
+    var perOperator = [];
+    var chain = Promise.resolve();
+    ops.forEach(function (op) {
+      chain = chain.then(function () {
+        if (onProgress) onProgress("Fetching " + op.code + " — " + op.name + "…");
+        return fetchOperatorFleet(op.id).then(function (r) {
+          r.vehicles.forEach(function (v) { v._mbtOperator = { id: op.id, code: op.code, name: op.name, slug: op.slug }; });
+          all = all.concat(r.vehicles);
+          perOperator.push({ code: op.code, name: op.name, id: op.id, fetched: r.vehicles.length, expected: r.total });
+          if (onProgress) onProgress("Fetched " + op.code + ": " + r.vehicles.length + " vehicles.");
+        }).catch(function (e) {
+          console.error("[MBT] fetch failed for " + op.code, e);
+          perOperator.push({ code: op.code, name: op.name, id: op.id, fetched: 0, expected: null, error: String(e && e.message || e) });
+          if (onProgress) onProgress("FAILED " + op.code + ": " + (e && e.message || e));
+        });
+      });
+    });
+    return chain.then(function () { return { vehicles: all, perOperator: perOperator }; });
+  }
+
+  function parsePastedJson(text) {
+    var d = JSON.parse(text);
+    if (Array.isArray(d)) return d;
+    if (d && Array.isArray(d.results)) return d.results;
+    throw new Error("Paste either a JSON array of vehicles or a full API response object with a results array.");
+  }
+
+  /* ---------------- mapping ---------------- */
+
+  function categoryFor(apiVehicle, idNum) {
+    if (isEquipmentType(apiVehicle)) return "ETM";
+    var vtd = apiVehicle.vehicle_type_data || null;
+    if (vtd && vtd.type === "Train") return "Coach";
+    if (vtd && vtd.double_decker) return "Decker";
+    if (typeof idNum === "number") {
+      if (idNum < 200) return "Training";
+      if (idNum < 2000) return "Mini/Midi";
+      if (idNum >= 3000 && idNum < 4000) return "Decker";
+      if (idNum >= 4000) return "Coach";
+      return "Single";
+    }
+    return "Single";
+  }
+
+  function liveryFor(apiVehicle) {
+    var bits = [];
+    if (apiVehicle.branding) bits.push(apiVehicle.branding);
+    if (apiVehicle.livery && apiVehicle.livery.name) bits.push(apiVehicle.livery.name);
+    return bits.join(" — ");
+  }
+
+  function groupByDepot(vehicles, includeOutOfService) {
+    var groups = {};
+    var fallbacks = {};
+    try {
+      getOperators().forEach(function (o) {
+        if (o.fallbackDepot) fallbacks[o.id] = o.fallbackDepot;
+      });
+    } catch (e) {}
+    vehicles.forEach(function (v) {
+      if (isEquipmentType(v)) return;
+      if (!includeOutOfService && v.in_service === false) return;
+      var raw = String(v.depot || "").trim();
+      if (!raw && v._mbtOperator && fallbacks[v._mbtOperator.id]) {
+        raw = fallbacks[v._mbtOperator.id]; // e.g. blank-depot Yard vehicles -> "Yard"
+      }
+      var key = normalize(raw) || "__unallocated__";
+      if (!groups[key]) groups[key] = { apiDepot: raw || UNALLOCATED, count: 0, vehicles: [] };
+      groups[key].count++;
+      groups[key].vehicles.push(v);
+    });
+    return Object.keys(groups).map(function (k) { return groups[k]; })
+      .sort(function (a, b) { return b.count - a.count; });
+  }
+
+  function findDepot(depots, apiDepot) {
+    var n = normalize(apiDepot);
+    if (!n || n === "__unallocated__") return null;
+    for (var i = 0; i < depots.length; i++) {
+      if (normalize(depots[i].name) === n) return { index: i, depot: depots[i] };
+    }
+    // tolerate trailing " depot/garage/yard"
+    var stripped = n.replace(/\s+(depot|garage|bus depot|bus garage)$/, "");
+    for (var j = 0; j < depots.length; j++) {
+      if (normalize(depots[j].name) === stripped) return { index: j, depot: depots[j] };
+    }
+    return null;
+  }
+
+  function matchDepots(groups, depots, aliases) {
+    aliases = aliases || getAliases();
+    return groups.map(function (g) {
+      var isUnallocated = normalize(g.apiDepot) === normalize(UNALLOCATED) || !String(g.apiDepot || "").trim();
+      // User alias override first ("Baschurch" -> "Shifnal", etc.)
+      var aliasHit = null;
+      if (!isUnallocated && Object.prototype.hasOwnProperty.call(aliases, normalize(g.apiDepot))) {
+        var target = aliases[normalize(g.apiDepot)];
+        if (target) {
+          for (var a = 0; a < depots.length; a++) {
+            if (normalize(depots[a].name) === normalize(target)) { aliasHit = { index: a, depot: depots[a] }; break; }
+          }
+          if (!aliasHit) aliasHit = { index: -1, depot: { name: target } }; // target depot may itself be created on apply
+        }
+      }
+      if (aliasHit && aliasHit.index >= 0) {
+        return { apiDepot: g.apiDepot, count: g.count, matchedIndex: aliasHit.index, matchedName: aliasHit.depot.name, isNew: false, isUnallocated: false, viaAlias: true };
+      }
+      if (aliasHit && aliasHit.index < 0) {
+        // Alias points at a depot row that does not exist yet — it will be created on apply.
+        return { apiDepot: g.apiDepot, count: g.count, matchedIndex: -1, matchedName: aliasHit.depot.name, createAs: aliasHit.depot.name, isNew: true, isUnallocated: false, viaAlias: true };
+      }
+      var hit = isUnallocated ? null : findDepot(depots, g.apiDepot);
+      return {
+        apiDepot: isUnallocated ? UNALLOCATED : g.apiDepot,
+        count: g.count,
+        matchedIndex: hit ? hit.index : -1,
+        matchedName: hit ? hit.depot.name : (aliasHit ? aliasHit.depot.name : null),
+        isNew: !hit && !aliasHit,
+        isUnallocated: isUnallocated
+      };
+    });
+  }
+
+  function avgPerBus() {
+    var seed = (window.INITIAL_STATE && window.INITIAL_STATE.depots) || [];
+    var rev = 0, exp = 0, n = 0;
+    seed.forEach(function (d) { rev += d.baseIncome; exp += d.baseExpenses; n += d.vehicles; });
+    if (!n) return { rev: 1000, exp: 700 };
+    return { rev: rev / n, exp: exp / n };
+  }
+
+  // Ticket machines are equipment, not vehicles: they get an "ETM" registry
+  // entry (no engine/gearbox/depot/livery) and never count toward depots.
+  var EQUIPMENT_TYPES = ["spare ticket machine", "handheld ticket machine"];
+
+  function isEquipmentType(apiVehicle) {
+    var t = String((apiVehicle.vehicle_type_data && apiVehicle.vehicle_type_data.type_name) || apiVehicle.type || "").toLowerCase().trim();
+    return EQUIPMENT_TYPES.indexOf(t) !== -1;
+  }
+
+  function isSkippedType(apiVehicle) { return isEquipmentType(apiVehicle); }
+
+  function drivetrainFor(typeName) {
+    var db = window.DB_SEED_DRIVETRAIN_SPECS || {};
+    return db[typeName] || null;
+  }
+
+  function mapVehicle(apiVehicle, specs) {
+    var fleetStr = String(apiVehicle.fleet_number === undefined || apiVehicle.fleet_number === null ? "" : apiVehicle.fleet_number).trim();
+    var parsed = parseFleetId(fleetStr);
+    var type = (apiVehicle.vehicle_type_data && apiVehicle.vehicle_type_data.type_name) || apiVehicle.type_details || "Unknown Type";
+    var spec = (specs || {})[type] || null;
+    var dt = drivetrainFor(type);
+    var liv = apiVehicle.livery || null;
+    var etm = isEquipmentType(apiVehicle);
+    return {
+      id: parsed.id,
+      idNum: parsed.idNum,
+      fleetNumberRaw: fleetStr,
+      reg: String(apiVehicle.reg || "").trim().toUpperCase(),
+      type: type,
+      cat: categoryFor(apiVehicle, parsed.idNum),
+      livery: etm ? "" : liveryFor(apiVehicle),
+      liveryCssL: etm ? null : (liv && liv.left_css ? liv.left_css : null),
+      liveryCssR: etm ? null : (liv && liv.right_css ? liv.right_css : null),
+      liveryColour: etm ? "" : (liv && liv.colour ? liv.colour : ""),
+      liveryText: etm ? "" : (liv && liv.text_colour ? liv.text_colour : ""),
+      liveryStroke: etm ? "" : (liv && liv.stroke_colour ? liv.stroke_colour : ""),
+      engine: etm ? "" : ((dt && dt.engine && dt.engine !== "—") ? dt.engine : (spec ? spec.engine : "Euro VI Standard")),
+      gearbox: etm ? "" : ((dt && dt.gearbox && dt.gearbox !== "—") ? dt.gearbox : (spec ? spec.gearbox : "ZF EcoLife / Voith")),
+      euro: etm ? "" : ((dt && dt.euro) || ""),
+      fuel: (apiVehicle.vehicle_type_data && apiVehicle.vehicle_type_data.fuel) || "",
+      depot: etm ? "" : (String(apiVehicle.depot || "").trim() || UNALLOCATED),
+      inService: apiVehicle.in_service !== false,
+      operatorCode: (apiVehicle._mbtOperator && apiVehicle._mbtOperator.code) || "",
+      operatorName: (apiVehicle._mbtOperator && apiVehicle._mbtOperator.name) || ((apiVehicle.operator && apiVehicle.operator.operator_name) || ""),
+      mbtId: apiVehicle.id
+    };
+  }
+
+  /* ---------------- apply ---------------- */
+
+  function getLastSync() {
+    try {
+      var raw = localStorage.getItem(LS_SYNC_KEY);
+      return raw ? JSON.parse(raw) : null;
+    } catch (e) { return null; }
+  }
+
+  function setLastSync(info) {
+    try { localStorage.setItem(LS_SYNC_KEY, JSON.stringify(info)); } catch (e) {}
+  }
+
+  function applySync(vehicles, opts) {
+    opts = opts || {};
+    var includeOutOfService = opts.includeOutOfService !== false;
+    var autoCreate = opts.autoCreateDepots !== false;
+    var zeroMissing = !!opts.zeroMissingDepots;
+
+    if (typeof state === "undefined" || !state) throw new Error("App state is not loaded yet.");
+
+    var specs = window.DB_SEED_VEHICLE_SPECS || window.VEHICLE_SPECS || window.DB_SEED_OMSI_SPECS || window.OMSI_SPECS || {};
+    var groups = groupByDepot(vehicles, includeOutOfService);
+    var depotRows = matchDepots(groups, state.depots);
+    var averages = avgPerBus();
+    var now = new Date().toISOString();
+
+    var depotsTouched = 0, depotsCreated = [], depotsZeroed = 0;
+    var seen = {};
+
+    function setDepotCount(depotObj, idx, count) {
+      // Two API groups can map onto one local depot (via alias mapping) — add, don't overwrite.
+      if (seen[idx]) depotObj.vehicles += count;
+      else { depotObj.vehicles = count; seen[idx] = true; }
+      depotObj.source = "mybustimes";
+      depotObj.mbtUpdatedAt = now;
+      depotsTouched++;
+    }
+
+    depotRows.forEach(function (row) {
+      if (row.isUnallocated) {
+        var una = null;
+        for (var i = 0; i < state.depots.length; i++) {
+          if (normalize(state.depots[i].name) === normalize(UNALLOCATED)) { una = state.depots[i]; break; }
+        }
+        if (!una && autoCreate) {
+          una = { name: UNALLOCATED, vehicles: 0, baseIncome: 0, baseExpenses: 0, rent: 0, source: "mybustimes", zeroFinance: true };
+          state.depots.push(una);
+          depotsCreated.push(UNALLOCATED);
+        }
+        if (una) setDepotCount(una, state.depots.indexOf(una), row.count);
+        return;
+      }
+      if (row.matchedIndex >= 0) {
+        setDepotCount(state.depots[row.matchedIndex], row.matchedIndex, row.count);
+      } else if (autoCreate) {
+        // Alias targets may name a depot that was created earlier in this same loop — re-resolve first.
+        var wantName = row.createAs || row.apiDepot;
+        var hit2 = findDepot(state.depots, wantName);
+        if (hit2) {
+          setDepotCount(state.depots[hit2.index], hit2.index, row.count);
+        } else {
+          state.depots.push({
+            name: wantName,
+            vehicles: row.count,
+            baseIncome: Math.round(averages.rev * row.count * 100) / 100,
+            baseExpenses: Math.round(averages.exp * row.count * 100) / 100,
+            rent: 0,
+            source: "mybustimes",
+            mbtUpdatedAt: now
+          });
+          depotsCreated.push(wantName);
+          depotsTouched++;
+        }
+      }
+    });
+
+    if (zeroMissing) {
+      state.depots.forEach(function (d) {
+        var idx = state.depots.indexOf(d);
+        if (!seen[idx] && normalize(d.name) !== normalize(UNALLOCATED) && d.source === "mybustimes") {
+          if (d.vehicles !== 0) { d.vehicles = 0; depotsZeroed++; }
+        }
+      });
+    }
+
+    var added = 0, updated = 0, skipped = 0;
+    vehicles.forEach(function (apiV) {
+      if (!includeOutOfService && apiV.in_service === false) { skipped++; return; }
+      var m = mapVehicle(apiV, specs);
+      if (!m.fleetNumberRaw && !m.reg) { skipped++; return; }
+
+      var existing = null;
+      if (m.idNum !== null) {
+        for (var i = 0; i < state.fleetRegistry.length; i++) {
+          var e = state.fleetRegistry[i];
+          if (String(e.id) === String(m.idNum)) { existing = e; break; }
+        }
+      }
+      if (!existing && m.reg) {
+        var nr = normalizeReg(m.reg);
+        for (var j = 0; j < state.fleetRegistry.length; j++) {
+          if (normalizeReg(state.fleetRegistry[j].reg) === nr) { existing = state.fleetRegistry[j]; break; }
+        }
+      }
+
+      if (existing) {
+        if (m.reg) existing.reg = m.reg;
+        existing.type = m.type;
+        existing.cat = m.cat;
+        if (m.livery) existing.livery = m.livery;
+        if (m.liveryCssL) {
+          existing.liveryCssL = m.liveryCssL;
+          existing.liveryCssR = m.liveryCssR;
+          existing.liveryColour = m.liveryColour;
+          existing.liveryText = m.liveryText;
+          existing.liveryStroke = m.liveryStroke;
+        }
+        if (m.euro) existing.euro = m.euro;
+        existing.depot = m.depot;
+        existing.operatorCode = m.operatorCode;
+        existing.operatorName = m.operatorName;
+        if (m.fuel) existing.fuel = m.fuel;
+        existing.inService = m.inService;
+        existing.mbtId = m.mbtId;
+        existing.mbtUpdatedAt = now;
+        updated++;
+      } else {
+        state.fleetRegistry.push({
+          id: m.id,
+          reg: m.reg || "UNREG",
+          type: m.type,
+          cat: m.cat,
+          livery: m.livery || (m.cat === "ETM" ? "" : "Swift Connect Standard"),
+          liveryCssL: m.liveryCssL,
+          liveryCssR: m.liveryCssR,
+          liveryColour: m.liveryColour,
+          liveryText: m.liveryText,
+          liveryStroke: m.liveryStroke,
+          engine: m.engine,
+          gearbox: m.gearbox,
+          euro: m.euro,
+          fuel: m.fuel,
+          depot: m.depot,
+          operatorCode: m.operatorCode,
+          operatorName: m.operatorName,
+          inService: m.inService,
+          mbtId: m.mbtId,
+          mbtUpdatedAt: now
+        });
+        added++;
+      }
+    });
+
+    // keep registry in a stable order: numeric ids ascending, then string ids
+    state.fleetRegistry.sort(function (a, b) {
+      var an = typeof a.id === "number", bn = typeof b.id === "number";
+      if (an && bn) return a.id - b.id;
+      if (an) return -1;
+      if (bn) return 1;
+      return String(a.id).localeCompare(String(b.id));
+    });
+
+    if (typeof saveState === "function") saveState();
+
+    var summary = {
+      at: now,
+      vehiclesFetched: vehicles.length,
+      depotsTouched: depotsTouched,
+      depotsCreated: depotsCreated,
+      depotsZeroed: depotsZeroed,
+      fleetAdded: added,
+      fleetUpdated: updated,
+      fleetSkipped: skipped,
+      registryTotal: state.fleetRegistry.length
+    };
+    setLastSync(summary);
+
+    if (typeof renderAll === "function") renderAll();
+    if (typeof renderMbtPanel === "function") renderMbtPanel();
+    if (opts.switchToDepots !== false && typeof switchTab === "function") { try { switchTab("depots"); } catch (e) {} }
+    return summary;
+  }
+
+  /* ---------------- UI panel ---------------- */
+
+  function esc(s) {
+    return String(s === undefined || s === null ? "" : s)
+      .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;");
+  }
+
+  function renderMbtPanel() {
+    if (typeof document === "undefined") return;
+    var ops = getOperators();
+    var tbody = document.getElementById("mbt-operator-tbody");
+    if (tbody) {
+      tbody.innerHTML = ops.map(function (o) {
+        return '<tr class="hover:bg-slate-800/40">' +
+          '<td class="py-2 px-3 mono font-bold text-sky-400">' + esc(o.code) + '</td>' +
+          '<td class="py-2 px-3 text-white">' + esc(o.name || "—") + '</td>' +
+          '<td class="py-2 px-3 mono text-slate-400">' + esc(o.id) + '</td>' +
+          '<td class="py-2 px-3 mono text-slate-500">' + esc(o.slug || "") + '</td>' +
+          '<td class="py-2 px-3 text-slate-400 text-[11px]">' + esc((o.depotHint || []).join(", ")) + '</td>' +
+          '<td class="py-2 px-3 text-right">' +
+          '<button onclick="mbtRemoveOperator(\'' + esc(o.code) + '\')" class="text-xs text-rose-400 hover:text-rose-300 px-2 py-1">Remove</button>' +
+          '</td></tr>';
+      }).join("");
+    }
+    var count = document.getElementById("mbt-operator-count");
+    if (count) count.textContent = ops.length + " operators";
+    var last = getLastSync();
+    var lastEl = document.getElementById("mbt-last-sync");
+    if (lastEl) {
+      lastEl.textContent = last
+        ? ("Last sync: " + last.vehiclesFetched + " fetched · +" + last.fleetAdded + " / ~" + last.fleetUpdated + " fleet · " + last.depotsTouched + " depots (" + last.at.slice(0, 16).replace("T", " ") + ")")
+        : "Not synced yet.";
+    }
+  }
+
+  /* ---------------- UI glue (onclick handlers for the sync panel) ---------------- */
+
+  function toast(msg, icon) {
+    if (typeof showToast === "function") showToast(msg, icon || "✅");
+  }
+
+  function mbtLog(msg) {
+    var el = typeof document !== "undefined" ? document.getElementById("mbt-log") : null;
+    if (!el) return;
+    var d = new Date();
+    var t = d.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit", second: "2-digit" });
+    var div = document.createElement("div");
+    div.textContent = "[" + t + "] " + msg;
+    el.appendChild(div);
+    while (el.children.length > 80) el.removeChild(el.firstChild);
+    el.scrollTop = el.scrollHeight;
+  }
+
+  function readOpts() {
+    function checked(id, def) {
+      var el = typeof document !== "undefined" ? document.getElementById(id) : null;
+      return el ? !!el.checked : def;
+    }
+    return {
+      includeOutOfService: checked("mbt-opt-outofservice", true),
+      autoCreateDepots: checked("mbt-opt-autocreate", true),
+      zeroMissingDepots: checked("mbt-opt-zeromissing", false)
+    };
+  }
+
+  function setBusy(busy) {
+    ["mbt-fetch-btn", "mbt-fetch-apply-btn", "mbt-apply-btn", "mbt-refresh-btn"].forEach(function (id) {
+      var el = typeof document !== "undefined" ? document.getElementById(id) : null;
+      if (el) el.disabled = busy;
+    });
+    var s = typeof document !== "undefined" ? document.getElementById("mbt-status") : null;
+    if (s) s.textContent = busy ? "Working…" : "Idle";
+  }
+
+  function localDepotOptions(selected) {
+    var depots = [];
+    try { depots = (typeof state !== "undefined" && state) ? state.depots : []; } catch (e) {}
+    return depots.map(function (d) {
+      return '<option value="' + esc(d.name) + '"' + (d.name === selected ? " selected" : "") + '>' + esc(d.name) + '</option>';
+    }).join("");
+  }
+
+  function stageResults(res) {
+    window._mbtStaged = res;
+    var opts = readOpts();
+    var depots = (typeof state !== "undefined" && state) ? state.depots : [];
+    var rows = matchDepots(groupByDepot(res.vehicles, opts.includeOutOfService), depots);
+
+    var dt = typeof document !== "undefined" ? document.getElementById("mbt-depot-preview-tbody") : null;
+    if (dt) {
+      dt.innerHTML = rows.map(function (r) {
+        var badge = r.isNew
+          ? '<span class="px-2 py-0.5 rounded bg-amber-500/10 text-amber-400 text-[11px] font-semibold">NEW depot</span>'
+          : '<span class="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 text-[11px] font-semibold">match</span>';
+        var mapCell;
+        if (!r.isNew || r.isUnallocated) {
+          mapCell = r.matchedName ? esc(r.matchedName) : '<span class="text-slate-500">—</span>';
+        } else {
+          // Unknown API depot name: let the user merge it into an existing depot instead of creating a new row.
+          mapCell = '<select onchange="mbtSetAlias(this)" data-api-depot="' + esc(r.apiDepot) + '" ' +
+            'class="bg-slate-900 border border-slate-700 rounded-lg px-2 py-1 text-[11px] text-amber-300 max-w-[220px]">' +
+            '<option value="">— create "' + esc(r.createAs || r.apiDepot) + '" —</option>' +
+            localDepotOptions(r.viaAlias ? r.matchedName : null) +
+            '</select>';
+        }
+        return '<tr class="hover:bg-slate-800/40">' +
+          '<td class="py-2 px-3 text-white">' + esc(r.apiDepot) + (r.viaAlias ? ' <span class="text-[10px] text-sky-400">via mapping</span>' : '') + '</td>' +
+          '<td class="py-2 px-3 text-slate-300">' + mapCell + '</td>' +
+          '<td class="py-2 px-3 mono text-right text-sky-400 font-bold">' + r.count + '</td>' +
+          '<td class="py-2 px-3 text-right">' + badge + '</td></tr>';
+      }).join("") || '<tr><td colspan="4" class="py-3 px-3 text-slate-500">No vehicles.</td></tr>';
+    }
+
+    var ft = typeof document !== "undefined" ? document.getElementById("mbt-fleet-preview-tbody") : null;
+    if (ft) {
+      var specs = window.DB_SEED_VEHICLE_SPECS || window.VEHICLE_SPECS || window.DB_SEED_OMSI_SPECS || window.OMSI_SPECS || {};
+      ft.innerHTML = res.vehicles.slice(0, 12).map(function (v) {
+        var m = mapVehicle(v, specs);
+        return '<tr class="hover:bg-slate-800/40">' +
+          '<td class="py-2 px-3 mono text-sky-400 font-bold">' + esc(m.fleetNumberRaw || "—") + '</td>' +
+          '<td class="py-2 px-3 mono text-slate-300">' + esc(m.reg || "—") + '</td>' +
+          '<td class="py-2 px-3 text-white">' + esc(m.type) + '</td>' +
+          '<td class="py-2 px-3 text-slate-300">' + esc(m.depot) + '</td>' +
+          '<td class="py-2 px-3 mono text-slate-500">' + esc(m.operatorCode) + '</td></tr>';
+      }).join("");
+      var more = typeof document !== "undefined" ? document.getElementById("mbt-fleet-more") : null;
+      if (more) more.textContent = res.vehicles.length > 12 ? ("Showing 12 of " + res.vehicles.length + " fetched vehicles.") : "";
+    }
+
+    var pt = typeof document !== "undefined" ? document.getElementById("mbt-perop-tbody") : null;
+    if (pt) {
+      pt.innerHTML = (res.perOperator || []).map(function (p) {
+        return '<tr class="hover:bg-slate-800/40">' +
+          '<td class="py-2 px-3 mono font-bold text-sky-400">' + esc(p.code) + '</td>' +
+          '<td class="py-2 px-3 text-white">' + esc(p.name) + '</td>' +
+          '<td class="py-2 px-3 mono text-right text-slate-300">' + (p.expected === null || p.expected === undefined ? "?" : p.expected) + '</td>' +
+          '<td class="py-2 px-3 mono text-right font-bold ' + (p.error ? "text-rose-400" : "text-emerald-400") + '">' +
+          (p.error ? esc(p.error) : p.fetched) + '</td></tr>';
+      }).join("");
+    }
+
+    var apply = typeof document !== "undefined" ? document.getElementById("mbt-apply-btn") : null;
+    if (apply) apply.disabled = !res.vehicles.length;
+  }
+
+  function mbtFetchFleet() {
+    var ops = getOperators();
+    var ids = ops.map(function (o) { return o.id; }).filter(function (x) { return !!x; });
+    if (!ids.length) { mbtLog("No operators configured. Add operator codes first."); toast("Add at least one operator code first.", "⚠️"); return; }
+    setBusy(true);
+    window._mbtStaged = null;
+    var apply = document.getElementById("mbt-apply-btn");
+    if (apply) apply.disabled = true;
+    mbtLog("Fetching fleet for " + ids.length + " operators via mybustimes.cc/api/operator/fleet/ …");
+    fetchAllOperators(ids, mbtLog).then(function (res) {
+      mbtLog("Done: " + res.vehicles.length + " vehicles across " + res.perOperator.length + " operators. Review the preview, then Apply.");
+      stageResults(res);
+      toast("Fetched " + res.vehicles.length + " vehicles. Review + Apply.", "📥");
+    }).catch(function (e) {
+      console.error(e);
+      mbtLog("Fetch failed: " + (e && e.message || e) + " — the API may block this network; use the paste-JSON fallback below.");
+      toast("Fetch failed — see log / paste-JSON fallback.", "⚠️");
+    }).then(function () { setBusy(false); });
+  }
+
+  function mbtSetAlias(sel) {
+    var apiDepot = sel.getAttribute("data-api-depot");
+    var target = sel.value || null; // null = create a new depot row
+    setAlias(apiDepot, target);
+    mbtLog(target
+      ? ("Mapping: API depot \u201c" + apiDepot + "\u201d \u2192 local depot \u201c" + target + "\u201d.")
+      : ("Mapping cleared for \u201c" + apiDepot + "\u201d — a new depot row will be created on Apply."));
+    if (window._mbtStaged) stageResults(window._mbtStaged); // re-preview with the mapping
+  }
+
+  function mbtApplyStaged() {
+    var staged = window._mbtStaged;
+    if (!staged || !staged.vehicles || !staged.vehicles.length) { toast("Nothing to apply — fetch first.", "⚠️"); return; }
+    try {
+      var summary = applySync(staged.vehicles, readOpts());
+      mbtLog("Applied: +" + summary.fleetAdded + " new / ~" + summary.fleetUpdated + " updated fleet entries; " +
+        summary.depotsTouched + " depots set" +
+        (summary.depotsCreated.length ? " (" + summary.depotsCreated.length + " created: " + summary.depotsCreated.join(", ") + ")" : "") +
+        (summary.depotsZeroed ? "; " + summary.depotsZeroed + " zeroed" : "") + ".");
+      toast("Depots + Fleet Registry updated from mybustimes!", "🔗");
+      if (typeof switchTab === "function") { try { switchTab("depots"); } catch (e) {} }
+    } catch (e) {
+      console.error(e);
+      toast("Apply failed: " + (e && e.message || e), "⚠️");
+    }
+  }
+
+  function mbtFetchAndApply() {
+    var ops = getOperators();
+    var ids = ops.map(function (o) { return o.id; }).filter(function (x) { return !!x; });
+    if (!ids.length) { mbtLog("No operators configured. Add operator codes first."); toast("Add at least one operator code first.", "⚠️"); return; }
+    setBusy(true);
+    window._mbtStaged = null;
+    mbtLog("Fetching fleet for " + ids.length + " operators, will auto-apply to Depot Network + Fleet Registry…");
+    fetchAllOperators(ids, mbtLog).then(function (res) {
+      stageResults(res);
+      mbtLog("Auto-applying " + res.vehicles.length + " vehicles…");
+      mbtApplyStaged();
+    }).catch(function (e) {
+      console.error(e);
+      mbtLog("Fetch failed: " + (e && e.message || e) + " — the API may block this network; use the paste-JSON fallback below.");
+      toast("Fetch failed — see log / paste-JSON fallback.", "⚠️");
+    }).then(function () { setBusy(false); });
+  }
+
+  function mbtUsePastedJson() {
+    var ta = document.getElementById("mbt-paste");
+    if (!ta || !ta.value.trim()) { toast("Paste fleet JSON first.", "⚠️"); return; }
+    try {
+      var vehicles = parsePastedJson(ta.value);
+      mbtLog("Pasted JSON parsed: " + vehicles.length + " vehicles.");
+      stageResults({ vehicles: vehicles, perOperator: [{ code: "PASTE", name: "Pasted JSON", id: "-", fetched: vehicles.length, expected: vehicles.length }] });
+      toast("Staged " + vehicles.length + " pasted vehicles. Review + Apply.", "📥");
+    } catch (e) {
+      toast("Invalid JSON: " + (e && e.message || e), "⚠️");
+    }
+  }
+
+  function mbtClearStaged() {
+    window._mbtStaged = null;
+    var apply = document.getElementById("mbt-apply-btn");
+    if (apply) apply.disabled = true;
+    ["mbt-depot-preview-tbody", "mbt-fleet-preview-tbody", "mbt-perop-tbody"].forEach(function (id) {
+      var el = document.getElementById(id);
+      if (el) el.innerHTML = "";
+    });
+    mbtLog("Staged results cleared.");
+  }
+
+  function mbtAddOperator() {
+    var input = document.getElementById("mbt-add-code");
+    var code = input ? input.value : "";
+    setBusy(true);
+    addOperatorByCode(code).then(function (entry) {
+      if (input) input.value = "";
+      renderMbtPanel();
+      mbtLog("Added operator " + entry.code + " — " + entry.name + " (ID " + entry.id + ").");
+      toast("Operator " + entry.code + " added!", "✅");
+    }).catch(function (e) {
+      mbtLog("Add failed: " + (e && e.message || e));
+      toast(String((e && e.message) || e), "⚠️");
+    }).then(function () { setBusy(false); });
+  }
+
+  function mbtRemoveOperator(code) {
+    var ops = getOperators().filter(function (o) { return o.code !== code; });
+    saveOperators(ops);
+    renderMbtPanel();
+    mbtLog("Removed operator " + code + ".");
+  }
+
+  function mbtRefreshNames() {
+    setBusy(true);
+    refreshOperatorNames(mbtLog).then(function (r) {
+      renderMbtPanel();
+      mbtLog(r.updated.length ? ("Names refreshed: " + r.updated.join(", ") + ".") : "Refresh done (no changes).");
+      toast("Operator names refreshed from API.", "✅");
+    }).catch(function (e) {
+      mbtLog("Refresh failed: " + (e && e.message || e));
+    }).then(function () { setBusy(false); });
+  }
+
+  function mbtResetOperators() {
+    if (!confirm("Reset the operator list to the 11 Swift Connect defaults?")) return;
+    resetOperators();
+    renderMbtPanel();
+    mbtLog("Operator list reset to defaults.");
+  }
+
+  window.MBT = {
+    API_BASE: API_BASE,
+    UNALLOCATED: UNALLOCATED,
+    getOperators: getOperators,
+    saveOperators: saveOperators,
+    resetOperators: resetOperators,
+    refreshOperatorNames: refreshOperatorNames,
+    addOperatorByCode: addOperatorByCode,
+    fetchOperatorFleet: fetchOperatorFleet,
+    fetchAllOperators: fetchAllOperators,
+    parsePastedJson: parsePastedJson,
+    groupByDepot: groupByDepot,
+    matchDepots: matchDepots,
+    mapVehicle: mapVehicle,
+    getAliases: getAliases,
+    setAlias: setAlias,
+    applySync: applySync,
+    getLastSync: getLastSync,
+    renderMbtPanel: renderMbtPanel,
+    esc: esc,
+    drivetrainFor: drivetrainFor,
+    isEquipmentType: isEquipmentType,
+    isSkippedType: isSkippedType
+  };
+  window.renderMbtPanel = renderMbtPanel;
+  window.mbtFetchFleet = mbtFetchFleet;
+  window.mbtFetchAndApply = mbtFetchAndApply;
+  window.mbtApplyStaged = mbtApplyStaged;
+  window.mbtSetAlias = mbtSetAlias;
+  window.mbtUsePastedJson = mbtUsePastedJson;
+  window.mbtClearStaged = mbtClearStaged;
+  window.mbtAddOperator = mbtAddOperator;
+  window.mbtRemoveOperator = mbtRemoveOperator;
+  window.mbtRefreshNames = mbtRefreshNames;
+  window.mbtResetOperators = mbtResetOperators;
+})();
