@@ -839,6 +839,17 @@
           </div>
         </div>
         <div id="fare-add-note" class="bg-white border border-slate-200 rounded-md px-4 py-3 text-xs text-slate-500" style="display:none;">Zones are read-only aggregates — pick a table under <b>By Company</b> to add, edit or remove its tickets.</div>
+
+        <div class="bg-white border border-slate-200 rounded-lg p-5 space-y-4">
+          <div class="flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <h2 class="text-base font-bold text-slate-900">Demand Forecast (MBT Routes & Timetables)</h2>
+              <p class="text-xs text-slate-500">Pulls each company's real routes, destinations and timetabled trips/day, then predicts boardings from seats × expected load. Apply writes the forecast into that company's tickets (keeping the current mix).</p>
+            </div>
+            <button id="demand-fetch-btn" onclick="refreshDemandData()" class="text-xs bg-indigo-700 hover:bg-indigo-800 text-white font-bold px-3 py-2 rounded-md shadow-sm whitespace-nowrap">Fetch routes & timetables</button>
+          </div>
+          <div id="demand-list" class="space-y-2"></div>
+        </div>
       </div>
     </section>
 
@@ -1215,6 +1226,7 @@
       renderFleetTable();
       renderDealerCatalogue();
       renderFareTable();
+      renderDemand();
       if (typeof renderMbtPanel === "function") { try { renderMbtPanel(); } catch (e) {} }
     }
 
@@ -2900,6 +2912,243 @@
       saveState();
       renderAll();
       showToast(`Cleared ${count} ticket(s) from ${names.length} table(s) — depot income is now £0 until tickets are sold again!`, "✅");
+    }
+
+    // =========================================================================
+    // 9b. DEMAND FORECAST (MBT routes + timetables → predicted boardings)
+    // Model, per route: trips/day (timetabled departures × days/7) × seats
+    // (company fleet mix) × load factor (school 85%, key destinations and
+    // express 55%, standard 45%). Company total ÷ company buses = per-bus
+    // pax, distributed across that company's tickets by current mix.
+    // =========================================================================
+    const DEMAND_SEATS = { "Mini/Midi": 30, Single: 70, Decker: 95, Coach: 60, Training: 0, ETM: 0 };
+
+    // Researched rival single fares (£): England £3 cap, Telford £2 cap
+    // (BBC May 2026), TfL £1.75 hopper. Wales/coach are estimates. The API
+    // publishes no fares, so these seed the benchmark — editable per company.
+    const AREA_COMP_SINGLE = {
+      "Telford & Wrekin (Hadley / Wellington / PRH)": 2.00,
+      "Notts & Derby (Purple Line / Robin Hood)": 3.00,
+      "West Midlands & Black Country (Dudley / Willenhall / X807)": 3.00,
+      "South London (Elmers End / TfL)": 1.75,
+      "Wales & UT Coach (Talbot Green / Wrexham / Colwyn Bay)": 2.50,
+      "East Anglia (Cromer / Fakenham / Lincs)": 3.00,
+      "Swift Connecting Railway": null,
+      "Other Depots (Unzoned)": 3.00
+    };
+    const FARE_ELASTICITY = -0.35; // short-run bus fare elasticity (Dargay/Hanly): 10% dearer ≈ 3.5% fewer pax
+
+    function companyCompPrice(code) {
+      const key = fareKeyForCompany(code);
+      const r = key && state.fares[key];
+      if (r && r.compPrice !== undefined && r.compPrice !== null && r.compPrice !== "") {
+        const n = parseFloat(r.compPrice);
+        if (!isNaN(n) && n > 0) return n;
+      }
+      const zb = AREA_COMP_SINGLE[companyZone(code)];
+      return (zb === undefined || zb === null) ? null : zb;
+    }
+
+    function companyCompetition(code) {
+      const key = fareKeyForCompany(code);
+      const region = key && state.fares[key];
+      const tickets = (region && region.tickets) || [];
+      let rev = 0, pax = 0;
+      tickets.forEach(t => { rev += t.price * (parseFloat(t.pax) || 0) * (t.factor || 1); pax += parseFloat(t.pax) || 0; });
+      const yourAvg = pax > 0 ? rev / pax : 0;
+      const comp = companyCompPrice(code);
+      const adjust = !region || region.compAdjust !== false;
+      const factor = (adjust && comp && yourAvg > 0) ? Math.pow(yourAvg / comp, FARE_ELASTICITY) : 1;
+      return { yourAvg, compPrice: comp, adjust, factor, competitors: (region && region.competitors) || [] };
+    }
+
+    function saveCompPrice(code, val) {
+      const key = fareKeyForCompany(code);
+      if (!key) return;
+      const s = String(val || "").trim();
+      if (s === "") { delete state.fares[key].compPrice; }
+      else {
+        const n = parseFloat(s);
+        if (isNaN(n) || n <= 0) { renderDemand(); return; }
+        state.fares[key].compPrice = Math.round(n * 100) / 100;
+      }
+      saveState();
+      renderDemand();
+    }
+
+    function toggleCompAdjust(code, on) {
+      const key = fareKeyForCompany(code);
+      if (!key) return;
+      state.fares[key].compAdjust = !!on;
+      saveState();
+      renderDemand();
+    }
+
+    function companyBuses(code) {
+      let n = 0;
+      (state.fleetRegistry || []).forEach(v => {
+        if (v.inService !== false && v.operatorCode === code) n++;
+      });
+      if (!n) companyDepots(code).forEach(dn => {
+        const d = (state.depots || []).find(x => x.name === dn);
+        if (d) n += d.vehicles || 0;
+      });
+      return n;
+    }
+
+    function companySeatsPerTrip(code) {
+      let s = 0, n = 0;
+      (state.fleetRegistry || []).forEach(v => {
+        if (v.inService === false || v.operatorCode !== code) return;
+        const c = DEMAND_SEATS[v.cat] || 0;
+        if (c) { s += c; n++; }
+      });
+      return n ? s / n : 70;
+    }
+
+    function routeLoadFactor(r) {
+      const text = ((r.name || "") + " " + (r.inbound || "") + " " + (r.outbound || "")).toLowerCase();
+      if (r.school) return { load: 0.85, why: "school service" };
+      if (/hospital|prh|station|college|university|school|airport/.test(text)) return { load: 0.55, why: "key destination" };
+      if (/^x\d/i.test(r.num || "") || /express|coach|link/.test(text)) return { load: 0.55, why: "express/coach" };
+      return { load: 0.45, why: "standard service" };
+    }
+
+    function companyDemand(code) {
+      const cache = (window.MBT && window.MBT.getDemandCache) ? window.MBT.getDemandCache() : { routes: {}, timetables: {} };
+      const routes = (((cache.routes || {})[code] || {}).list) || [];
+      const seats = companySeatsPerTrip(code);
+      let trips = 0, pax = 0, withData = 0;
+      const detail = routes.map(r => {
+        const tt = (((cache.timetables || {})[r.id] || {}).tables) || [];
+        const rt = tt.reduce((a, t) => a + t.trips * (t.days / 7), 0);
+        if (tt.length) withData++;
+        const lf = routeLoadFactor(r);
+        const rp = rt * seats * lf.load;
+        trips += rt;
+        pax += rp;
+        return { num: r.num, inbound: r.inbound, outbound: r.outbound, tripsPerDay: rt, load: lf.load, why: lf.why, pax: rp, hasData: !!tt.length };
+      });
+      return { routes: detail, tripsPerDay: trips, seatsPerTrip: seats, paxPerDay: pax, coverage: routes.length ? withData + "/" + routes.length + " routes" : "no routes yet" };
+    }
+
+    function fareKeyForCompany(code) {
+      return Object.keys(state.fares).find(k => state.fares[k] && state.fares[k].companyCode === code) || null;
+    }
+
+    async function refreshDemandData() {
+      const btn = document.getElementById("demand-fetch-btn");
+      const label = btn ? btn.textContent : "";
+      try {
+        if (!window.MBT || !window.MBT.fetchDemandRoutes) throw new Error("sync engine unavailable");
+        const ops = window.MBT.getOperators().filter(o => o.code);
+        if (!ops.length) { showToast("No operators configured — add codes in MyBusTimes Sync first.", "⚠️"); return; }
+        if (btn) btn.disabled = true;
+        for (const op of ops) {
+          if (btn) btn.textContent = `Routes: ${op.code}…`;
+          const routes = await window.MBT.fetchDemandRoutes(op.code);
+          for (let i = 0; i < routes.length; i++) {
+            if (btn) btn.textContent = `${op.code}: timetables ${i + 1}/${routes.length}…`;
+            try { await window.MBT.fetchRouteTrips(routes[i].id); }
+            catch (e) { console.warn("[demand] timetable failed for route " + routes[i].id, e); }
+          }
+          // Rival discovery: top destination names → other operators serving them.
+          if (btn) btn.textContent = `${op.code}: rivals…`;
+          try {
+            const destCount = {};
+            const generic = ["bus station", "station", "town centre", "bus stn", "stand", "stand a", "stand b", "stand c", "stand d", "stand e", "stand f", "interchange", "depot"];
+            routes.forEach(r => {
+              [r.inbound, r.outbound].forEach(dest => {
+                const t = String(dest || "").trim();
+                if (t.length >= 5 && !generic.includes(t.toLowerCase())) destCount[t] = (destCount[t] || 0) + 1;
+              });
+            });
+            const terms = Object.keys(destCount).sort((a, b) => destCount[b] - destCount[a]).slice(0, 3);
+            const rivals = {};
+            for (const term of terms) {
+              try {
+                const found = await window.MBT.fetchCompetitorOperators(term);
+                found.forEach(o => { if (o.code !== op.code) rivals[o.code] = o; });
+              } catch (e) { console.warn("[demand] rival search failed for " + term, e); }
+            }
+            const key = fareKeyForCompany(op.code);
+            if (key) {
+              state.fares[key].competitors = Object.keys(rivals).map(k => rivals[k]).slice(0, 12);
+              saveState();
+            }
+          } catch (e) { console.warn("[demand] rival discovery failed for " + op.code, e); }
+        }
+        renderAll();
+        showToast("Demand data refreshed from routes & timetables!", "✅");
+      } catch (e) {
+        console.error(e);
+        showToast("Demand fetch failed: " + (e && e.message || e), "⚠️");
+      } finally {
+        if (btn) { btn.disabled = false; btn.textContent = label || "Fetch routes & timetables"; }
+      }
+    }
+
+    function applyDemandToTickets(code) {
+      const key = fareKeyForCompany(code);
+      const region = key && state.fares[key];
+      if (!region) { showToast("No fare table for this company yet.", "⚠️"); return; }
+      if (!(region.tickets || []).length) { showToast("Add tickets to this company first, then apply the forecast.", "⚠️"); return; }
+      const d = companyDemand(code);
+      const buses = companyBuses(code);
+      if (!buses) { showToast("No buses found for this company — cannot spread per-bus pax.", "⚠️"); return; }
+      if (!d.tripsPerDay) { showToast("No timetable data yet — fetch routes & timetables first.", "⚠️"); return; }
+      const comp = companyCompetition(code);
+      const perBus = d.paxPerDay / buses * comp.factor;
+      const weights = region.tickets.map(t => (parseFloat(t.pax) || 0) * t.price * (t.factor || 1));
+      const totalW = weights.reduce((a, w) => a + w, 0);
+      region.tickets.forEach((t, i) => {
+        const share = totalW > 0 ? weights[i] / totalW : 1 / region.tickets.length;
+        t.pax = Math.round(perBus * share * 10) / 10;
+      });
+      saveState();
+      renderAll();
+      showToast(`Applied forecast to ${region.tickets.length} ticket(s): ${perBus.toFixed(1)} pax/bus/day from ${d.tripsPerDay.toFixed(0)} trips × ~${d.seatsPerTrip.toFixed(0)} seats${comp.factor !== 1 ? ` ×${comp.factor.toFixed(3)} price-adjusted` : ""}!`, "✅");
+    }
+
+    function renderDemand() {
+      const box = document.getElementById("demand-list");
+      if (!box) return;
+      const ops = (window.MBT && window.MBT.getOperators) ? window.MBT.getOperators().filter(o => o.code) : [];
+      if (!ops.length) {
+        box.innerHTML = `<div class="text-xs text-slate-400">No operators configured — add codes in MyBusTimes Sync first.</div>`;
+        return;
+      }
+      box.innerHTML = ops.map(o => {
+        const d = companyDemand(o.code);
+        const key = fareKeyForCompany(o.code);
+        const region = key && state.fares[key];
+        const buses = companyBuses(o.code);
+        const perBus = buses ? d.paxPerDay / buses : 0;
+        const top = d.routes.slice().sort((a, b) => b.pax - a.pax).slice(0, 3)
+          .map(r => `${escAttr(r.num || "?")} (${r.tripsPerDay.toFixed(0)}/day · ${Math.round(r.load * 100)}% ${escAttr(r.why)} → ${r.pax.toFixed(0)}/day)`).join(" · ");
+        const comp = companyCompetition(o.code);
+        const rivalNames = comp.competitors.length
+          ? escAttr(comp.competitors.map(c => c.name || c.code).slice(0, 6).join(", ")) + (comp.competitors.length > 6 ? ` +${comp.competitors.length - 6} more` : "")
+          : "not discovered yet — fetch data";
+        const priceLine = comp.compPrice && comp.yourAvg > 0
+          ? (comp.yourAvg <= comp.compPrice
+              ? `${Math.round((1 - comp.yourAvg / comp.compPrice) * 100)}% cheaper → demand ×${comp.factor.toFixed(3)}`
+              : `${Math.round((comp.yourAvg / comp.compPrice - 1) * 100)}% dearer → demand ×${comp.factor.toFixed(3)}`)
+          : (comp.compPrice ? "set ticket pax to compare" : "no area benchmark");
+        return `<div class="bg-white border border-slate-200 rounded-md px-3 py-2.5 text-xs space-y-1.5">
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <span class="font-bold text-slate-900">${escAttr(o.name || o.code)} <span class="font-normal text-slate-400 mono">(${escAttr(o.code)})</span></span>
+            <button onclick="applyDemandToTickets('${escAttr(o.code)}')" ${(!d.tripsPerDay || !(region && region.tickets && region.tickets.length)) ? "disabled title=\"Needs timetable data and company tickets\"" : ""} class="text-[11px] font-bold bg-emerald-600 hover:bg-emerald-700 disabled:bg-slate-100 disabled:text-slate-400 text-white px-2.5 py-1.5 rounded-md">Apply forecast to tickets</button>
+          </div>
+          <div class="text-slate-500">Routes: <b class="mono">${d.routes.length}</b> (${escAttr(d.coverage)}) · Trips/day: <b class="mono">${d.tripsPerDay.toFixed(1)}</b> · Seats/trip: <b class="mono">~${d.seatsPerTrip.toFixed(0)}</b> · Buses: <b class="mono">${buses}</b></div>
+          <div class="text-slate-600">Predicted: <b class="mono text-sky-700">${d.paxPerDay.toFixed(1)}/day</b> (${perBus.toFixed(1)} pax/bus/day)${top ? ` · Top: <span class="mono">${top}</span>` : ""}</div>
+          <div class="text-slate-600">Area rivals: <span class="mono">${rivalNames}</span></div>
+          <div class="flex flex-wrap items-center gap-x-3 gap-y-1 text-slate-600">
+            <span>Your avg single: <b class="mono">${comp.yourAvg > 0 ? formatGBP(comp.yourAvg, 2) : "—"}</b> vs area <input type="number" step="0.05" min="0" value="${comp.compPrice !== null ? comp.compPrice : ""}" placeholder="area £" title="Rival benchmark single fare (£) — researched defaults, editable" onchange="saveCompPrice('${escAttr(o.code)}', this.value)" class="bg-white border border-slate-300 rounded-md px-2 py-0.5 mono text-xs w-20 text-right" /> → <b class="mono">${priceLine}</b></span>
+            <label class="flex items-center gap-1 cursor-pointer"><input type="checkbox" ${comp.adjust ? "checked" : ""} onchange="toggleCompAdjust('${escAttr(o.code)}', this.checked)" class="rounded" /><span>Adjust forecast for pricing</span></label>
+          </div>
+        </div>`;
+      }).join("");
     }
 
     // =========================================================================

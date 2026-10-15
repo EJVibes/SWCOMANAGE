@@ -239,6 +239,120 @@
     return step();
   }
 
+  /* ---------------- demand data: routes + timetables per operator ----------------
+   * Route inventory comes from /operator/route/ (operator_code filter).
+   * Trips/day comes from /get_timetables/ (route_id) + /get_trip_times/
+   * (timetable_id), counting departures × days-covered/7. Cached in
+   * localStorage; timetables change rarely so cache is king. */
+
+  var LS_DEMAND_KEY = "sc_db_v2_mbt_demand";
+  var WEEKDAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+
+  function getDemandCache() {
+    try {
+      var raw = localStorage.getItem(LS_DEMAND_KEY);
+      var c = raw ? JSON.parse(raw) : null;
+      return (c && c.routes && c.timetables) ? c : { routes: {}, timetables: {} };
+    } catch (e) { return { routes: {}, timetables: {} }; }
+  }
+
+  function setDemandCache(c) {
+    try { localStorage.setItem(LS_DEMAND_KEY, JSON.stringify(c)); } catch (e) {}
+  }
+
+  function parseTimetableDays(label) {
+    var m = String(label || "").match(/\(([^)]+)\)/);
+    if (!m) return 7;
+    var days = [];
+    m[1].split(",").forEach(function (tok) {
+      var t = tok.trim();
+      var rg = t.match(/(\w+)\s*(?:to|-)\s*(\w+)/);
+      if (rg) {
+        var a = WEEKDAYS.indexOf(rg[1]), b = WEEKDAYS.indexOf(rg[2]);
+        if (a >= 0 && b >= 0) {
+          for (var i = a; i <= b; i++) { if (days.indexOf(WEEKDAYS[i]) === -1) days.push(WEEKDAYS[i]); }
+        }
+      } else {
+        var d = null;
+        for (var j = 0; j < WEEKDAYS.length; j++) {
+          if (WEEKDAYS[j].toLowerCase() === t.toLowerCase()) { d = WEEKDAYS[j]; break; }
+        }
+        if (d && days.indexOf(d) === -1) days.push(d);
+      }
+    });
+    return days.length || 7;
+  }
+
+  function fetchDemandRoutes(opCode) {
+    var out = [];
+    var url = API_BASE + "/operator/route/?format=json&limit=100&operator_code=" + encodeURIComponent(opCode);
+    function step() {
+      return fetchJson(url).then(function (d) {
+        (d.results || []).forEach(function (r) {
+          var det = (r.route_details && r.route_details.details) || {};
+          out.push({
+            id: r.id,
+            num: String(r.route_num === undefined || r.route_num === null ? "" : r.route_num),
+            name: String(r.route_name || ""),
+            inbound: String(r.inbound_destination || ""),
+            outbound: String(r.outbound_destination || ""),
+            school: det.school_service === "true" || det.school_service === true
+          });
+        });
+        if (d.next) {
+          url = String(d.next).replace(/^http:/, "https:");
+          return step();
+        }
+        var c = getDemandCache();
+        c.routes[opCode] = { at: new Date().toISOString(), list: out };
+        setDemandCache(c);
+        return out;
+      });
+    }
+    return step();
+  }
+
+  function fetchRouteTrips(routeId) {
+    return fetchJson(API_BASE + "/get_timetables/?format=json&route_id=" + encodeURIComponent(routeId)).then(function (d) {
+      var tables = (d && d.timetables) || {};
+      var ids = Object.keys(tables);
+      var chain = Promise.resolve();
+      var out = [];
+      ids.forEach(function (id) {
+        chain = chain.then(function () {
+          return fetchJson(API_BASE + "/get_trip_times/?format=json&timetable_id=" + encodeURIComponent(id)).then(function (t) {
+            var n = (t && t.times) ? Object.keys(t.times).length : 0;
+            out.push({ id: id, label: tables[id], days: parseTimetableDays(tables[id]), trips: n });
+          }).catch(function () {
+            out.push({ id: id, label: tables[id], days: parseTimetableDays(tables[id]), trips: 0 });
+          });
+        });
+      });
+      return chain.then(function () {
+        var c = getDemandCache();
+        c.timetables[routeId] = { at: new Date().toISOString(), tables: out };
+        setDemandCache(c);
+        return out;
+      });
+    });
+  }
+
+  /* Distinct operators (other than you) serving routes that match a
+   * place name — i.e. the real-life competition in that area. */
+  function fetchCompetitorOperators(term) {
+    var url = API_BASE + "/operator/route/?format=json&limit=20&search=" + encodeURIComponent(term);
+      return fetchJson(url).then(function (d) {
+        var ops = {};
+        (d.results || []).forEach(function (r) {
+          (r.route_operators_data || []).forEach(function (o) {
+            var code = o && (o.operator_code || o.code);
+            if (code) ops[code] = { code: code, name: o.operator_name || o.name || "", slug: o.operator_slug || o.slug || "" };
+          });
+        });
+        return Object.keys(ops).map(function (k) { return ops[k]; });
+      });
+  }
+
   function fetchAllOperators(ids, onProgress) {
     var ops = getOperators().filter(function (o) { return ids.indexOf(o.id) !== -1; });
     var all = [];
@@ -911,6 +1025,11 @@
     refreshOperatorNames: refreshOperatorNames,
     addOperatorByCode: addOperatorByCode,
     fetchOperatorFleet: fetchOperatorFleet,
+    fetchDemandRoutes: fetchDemandRoutes,
+    fetchRouteTrips: fetchRouteTrips,
+    fetchCompetitorOperators: fetchCompetitorOperators,
+    getDemandCache: getDemandCache,
+    parseTimetableDays: parseTimetableDays,
     fetchAllOperators: fetchAllOperators,
     parsePastedJson: parsePastedJson,
     groupByDepot: groupByDepot,
