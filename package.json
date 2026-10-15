@@ -1,0 +1,9 @@
+{
+  "name": "swift-connect-operations-portal",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Swift Connect Operations Portal + local disk persistence server (zero dependencies)",
+  "scripts": {
+    "start": "node server.js"
+  }
+}

@@ -8,6 +8,11 @@
  *  - seeds = factory defaults (individual database files)
  *  - localStorage overlay = live writable database
  *  - Export buttons download the live DB back to files when needed
+ *
+ * When served via server.js, a disk backend IS available: every saveState()
+ * is also POSTed to /api/save-all (debounced), which rewrites the seed
+ * files (backed up first). Without the server, the app silently stays
+ * local-only.
  * ========================================================================= */
 (function () {
   "use strict";
@@ -21,6 +26,7 @@
     "busCatalogue",
     "fleetRegistry",
     "fares",
+    "overheads",
     "workshopQueue",
     "workshopCompleted",
     "mbtOperators"
@@ -37,8 +43,14 @@
       case "workshopQueue": return clone(window.DB_SEED_WORKSHOP_QUEUE || []);
       case "workshopCompleted": return clone(window.DB_SEED_WORKSHOP_COMPLETED || []);
       case "fares": return clone(window.DB_SEED_FARES || {});
+      case "overheads": return clone(window.DB_SEED_OVERHEADS || []);
       case "mbtOperators": return clone(window.DB_SEED_MBT_OPERATORS || []);
-      case "fleetRegistry": return buildFleetFromSeeds();
+      case "fleetRegistry": {
+        // Written by server.js on save (database/fleet-registry.js). Falls
+        // back to building from the fleet CSV when the file was never saved.
+        if (Array.isArray(window.DB_SEED_FLEET_REGISTRY)) return clone(window.DB_SEED_FLEET_REGISTRY);
+        return buildFleetFromSeeds();
+      }
       default: return null;
     }
   }
@@ -141,24 +153,100 @@
   }
 
   var saveBadgeTimer = null;
+  function diskSuffix() {
+    return (window.DB && window.DB.server && window.DB.server.available) ? " · \uD83D\uDCBE disk live" : "";
+  }
   function updateSaveBadge() {
     var el = document.getElementById("db-save-status");
     if (!el) return;
     var d = new Date();
     var t = d.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit", second: "2-digit" });
-    el.textContent = "● Saved " + t;
+    el.textContent = "● Saved " + t + diskSuffix();
     el.classList.remove("text-slate-500");
     el.classList.add("text-emerald-400");
     clearTimeout(saveBadgeTimer);
     saveBadgeTimer = setTimeout(function () {
-      el.textContent = "● Database connected (" + COLLECTIONS.length + " tables)";
+      el.textContent = "● Database connected (" + COLLECTIONS.length + " tables)" + diskSuffix();
       el.classList.remove("text-emerald-400");
       el.classList.add("text-slate-500");
     }, 2500);
   }
 
+  // ---- Disk backend (server.js). Best-effort: never blocks or throws. ----
+  var serverState = { available: false, saving: false, lastSaved: 0 };
+  var serverSaveTimer = null;
+
+  function checkServer() {
+    return fetch("api/status", { cache: "no-store" }).then(function (res) {
+      if (!res.ok) throw new Error("no server");
+      return res.json();
+    }).then(function (data) {
+      serverState.available = !!(data && data.ok);
+      refreshDiskBadge();
+      return serverState.available;
+    }).catch(function () {
+      serverState.available = false;
+      return false;
+    });
+  }
+
+  function refreshDiskBadge() {
+    var el = document.getElementById("db-save-status");
+    if (!el) return;
+    el.textContent = "● Database connected (" + COLLECTIONS.length + " tables)" + diskSuffix();
+  }
+
+  function saveToServer(state) {
+    if (!serverState.available || !state) return Promise.resolve(false);
+    clearTimeout(serverSaveTimer);
+    return new Promise(function (resolve) {
+      serverSaveTimer = setTimeout(function () {
+        var payload;
+        try {
+          payload = {
+            meta: { simDate: state.simDate, bankBalance: state.bankBalance },
+            transactions: state.transactions,
+            depots: state.depots,
+            busCatalogue: state.busCatalogue,
+            fleetRegistry: state.fleetRegistry,
+            fares: state.fares,
+            overheads: state.overheads || [],
+            workshopQueue: state.workshopQueue,
+            workshopCompleted: state.workshopCompleted || [],
+            mbtOperators: readLS("mbtOperators") !== undefined ? readLS("mbtOperators") : clone(window.DB_SEED_MBT_OPERATORS || [])
+          };
+        } catch (e) { resolve(false); return; }
+        serverState.saving = true;
+        fetch("api/save-all", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        }).then(function (res) { return res.json(); }).then(function (data) {
+          if (data && data.ok) {
+            serverState.lastSaved = Date.now();
+            var el = document.getElementById("db-save-status");
+            if (el) {
+              var t = new Date().toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit", second: "2-digit" });
+              el.textContent = "● Saved " + t + " · \uD83D\uDCBE disk " + t;
+            }
+            resolve(true);
+          } else {
+            serverState.available = false;
+            resolve(false);
+          }
+        }).catch(function () {
+          serverState.available = false;
+          resolve(false);
+        }).finally(function () { serverState.saving = false; });
+      }, 800);
+    });
+  }
+
   window.DB = {
     COLLECTIONS: COLLECTIONS,
+    server: serverState,
+    checkServer: checkServer,
+    saveToServer: saveToServer,
     load: function (name) {
       var v = readLS(name);
       if (v !== undefined) return v;
@@ -179,8 +267,8 @@
         busCatalogue: this.load("busCatalogue"),
         fleetRegistry: this.load("fleetRegistry"),
         fares: this.load("fares"),
-        workshopQueue: this.load("workshopQueue"),
-        workshopCompleted: this.load("workshopCompleted")
+        overheads: this.load("overheads"),
+        workshopQueue: this.load("workshopQueue")
       };
     },
     // Write-through: every app mutation calls this, so writes always save.
@@ -192,6 +280,7 @@
       writeLS("busCatalogue", state.busCatalogue);
       writeLS("fleetRegistry", state.fleetRegistry);
       writeLS("fares", state.fares);
+      writeLS("overheads", state.overheads || []);
       writeLS("workshopQueue", state.workshopQueue);
       writeLS("workshopCompleted", state.workshopCompleted || []);
     },
@@ -208,6 +297,7 @@
         busCatalogue: this.load("busCatalogue"),
         fleetRegistry: this.load("fleetRegistry"),
         fares: this.load("fares"),
+        overheads: this.load("overheads"),
         workshopQueue: this.load("workshopQueue"),
         workshopCompleted: this.load("workshopCompleted"),
         vehicleSpecs: clone(window.DB_SEED_VEHICLE_SPECS || window.DB_SEED_OMSI_SPECS || {}),
@@ -229,6 +319,7 @@
     bankBalance: (window.DB_SEED_META || {}).bankBalance,
     workshopQueue: clone(window.DB_SEED_WORKSHOP_QUEUE || []),
     workshopCompleted: clone(window.DB_SEED_WORKSHOP_COMPLETED || []),
+    overheads: clone(window.DB_SEED_OVERHEADS || []),
     transactions: clone(window.DB_SEED_TRANSACTIONS || []),
     depots: clone(window.DB_SEED_DEPOTS || []),
     busCatalogue: clone(window.DB_SEED_BUS_CATALOGUE || [])

@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Swift Connect — Operations Portal</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.css" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
   <style>
     body { font-family: 'Inter', sans-serif; background-color: #e9edf2; color: #1e293b; }
@@ -156,6 +158,9 @@
       <button onclick="switchTab('depots')" id="tab-depots" class="tab-btn px-4 py-2.5 text-xs md:text-sm font-semibold border-b-2 border-transparent text-slate-500 hover:text-slate-900 whitespace-nowrap">
         Depots & Operations (19)
       </button>
+      <button onclick="switchTab('expenses')" id="tab-expenses" class="tab-btn px-4 py-2.5 text-xs md:text-sm font-semibold border-b-2 border-transparent text-slate-500 hover:text-slate-900 whitespace-nowrap">
+        Expenses & Overheads
+      </button>
       <button onclick="switchTab('fleet')" id="tab-fleet" class="tab-btn px-4 py-2.5 text-xs md:text-sm font-semibold border-b-2 border-transparent text-slate-500 hover:text-slate-900 whitespace-nowrap">
         Fleet Registry & Liveries
       </button>
@@ -283,7 +288,7 @@
               <p class="text-xs text-slate-500">Includes historical spreadsheet logs (2024–2026) and live game transactions</p>
             </div>
             <div class="flex flex-wrap items-center gap-2">
-              <span id="db-save-status" class="text-[11px] text-slate-500 mono">● Database connected (9 tables)</span>
+              <span id="db-save-status" class="text-[11px] text-slate-500 mono">● Database connected (10 tables)</span>
               <button onclick="exportSaveData()" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded-lg border border-slate-300">⬇ Export DB JSON</button>
               <label class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded-lg border border-slate-300 cursor-pointer">⬆ Import DB<input id="db-import-input" type="file" accept="application/json" class="hidden" onchange="importDatabaseFile(this)" /></label>
               <button onclick="resetDatabaseToSeeds()" class="text-xs bg-slate-100 hover:bg-rose-100 hover:text-rose-700 text-slate-500 px-3 py-1.5 rounded-lg border border-slate-300" title="Reload factory defaults from database/*.js seed files">↺ Reset from seeds</button>
@@ -320,6 +325,7 @@
           <div class="flex items-center gap-4 bg-white px-4 py-2 rounded-md border border-slate-200 text-xs">
             <div>Total Allocated Vehicles: <span id="depot-total-buses" class="mono font-bold text-slate-900">434</span></div>
             <div>Total Daily Rent: <span id="depot-total-rent" class="mono font-bold text-amber-700">£6,626</span></div>
+            <button onclick="exportDepotsSeedFile()" title="Download a database/depots.js file with all current depot data (incl. site surveys) to save into database/" class="bg-blue-800 hover:bg-blue-900 text-white font-semibold px-3 py-1.5 rounded-lg">⬇ Save depots.js</button>
           </div>
         </div>
 
@@ -341,11 +347,173 @@
         </div>
       </div>
 
+      <!-- Depot Site Survey & Validation (map speak first, then draw) -->
+      <div class="bg-white border border-slate-200 rounded-lg p-5 space-y-4">
+        <div class="flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <h3 class="text-base font-bold text-slate-900">Depot Site Survey & Validation</h3>
+            <p class="text-xs text-slate-500">1️⃣ Pick a depot, click the map to pin it — a legal UK address (street + postcode) is looked up and validated · 2️⃣ Draw the yard boundary — bays, capacity, rent and business rates are calculated and the depot's rates bill updates automatically. Bays use 45&nbsp;m² at 65% usable site; rent £150/m²/yr London, £70 elsewhere (C&W/BNP 2025-26: Midlands £5–10/sq ft, London £20+/sq ft).</p>
+          </div>
+          <select id="survey-depot" onchange="onSurveyDepotChange()" class="bg-white border border-slate-300 rounded-md px-3 py-2 text-xs md:text-sm text-slate-900 font-semibold"></select>
+        </div>
+
+        <div id="survey-validate-list" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2"></div>
+
+        <div id="depot-map" class="rounded-md border border-slate-300 overflow-hidden" style="height:380px;"></div>
+
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
+          <div class="bg-white border border-slate-200 rounded-md px-3 py-2">
+            <div class="text-slate-500 font-semibold mb-0.5">Legal Address</div>
+            <div id="survey-addr-out" class="text-slate-700">Click the map to pin the depot location.</div>
+          </div>
+          <div class="bg-white border border-slate-200 rounded-md px-3 py-2">
+            <div class="text-slate-500 font-semibold mb-0.5">Drawn Site Area</div>
+            <div id="survey-area-out" class="mono font-bold text-slate-900">—</div>
+          </div>
+          <div class="bg-white border border-slate-200 rounded-md px-3 py-2">
+            <div class="text-slate-500 font-semibold mb-0.5">Vehicle Capacity</div>
+            <div id="survey-cap-out" class="mono font-bold text-sky-700">—</div>
+          </div>
+          <div class="bg-white border border-slate-200 rounded-md px-3 py-2">
+            <div class="text-slate-500 font-semibold mb-0.5">Assessed Rent</div>
+            <div id="survey-rent-out" class="mono font-bold text-amber-700">—</div>
+          </div>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-2">
+          <button id="survey-confirm-btn" onclick="confirmSurveyAddress()" disabled class="text-xs bg-sky-700 hover:bg-sky-800 disabled:bg-slate-100 disabled:text-slate-400 text-white font-bold px-3 py-2 rounded-md shadow-sm">✓ Confirm Address</button>
+          <button id="survey-apply-btn" onclick="applySurveySite()" disabled class="text-xs bg-emerald-700 hover:bg-emerald-800 disabled:bg-slate-100 disabled:text-slate-400 text-white font-bold px-3 py-2 rounded-md shadow-sm">▣ Apply Capacity & Rent</button>
+          <button onclick="clearSurvey()" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-600 px-3 py-2 rounded-md border border-slate-300">Clear Pin & Shape</button>
+          <label class="flex items-center gap-1.5 text-xs text-slate-600 cursor-pointer">
+            <input id="survey-set-rent" type="checkbox" checked class="rounded" />
+            <span>Also set as depot daily rent</span>
+          </label>
+          <span id="survey-saved-out" class="text-[11px] text-slate-400"></span>
+        </div>
+      </div>
+
       <!-- Regional Allocation Matrix from Bus Prices Sheet -->
       <div class="bg-white border border-slate-200 rounded-lg p-5">
         <h3 class="text-base font-bold text-slate-900 mb-1">Regional Fleet Valuation Breakdown (From Bus Prices Sheet)</h3>
         <p class="text-xs text-slate-500 mb-4">Summary of your current active regional allocations across West Midlands, Notts & Derby, Shropshire, Worcestershire, Wales, Staffordshire, South London, Yard & Preservation.</p>
         <div id="regional-summary-grid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3"></div>
+      </div>
+    </section>
+
+    <!-- ================= TAB: EXPENSES & OVERHEADS ================= -->
+    <section id="view-expenses" class="hidden space-y-6">
+      <div class="bg-white border border-slate-200 rounded-lg p-5 space-y-3">
+        <div>
+          <h2 class="text-base font-bold text-slate-900">Industry Cost Benchmarks (researched Oct 2026)</h2>
+          <p class="text-xs text-slate-500">How a real UK bus company's costs break down — the site bills below are modelled from these benchmarks, assumptions noted per row.</p>
+        </div>
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
+          <div class="bg-white border border-slate-200 rounded-md px-3 py-2">
+            <div class="font-semibold text-slate-900 mb-1">CPT Cost Monitor Feb 2026 (GB ex-London)</div>
+            <div class="text-slate-600 leading-relaxed">Labour 57.8% (drivers 39.2%) · Fuel 13.2% · Parts 5.5% · Overheads ~14% · Claims 2.1% · Ownership 7.1% · <span class="mono font-bold">£60.45/bus/hour</span> · NI rise +£800/driver</div>
+          </div>
+          <div class="bg-white border border-slate-200 rounded-md px-3 py-2">
+            <div class="font-semibold text-slate-900 mb-1">Staff & Fuel</div>
+            <div class="text-slate-600 leading-relaxed">Driver median <span class="mono font-bold">£33,947</span> (£36,340 full-time, ONS 2025; London ~£40k) · Diesel <span class="mono font-bold">200.01p/l</span> record Oct 2026 (RAC)</div>
+          </div>
+          <div class="bg-white border border-slate-200 rounded-md px-3 py-2">
+            <div class="font-semibold text-slate-900 mb-1">Energy, Rates & Property</div>
+            <div class="text-slate-600 leading-relaxed">Elec 22–30p/kWh · Gas 6.5–9p/kWh (2026 fixes) · Rates 43.2p/48p/50.8p (2026/27) · Industrial: Midlands £5–10/sq ft, London £20+/sq ft</div>
+          </div>
+          <div class="bg-white border border-slate-200 rounded-md px-3 py-2">
+            <div class="font-semibold text-slate-900 mb-1">Insurance & Connectivity</div>
+            <div class="text-slate-600 leading-relaxed">Fleet £1,500–£4,500/veh/yr, buses upper end (ABI) · Business broadband ~£29–40/mo</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="bg-white border border-slate-200 p-4 rounded-lg">
+          <div class="text-xs text-slate-500 font-medium">Total Overheads / Day</div>
+          <div id="oh-total-day" class="mono text-2xl font-extrabold text-rose-700 mt-1">£0</div>
+          <div class="text-[11px] text-slate-500 mt-1">Recurring bills, ex depot rent</div>
+        </div>
+        <div class="bg-white border border-slate-200 p-4 rounded-lg">
+          <div class="text-xs text-slate-500 font-medium">Company-Wide / Day</div>
+          <div id="oh-total-company" class="mono text-2xl font-extrabold text-amber-700 mt-1">£0</div>
+          <div class="text-[11px] text-slate-500 mt-1">Internet, insurance & HQ costs</div>
+        </div>
+        <div class="bg-white border border-slate-200 p-4 rounded-lg">
+          <div class="text-xs text-slate-500 font-medium">Depot-Scoped / Day</div>
+          <div id="oh-total-depot" class="mono text-2xl font-extrabold text-amber-700 mt-1">£0</div>
+          <div class="text-[11px] text-slate-500 mt-1">Utilities, rates per depot</div>
+        </div>
+        <div class="bg-white border border-slate-200 p-4 rounded-lg">
+          <div class="text-xs text-slate-500 font-medium">Depot Rent / Day</div>
+          <div id="oh-rent-day" class="mono text-2xl font-extrabold text-slate-900 mt-1">£0</div>
+          <div class="text-[11px] text-slate-500 mt-1">Editable in Depots & Operations</div>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div class="bg-white border border-slate-200 rounded-lg p-5 space-y-4 h-fit">
+          <h2 class="text-base font-bold text-slate-900">Add Recurring Bill</h2>
+          <p class="text-xs text-slate-500">Monthly bills are spread ÷30 into the daily profit and midnight income. Depot-scoped bills hit that depot's profit.</p>
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">Bill Name</label>
+            <input id="oh-name" type="text" placeholder="e.g. Depot Wi-Fi" class="w-full bg-white border border-slate-300 rounded-md px-3 py-2 text-sm text-slate-900" />
+          </div>
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs font-semibold text-slate-600 mb-1">Category</label>
+              <select id="oh-category" class="w-full bg-white border border-slate-300 rounded-md px-3 py-2 text-sm text-slate-900">
+                <option value="Internet">Internet</option>
+                <option value="Insurance">Insurance</option>
+                <option value="Utilities">Utilities</option>
+                <option value="Business Rates">Business Rates</option>
+                <option value="Compliance">Compliance</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-600 mb-1">Applies To</label>
+              <select id="oh-scope" class="w-full bg-white border border-slate-300 rounded-md px-3 py-2 text-sm text-slate-900"></select>
+            </div>
+          </div>
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs font-semibold text-slate-600 mb-1">Amount (£)</label>
+              <input id="oh-amount" type="number" step="0.01" min="0" placeholder="e.g. 85" class="w-full bg-white border border-slate-300 rounded-md px-3 py-2 text-sm text-slate-900 mono" />
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-600 mb-1">Per</label>
+              <select id="oh-freq" class="w-full bg-white border border-slate-300 rounded-md px-3 py-2 text-sm text-slate-900">
+                <option value="monthly">Month (÷30/day)</option>
+                <option value="daily">Day</option>
+              </select>
+            </div>
+          </div>
+          <button onclick="addOverhead()" class="w-full bg-blue-800 hover:bg-blue-900 text-slate-900 font-bold py-2.5 rounded-md text-sm transition shadow-sm">
+            Add Bill to Overheads
+          </button>
+        </div>
+
+        <div class="lg:col-span-2 bg-white border border-slate-200 rounded-lg p-5 flex flex-col">
+          <div class="mb-4">
+            <h2 class="text-base font-bold text-slate-900">Recurring Overheads</h2>
+            <p class="text-xs text-slate-500">Feeds Today's Operating Expenses, depot profits, and the automatic midnight income.</p>
+          </div>
+          <div class="overflow-x-auto max-h-[420px] overflow-y-auto border border-slate-200 rounded-md">
+            <table class="w-full text-left border-collapse text-xs">
+              <thead class="bg-slate-100 text-slate-600 sticky top-0">
+                <tr>
+                  <th class="py-2.5 px-3">Bill</th>
+                  <th class="py-2.5 px-3">Category</th>
+                  <th class="py-2.5 px-3">Applies To</th>
+                  <th class="py-2.5 px-3 text-right">Billed</th>
+                  <th class="py-2.5 px-3 text-right">Cost / Day (£)</th>
+                  <th class="py-2.5 px-3 text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="oh-tbody" class="divide-y divide-slate-200"></tbody>
+            </table>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -619,7 +787,7 @@
         <div class="flex flex-wrap items-center justify-between gap-4">
           <div>
             <h2 class="text-lg font-bold text-slate-900">Regional Fare Tables & Per-Bus Revenue Simulator</h2>
-            <p class="text-xs text-slate-500">Edit ticket prices or estimated daily passenger numbers for any operating region from <code>Ticket_Prices.csv</code> to see live per-bus profit changes.</p>
+            <p class="text-xs text-slate-500">Add tickets per zone, edit prices and passenger counts from <code>Ticket_Prices.csv</code>, or calibrate counts to REAL depot takings — and see live per-bus profit changes.</p>
           </div>
           <select id="fare-region-select" onchange="renderFareTable()" class="bg-white border border-slate-300 rounded-md px-4 py-2 text-xs md:text-sm text-slate-900 font-semibold"></select>
         </div>
@@ -639,18 +807,63 @@
           </div>
         </div>
 
+        <div class="bg-white border border-slate-200 rounded-md p-4 space-y-3">
+          <div class="flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <h3 class="text-sm font-bold text-slate-900">Real Patronage Calibration</h3>
+              <p class="text-xs text-slate-500">Scales every ticket's pax so table revenue matches the mapped depots' actual takings — keeping the current ticket mix. Resulting counts are REAL (depot-backed).</p>
+            </div>
+            <button onclick="calibrateFarePax()" title="Derive per-ticket passengers from actual depot income per bus" class="text-xs bg-indigo-700 hover:bg-indigo-800 text-white font-bold px-3 py-2 rounded-md shadow-sm whitespace-nowrap">📊 Calibrate pax to depot income</button>
+          </div>
+          <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
+            <div class="bg-white border border-slate-200 rounded-md px-3 py-2">
+              <div class="text-slate-500">Mapped Depots</div>
+              <div id="fare-calib-depots" class="font-semibold text-slate-900 mt-0.5">—</div>
+            </div>
+            <div class="bg-white border border-slate-200 rounded-md px-3 py-2">
+              <div class="text-slate-500">Actual Depot Income / Bus / Day</div>
+              <div id="fare-calib-actual" class="mono font-bold text-sky-700 mt-0.5">—</div>
+            </div>
+            <div class="bg-white border border-slate-200 rounded-md px-3 py-2">
+              <div class="text-slate-500">Ticket Table Revenue / Bus / Day</div>
+              <div id="fare-calib-table" class="mono font-bold text-emerald-700 mt-0.5">—</div>
+            </div>
+            <div class="bg-white border border-slate-200 rounded-md px-3 py-2">
+              <div class="text-slate-500">OpEx / Bus / Day (editable)</div>
+              <input id="fare-opex-input" type="number" step="0.01" min="0" onchange="updateFareOpEx(this.value)"
+                class="mono font-bold text-rose-700 mt-0.5 w-full bg-transparent border-b border-slate-300 focus:outline-none focus:border-rose-500" />
+            </div>
+          </div>
+        </div>
+
         <div class="overflow-x-auto border border-slate-200 rounded-md">
           <table class="w-full text-left border-collapse text-xs md:text-sm">
             <thead class="bg-slate-100 text-slate-600">
               <tr>
                 <th class="py-3 px-4">Ticket Type</th>
                 <th class="py-3 px-4 text-right">Ticket Price (£)</th>
-                <th class="py-3 px-4 text-right">Est. Daily Passengers (Per Bus)</th>
+                <th class="py-3 px-4 text-right">Est. Daily Passengers (Per Bus) <span id="fare-pax-badge"></span></th>
                 <th class="py-3 px-4 text-right">Effective Daily Income (£)</th>
+                <th class="py-3 px-4 text-right">Actions</th>
               </tr>
             </thead>
             <tbody id="fares-tbody" class="divide-y divide-slate-200"></tbody>
           </table>
+        </div>
+
+        <div class="bg-white border border-slate-200 rounded-md p-4 space-y-3">
+          <h3 class="text-sm font-bold text-slate-900">Add Ticket to <span id="fare-add-region" class="text-indigo-700"></span></h3>
+          <div class="grid grid-cols-2 md:grid-cols-6 gap-2">
+            <input id="fare-new-name" type="text" placeholder="Ticket name (e.g. Evening Saver)" class="md:col-span-2 bg-white border border-slate-300 rounded-md px-3 py-2 text-xs text-slate-900" />
+            <input id="fare-new-price" type="number" step="0.01" min="0" placeholder="Price £" class="bg-white border border-slate-300 rounded-md px-3 py-2 text-xs text-slate-900 mono" />
+            <input id="fare-new-pax" type="number" step="0.1" min="0" placeholder="Pax / bus / day" class="bg-white border border-slate-300 rounded-md px-3 py-2 text-xs text-slate-900 mono" />
+            <select id="fare-new-factor" class="bg-white border border-slate-300 rounded-md px-3 py-2 text-xs text-slate-900">
+              <option value="1">Single / Day (×1)</option>
+              <option value="0.14285714285714285">Weekly (÷7)</option>
+              <option value="0.03571428571428571">Monthly (÷28)</option>
+            </select>
+            <button onclick="addFareTicket()" class="bg-emerald-700 hover:bg-emerald-800 text-white font-bold py-2 rounded-md text-xs transition shadow-sm">+ Add Ticket</button>
+          </div>
         </div>
       </div>
     </section>
@@ -792,8 +1005,12 @@
   <script src="database/vehicle-specs.js"></script>
   <script src="database/drivetrain-specs.js"></script>
   <script src="database/fleet-raw.js"></script>
+  <script src="database/fleet-registry.js"></script>
   <script src="database/workshop-queue.js"></script>
   <script src="database/workshop-completed.js"></script>
+  <script src="database/overheads.js"></script>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.js"></script>
   <script src="database/mybustimes-operators.js"></script>
   <script src="database/db.js"></script>
   <script src="database/mybustimes.js"></script>
@@ -840,11 +1057,19 @@
       // Pulls live writable database (seeds on first run, localStorage after).
       state = window.DB.loadAllState();
       if (!Array.isArray(state.workshopCompleted)) state.workshopCompleted = [];
+      if (!Array.isArray(state.overheads)) state.overheads = [];
+      else if (state.overheads.length === 4 && state.overheads.every(o => /^oh-seed-[1-4]$/.test(o.id || ""))) {
+        // Untouched original 4-row seed bills → upgrade to the researched 2026 bill set.
+        state.overheads = JSON.parse(JSON.stringify(window.DB_SEED_OVERHEADS || []));
+        window.DB.save("overheads", state.overheads);
+      }
     }
 
     function saveState() {
       // Write-through: every caller persists all tables immediately.
       window.DB.saveAllState(state);
+      // Best-effort disk sync when served via server.js (no-op otherwise).
+      if (window.DB.saveToServer) window.DB.saveToServer(state);
     }
 
 
@@ -870,6 +1095,29 @@
       return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
     }
 
+    // Overheads: monthly bills are spread ÷30 into a daily cost.
+    function overheadDaily(o) {
+      const amt = parseFloat(o.amount) || 0;
+      return o.freq === "monthly" ? amt / 30 : amt;
+    }
+
+    function overheadsByDepot() {
+      const m = {};
+      (state.overheads || []).forEach(o => {
+        if (o.scope && o.scope !== "Company-wide") m[o.scope] = (m[o.scope] || 0) + overheadDaily(o);
+      });
+      return m;
+    }
+
+    function overheadTotals() {
+      let company = 0, depot = 0;
+      (state.overheads || []).forEach(o => {
+        if (o.scope && o.scope !== "Company-wide") depot += overheadDaily(o);
+        else company += overheadDaily(o);
+      });
+      return { company, depot, total: company + depot };
+    }
+
     function calculateDailyTotals() {
       let totalIncome = 0;
       let totalOpEx = 0;
@@ -887,7 +1135,7 @@
         totalBuses += d.vehicles;
       });
 
-      const totalExpenses = totalOpEx + totalRent;
+      const totalExpenses = totalOpEx + totalRent + overheadTotals().total;
       const preTaxProfit = totalIncome - totalExpenses;
       const afterTaxProfit = preTaxProfit > 0 ? preTaxProfit * 0.75 : preTaxProfit;
 
@@ -988,6 +1236,7 @@
       renderWorkshopCompletedBanner();
       renderLedger();
       renderDepots();
+      renderExpenses();
       renderFleetTable();
       renderDealerCatalogue();
       renderFareTable();
@@ -1177,6 +1426,7 @@
       const daily = calculateDailyTotals();
       document.getElementById("depot-total-buses").textContent = daily.totalBuses;
       document.getElementById("depot-total-rent").textContent = formatGBP(daily.totalRent);
+      const depotOh = overheadsByDepot();
 
       tbody.innerHTML = state.depots.map((d, idx) => {
         const orig = INITIAL_STATE.depots[idx] || d;
@@ -1184,11 +1434,12 @@
         const expPerBus = d.baseExpenses / Math.max(1, orig.vehicles);
         const inc = revPerBus * d.vehicles;
         const exp = expPerBus * d.vehicles;
-        const profit = inc - exp - d.rent;
+        const oh = depotOh[d.name] || 0;
+        const profit = inc - exp - d.rent - oh;
 
         return `
           <tr class="hover:bg-slate-100">
-            <td class="py-2.5 px-4 font-semibold text-slate-900">${d.name}${d.source === "mybustimes" ? ' <span class="text-[10px] text-emerald-700 font-normal" title="Auto-synced from mybustimes">🔗</span>' : ""}</td>
+            <td class="py-2.5 px-4 font-semibold text-slate-900">${d.name}${d.source === "mybustimes" ? ' <span class="text-[10px] text-emerald-700 font-normal" title="Auto-synced from mybustimes">🔗</span>' : ""}${d.address ? ` <span class="text-[10px]" title="${escAttr(d.address)}">📍</span>` : ""}${oh ? ` <span class="text-[10px] text-amber-700 font-normal" title="Depot-scoped overheads">+${formatGBP(oh, 2)}/day o/h</span>` : ""}${siteBadge(d)}</td>
             <td class="py-2.5 px-4 text-center">
               <div class="inline-flex items-center gap-1 bg-white border border-slate-300 rounded-lg px-1.5 py-0.5">
                 <button onclick="adjustDepotVehicles(${idx}, -1)" class="text-slate-500 hover:text-slate-900 px-1.5 font-bold">-</button>
@@ -1199,7 +1450,10 @@
             <td class="py-2.5 px-4 mono text-right text-slate-500">${formatGBP(revPerBus, 2)}</td>
             <td class="py-2.5 px-4 mono text-right text-emerald-700 font-medium">${formatGBP(inc, 2)}</td>
             <td class="py-2.5 px-4 mono text-right text-rose-700">${formatGBP(exp, 2)}</td>
-            <td class="py-2.5 px-4 mono text-right text-amber-700">${formatGBP(d.rent, 0)}</td>
+            <td class="py-2.5 px-4 mono text-right">
+              <input type="number" step="1" min="0" value="${d.rent || 0}" onchange="updateDepotRent(${idx}, this.value)" title="Daily rent (£)"
+                class="bg-white border border-slate-300 rounded-lg px-2 py-1 text-right mono text-xs text-amber-700 w-20" />
+            </td>
             <td class="py-2.5 px-4 mono text-right font-bold ${profit >= 0 ? 'text-emerald-700' : 'text-rose-700'}">${formatGBP(profit, 2)}</td>
           </tr>
         `;
@@ -1224,14 +1478,430 @@
           <div class="text-[11px] text-slate-500 mt-0.5">${r.note}</div>
         </div>
       `).join("");
+      refreshSurveyDepots();
     }
 
     function adjustDepotVehicles(idx, delta) {
-      const next = state.depots[idx].vehicles + delta;
+      const d = state.depots[idx];
+      const next = d.vehicles + delta;
       if (next < 0) return;
-      state.depots[idx].vehicles = next;
+      if (delta > 0 && d.maxVehicles && next > d.maxVehicles) {
+        showToast(`${d.name} is validated for ${d.maxVehicles} bays — survey a larger site or move vehicles elsewhere (currently ${d.vehicles}).`, "⚠️");
+        return;
+      }
+      d.vehicles = next;
       saveState();
       renderAll();
+    }
+
+    function updateDepotRent(idx, val) {
+      const num = parseFloat(val);
+      if (isNaN(num) || num < 0) { renderDepots(); return; }
+      state.depots[idx].rent = Math.round(num * 100) / 100;
+      saveState();
+      renderAll();
+      showToast(`Daily rent updated for ${state.depots[idx].name}!`, "✅");
+    }
+
+    // =========================================================================
+    // 5c. DEPOT SITE SURVEY & VALIDATION (map pin → legal address, draw → bays/rent)
+    // =========================================================================
+    const DEPOT_BAY_M2 = 45;            // one parked bus + manoeuvring share
+    const DEPOT_USABLE_SHARE = 0.65;    // share of site usable for parking
+    const DEPOT_RENT_LONDON = 150;      // £/m²/year
+    const DEPOT_RENT_STANDARD = 70;     // £/m²/year
+    const LONDON_PC_AREAS = ["E", "EC", "N", "NW", "SE", "SW", "W", "WC", "BR", "CR", "DA", "EN", "HA", "IG", "KT", "RM", "SM", "TW", "UB", "WD"];
+    const UK_POSTCODE_RE = /^[A-Z]{1,2}\d[A-Z\d]?\s*\d[A-Z]{2}$/i;
+
+    let surveyDepotIdx = 0;
+    let surveyPin = null;
+    let surveyDrawing = false;
+    let surveyGeo = { lat: null, lng: null, address: "", postcode: "", valid: false, msg: "Click the map to pin the depot location." };
+    let surveyAreaM2 = 0;
+
+    function rentRateForPostcode(pc) {
+      const m = String(pc || "").trim().match(/^([A-Z]+)\d/i);
+      return (m && LONDON_PC_AREAS.includes(m[1].toUpperCase())) ? DEPOT_RENT_LONDON : DEPOT_RENT_STANDARD;
+    }
+
+    function surveyCapacity(areaM2) {
+      return Math.floor(areaM2 * DEPOT_USABLE_SHARE / DEPOT_BAY_M2);
+    }
+
+    function siteBadge(d) {
+      if (!d.maxVehicles) return "";
+      if ((d.vehicles || 0) > d.maxVehicles)
+        return ` <span class="px-1.5 py-0.5 rounded bg-rose-50 text-rose-700 text-[10px] font-bold whitespace-nowrap" title="Over validated capacity">⚠️ ${d.vehicles}/${d.maxVehicles} bays</span>`;
+      return ` <span class="px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-700 text-[10px] font-bold whitespace-nowrap" title="Validated capacity">${d.vehicles}/${d.maxVehicles} bays</span>`;
+    }
+
+    function depotSiteStatus(d) {
+      if (!d.maxVehicles) return { t: "Unsurveyed", c: "slate" };
+      if ((d.vehicles || 0) > d.maxVehicles) return { t: `OVER ${d.vehicles}/${d.maxVehicles} bays`, c: "rose" };
+      return { t: `${d.vehicles}/${d.maxVehicles} bays`, c: "emerald" };
+    }
+
+    function initDepotMap() {
+      if (window._depotMap) return window._depotMap;
+      const el = document.getElementById("depot-map");
+      if (!el) return null;
+      if (typeof L === "undefined") {
+        el.innerHTML = `<div class="p-6 text-sm text-slate-500">Map unavailable — the Leaflet CDN could not be loaded (network blocked?). Site survey needs a connection.</div>`;
+        return null;
+      }
+      const map = L.map("depot-map").setView([53.5, -2.5], 6);
+      L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", { maxZoom: 19, attribution: "&copy; OpenStreetMap contributors" }).addTo(map);
+      const drawn = new L.FeatureGroup();
+      map.addLayer(drawn);
+      window._depotDrawn = drawn;
+      map.addControl(new L.Control.Draw({
+        draw: {
+          marker: false, circle: false, circlemarker: false, polyline: false, polygon: { allowIntersection: false, showArea: true }, rectangle: { showArea: true }
+        },
+        edit: false
+      }));
+      map.on(L.Draw.Event.DRAWSTART, () => { surveyDrawing = true; });
+      map.on(L.Draw.Event.DRAWSTOP, () => { surveyDrawing = false; });
+      map.on(L.Draw.Event.CREATED, e => {
+        drawn.clearLayers();
+        drawn.addLayer(e.layer);
+        onSurveyShape(e.layer);
+      });
+      map.on("click", e => {
+        if (surveyDrawing) return;
+        placeSurveyPin(e.latlng.lat, e.latlng.lng);
+      });
+      window._depotMap = map;
+      return map;
+    }
+
+    function placeSurveyPin(lat, lng) {
+      const map = window._depotMap;
+      if (!map) return;
+      if (surveyPin) map.removeLayer(surveyPin);
+      surveyPin = L.marker([lat, lng]).addTo(map);
+      surveyGeo = { lat, lng, address: "", postcode: "", valid: false, msg: "Looking up address…" };
+      updateSurveyReadout();
+      reverseGeocode(lat, lng);
+    }
+
+    async function reverseGeocode(lat, lng) {
+      const stampLat = lat, stampLng = lng;
+      try {
+        const url = `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat.toFixed(6)}&lon=${lng.toFixed(6)}&zoom=18&addressdetails=1&countrycodes=gb&accept-language=en`;
+        const res = await fetch(url, { headers: { "Accept": "application/json" } });
+        if (!res.ok) throw new Error("lookup failed");
+        const data = await res.json();
+        // Ignore stale responses if the pin moved mid-lookup.
+        if (!surveyPin || surveyGeo.lat !== stampLat || surveyGeo.lng !== stampLng) return;
+        const a = (data && data.address) || {};
+        if (data.error || !data.address) {
+          surveyGeo = { lat, lng, address: "", postcode: "", valid: false, msg: "❌ No UK address found at this pin — try a built-up area." };
+        } else {
+          const road = a.road || a.pedestrian || a.footway || a.cycleway || a.retail || a.industrial || "";
+          const pc = (a.postcode || "").trim();
+          const missing = [];
+          if (!road) missing.push("street name");
+          if (!UK_POSTCODE_RE.test(pc)) missing.push("valid postcode");
+          if ((a.country_code || "").toLowerCase() !== "gb") missing.push("UK location");
+          surveyGeo = missing.length
+            ? { lat, lng, address: data.display_name || "", postcode: pc, valid: false, msg: `❌ Not a legal depot address — missing: ${missing.join(", ")}.` }
+            : { lat, lng, address: data.display_name, postcode: pc, valid: true, msg: `✅ Legal address: ${data.display_name}` };
+        }
+      } catch (e) {
+        if (!surveyPin || surveyGeo.lat !== stampLat || surveyGeo.lng !== stampLng) return;
+        surveyGeo = { lat, lng, address: "", postcode: "", valid: false, msg: "❌ Address lookup unavailable — check connection and try again." };
+      }
+      updateSurveyReadout();
+    }
+
+    function shapeAreaM2(layer) {
+      try {
+        let ll = layer.getLatLngs();
+        const flat = (Array.isArray(ll[0]) ? ll[0] : ll);
+        if (window.L && L.GeometryUtil && L.GeometryUtil.geodesicArea) return L.GeometryUtil.geodesicArea(flat);
+      } catch (e) {}
+      // Planar fallback (equirectangular shoelace).
+      try {
+        let ll = layer.getLatLngs();
+        const pts = (Array.isArray(ll[0]) ? ll[0] : ll);
+        const r = 6371000, rad = Math.PI / 180;
+        const lat0 = pts.reduce((s, p) => s + p.lat, 0) / pts.length * rad;
+        let sum = 0;
+        for (let i = 0; i < pts.length; i++) {
+          const p = pts[i], q = pts[(i + 1) % pts.length];
+          const x1 = p.lng * rad * Math.cos(lat0) * r, y1 = p.lat * rad * r;
+          const x2 = q.lng * rad * Math.cos(lat0) * r, y2 = q.lat * rad * r;
+          sum += (x1 * y2 - x2 * y1);
+        }
+        return Math.abs(sum / 2);
+      } catch (e2) { return 0; }
+    }
+
+    function onSurveyShape(layer) {
+      surveyAreaM2 = Math.round(shapeAreaM2(layer));
+      updateSurveyReadout();
+    }
+
+    function updateSurveyReadout() {
+      const addrEl = document.getElementById("survey-addr-out");
+      if (addrEl) {
+        addrEl.textContent = surveyGeo.valid ? surveyGeo.address : surveyGeo.msg;
+        addrEl.className = surveyGeo.valid ? "text-emerald-700 font-semibold" : "text-slate-700";
+      }
+      const cap = surveyCapacity(surveyAreaM2);
+      const rate = surveyGeo.postcode ? rentRateForPostcode(surveyGeo.postcode) : null;
+      const rent = rate ? Math.round(surveyAreaM2 * rate / 365) : 0;
+      const areaEl = document.getElementById("survey-area-out");
+      if (areaEl) areaEl.textContent = surveyAreaM2 ? `${surveyAreaM2.toLocaleString("en-GB")} m²` : "— (draw a boundary)";
+      const capEl = document.getElementById("survey-cap-out");
+      if (capEl) capEl.textContent = surveyAreaM2 ? `${cap} vehicles` : "—";
+      const rentEl = document.getElementById("survey-rent-out");
+      if (rentEl) rentEl.textContent = surveyAreaM2 ? (rate ? `${formatGBP(rent, 0)}/day @ £${rate}/m²/yr` : "pin location first (needs postcode)") : "—";
+      const confirmBtn = document.getElementById("survey-confirm-btn");
+      if (confirmBtn) confirmBtn.disabled = !surveyGeo.valid;
+      const applyBtn = document.getElementById("survey-apply-btn");
+      if (applyBtn) applyBtn.disabled = !(surveyGeo.valid && surveyAreaM2 > 0);
+    }
+
+    function refreshSurveyDepots() {
+      const sel = document.getElementById("survey-depot");
+      if (sel) {
+        const keep = sel.value;
+        sel.innerHTML = (state.depots || []).map((d, i) => `<option value="${i}">${escAttr(d.name)}</option>`).join("");
+        const idx = (keep !== "" && state.depots[keep]) ? parseInt(keep, 10) : 0;
+        surveyDepotIdx = isNaN(idx) ? 0 : idx;
+        sel.value = String(surveyDepotIdx);
+        const d = state.depots[surveyDepotIdx];
+        const saved = document.getElementById("survey-saved-out");
+        if (saved) saved.textContent = d
+          ? (d.address
+              ? `Saved: ${d.address.slice(0, 80)}${d.address.length > 80 ? "…" : ""}${d.siteAreaM2 ? ` · ${d.siteAreaM2.toLocaleString("en-GB")} m² · ${d.maxVehicles} bays` : ""}`
+              : (d.siteAreaM2 ? `Saved: ${d.siteAreaM2.toLocaleString("en-GB")} m² · ${d.maxVehicles} bays (no address yet)` : "No survey saved for this depot yet."))
+          : "";
+      }
+      const list = document.getElementById("survey-validate-list");
+      if (list) {
+        const pill = { slate: "bg-slate-100 text-slate-500", emerald: "bg-emerald-50 text-emerald-700", rose: "bg-rose-50 text-rose-700" };
+        list.innerHTML = (state.depots || []).map(d => {
+          const s = depotSiteStatus(d);
+          return `<div class="flex items-center justify-between gap-2 bg-white border border-slate-200 rounded-md px-2.5 py-1.5 text-[11px]">
+            <span class="font-semibold text-slate-900 truncate" title="${escAttr(d.address || "No address on file")}">${d.address ? "📍 " : ""}${escAttr(d.name)}</span>
+            <span class="px-1.5 py-0.5 rounded font-bold whitespace-nowrap ${pill[s.c]}">${s.t}</span>
+          </div>`;
+        }).join("");
+      }
+    }
+
+    function onSurveyDepotChange() {
+      const sel = document.getElementById("survey-depot");
+      surveyDepotIdx = parseInt(sel.value, 10) || 0;
+      const d = state.depots[surveyDepotIdx];
+      const map = window._depotMap;
+      if (map && d && typeof d.lat === "number" && typeof d.lng === "number") {
+        map.setView([d.lat, d.lng], 16);
+        if (surveyPin) map.removeLayer(surveyPin);
+        surveyPin = L.marker([d.lat, d.lng]).addTo(map);
+        surveyGeo = { lat: d.lat, lng: d.lng, address: d.address || "", postcode: "", valid: !!d.address, msg: d.address || "Saved pin has no address — click map to re-pin." };
+        if (d.address) {
+          const m = d.address.match(/([A-Z]{1,2}\d[A-Z\d]?\s*\d[A-Z]{2})\s*$/i);
+          surveyGeo.postcode = m ? m[1] : "";
+        }
+      } else {
+        if (surveyPin && map) { map.removeLayer(surveyPin); surveyPin = null; }
+        surveyGeo = { lat: null, lng: null, address: "", postcode: "", valid: false, msg: "Click the map to pin the depot location." };
+      }
+      if (window._depotDrawn) window._depotDrawn.clearLayers();
+      surveyAreaM2 = 0;
+      refreshSurveyDepots();
+      updateSurveyReadout();
+    }
+
+    function confirmSurveyAddress() {
+      const d = state.depots[surveyDepotIdx];
+      if (!d || !surveyGeo.valid) return;
+      d.lat = surveyGeo.lat;
+      d.lng = surveyGeo.lng;
+      d.address = surveyGeo.address;
+      saveState();
+      renderAll();
+      refreshSurveyDepots();
+      updateSurveyReadout();
+      showToast(`Legal address saved for ${d.name}!`, "✅");
+    }
+
+    function applySurveySite() {
+      const d = state.depots[surveyDepotIdx];
+      if (!d || !surveyGeo.valid || !surveyAreaM2) return;
+      const cap = surveyCapacity(surveyAreaM2);
+      const rate = rentRateForPostcode(surveyGeo.postcode);
+      const rent = Math.round(surveyAreaM2 * rate / 365);
+      d.lat = surveyGeo.lat;
+      d.lng = surveyGeo.lng;
+      d.address = surveyGeo.address;
+      d.siteAreaM2 = surveyAreaM2;
+      d.maxVehicles = cap;
+      d.assessedRent = rent;
+      d.rentRate = rate;
+      if (document.getElementById("survey-set-rent")?.checked) d.rent = rent;
+      // Business rates follow the surveyed site: RV ≈ open-market annual
+      // rent (area × £/m²/yr), taxed at the real 2026/27 multiplier —
+      // 48p standard (RV £51k+), 43.2p small. Updates (or creates) this
+      // depot's Business Rates overhead row so Expenses move with the map.
+      const rv = surveyAreaM2 * rate;
+      const mult = rv >= 51000 ? 0.48 : 0.432;
+      const monthlyRates = Math.round(rv * mult / 12 * 100) / 100;
+      const ratesName = `Business Rates (surveyed ${surveyAreaM2.toLocaleString("en-GB")} m², RV ≈ ${formatGBP(rv, 0)} × ${mult === 0.48 ? "48p" : "43.2p"})`;
+      const row = (state.overheads || []).find(o => o.scope === d.name && o.category === "Business Rates");
+      if (row) {
+        row.amount = monthlyRates;
+        row.freq = "monthly";
+        row.name = ratesName;
+      } else {
+        (state.overheads = state.overheads || []).push({
+          id: "oh-" + Date.now().toString(36) + Math.floor(Math.random() * 1e4).toString(36),
+          name: ratesName, category: "Business Rates", scope: d.name,
+          amount: monthlyRates, freq: "monthly"
+        });
+      }
+      saveState();
+      renderAll();
+      refreshSurveyDepots();
+      updateSurveyReadout();
+      showToast(`${d.name}: ${surveyAreaM2.toLocaleString("en-GB")} m² → ${cap} bays, ${formatGBP(rent, 0)}/day rent + ${formatGBP(monthlyRates, 2)}/mo rates${document.getElementById("survey-set-rent")?.checked ? " (rent applied)" : ""}!`, "✅");
+    }
+
+    function clearSurvey() {
+      if (surveyPin && window._depotMap) { window._depotMap.removeLayer(surveyPin); surveyPin = null; }
+      if (window._depotDrawn) window._depotDrawn.clearLayers();
+      surveyGeo = { lat: null, lng: null, address: "", postcode: "", valid: false, msg: "Click the map to pin the depot location." };
+      surveyAreaM2 = 0;
+      updateSurveyReadout();
+    }
+
+    // =========================================================================
+    // 5b. EXPENSES & OVERHEADS
+    // =========================================================================
+    let editingOhId = null;
+
+    function overheadScopeOptions(selected) {
+      const scopes = ["Company-wide"].concat((state.depots || []).map(d => d.name));
+      const list = scopes.includes(selected) ? scopes : scopes.concat([selected]);
+      return list.map(s => `<option value="${escAttr(s)}"${s === selected ? " selected" : ""}>${s === "Company-wide" ? "Company-wide" : escAttr(s)}</option>`).join("");
+    }
+
+    function renderExpenses() {
+      const totals = overheadTotals();
+      document.getElementById("oh-total-day").textContent = formatGBP(totals.total, 2);
+      document.getElementById("oh-total-company").textContent = formatGBP(totals.company, 2);
+      document.getElementById("oh-total-depot").textContent = formatGBP(totals.depot, 2);
+      document.getElementById("oh-rent-day").textContent = formatGBP((state.depots || []).reduce((a, d) => a + (parseFloat(d.rent) || 0), 0), 2);
+
+      const scopeSel = document.getElementById("oh-scope");
+      if (scopeSel && document.activeElement !== scopeSel) {
+        const keep = scopeSel.value || "Company-wide";
+        scopeSel.innerHTML = overheadScopeOptions(keep);
+      }
+
+      const tbody = document.getElementById("oh-tbody");
+      const items = state.overheads || [];
+      tbody.innerHTML = items.length ? items.map(o => {
+        if (o.id === editingOhId) {
+          return `
+          <tr class="bg-amber-50">
+            <td class="py-2 px-2"><input id="edit-oh-name" type="text" value="${escAttr(o.name)}" class="bg-white border border-slate-300 rounded-md px-2 py-1 text-xs w-full" /></td>
+            <td class="py-2 px-2">
+              <select id="edit-oh-category" class="bg-white border border-slate-300 rounded-md px-2 py-1 text-xs">
+                ${["Internet", "Insurance", "Utilities", "Business Rates", "Compliance", "Other"].map(c => `<option value="${c}"${o.category === c ? " selected" : ""}>${c}</option>`).join("")}
+              </select>
+            </td>
+            <td class="py-2 px-2"><select id="edit-oh-scope" class="bg-white border border-slate-300 rounded-md px-2 py-1 text-xs">${overheadScopeOptions(o.scope)}</select></td>
+            <td class="py-2 px-2 text-right whitespace-nowrap">
+              <input id="edit-oh-amount" type="number" step="0.01" min="0" value="${o.amount}" class="bg-white border border-slate-300 rounded-md px-2 py-1 text-xs mono text-right w-20" />
+              <select id="edit-oh-freq" class="bg-white border border-slate-300 rounded-md px-1 py-1 text-xs">
+                <option value="monthly"${o.freq === "monthly" ? " selected" : ""}>/mo</option>
+                <option value="daily"${o.freq !== "monthly" ? " selected" : ""}>/day</option>
+              </select>
+            </td>
+            <td class="py-2 px-2 mono text-right font-bold text-rose-700">${formatGBP(overheadDaily(o), 2)}</td>
+            <td class="py-2 px-2 text-right whitespace-nowrap">
+              <button onclick="saveOverheadEdit('${o.id}')" class="text-[11px] font-bold bg-emerald-600 hover:bg-emerald-700 text-white px-2 py-1 rounded-md">Save</button>
+              <button onclick="cancelOverheadEdit()" class="text-[11px] font-semibold bg-slate-100 hover:bg-slate-200 text-slate-600 px-2 py-1 rounded-md border border-slate-300">Cancel</button>
+            </td>
+          </tr>`;
+        }
+        return `
+          <tr class="hover:bg-slate-100">
+            <td class="py-2.5 px-3 font-semibold text-slate-900">${escAttr(o.name)}</td>
+            <td class="py-2.5 px-3"><span class="px-2 py-0.5 rounded bg-slate-100 text-slate-600 text-[11px]">${escAttr(o.category) || "Other"}</span></td>
+            <td class="py-2.5 px-3 text-slate-600">${escAttr(o.scope) || "Company-wide"}</td>
+            <td class="py-2.5 px-3 mono text-right text-slate-600">${formatGBP(o.amount, 2)}${o.freq === "monthly" ? "/mo" : "/day"}</td>
+            <td class="py-2.5 px-3 mono text-right font-bold text-rose-700">−${formatGBP(overheadDaily(o), 2)}</td>
+            <td class="py-2.5 px-3 text-right whitespace-nowrap">
+              <button onclick="editOverhead('${o.id}')" class="text-[11px] font-semibold text-sky-700 hover:underline px-1">Edit</button>
+              <button onclick="deleteOverhead('${o.id}')" class="text-[11px] font-semibold text-rose-700 hover:underline px-1">Remove</button>
+            </td>
+          </tr>`;
+      }).join("") : `<tr><td colspan="6" class="py-6 px-3 text-center text-slate-400 text-xs">No recurring bills yet — add one on the left.</td></tr>`;
+    }
+
+    function addOverhead() {
+      const name = document.getElementById("oh-name").value.trim();
+      const category = document.getElementById("oh-category").value;
+      const scope = document.getElementById("oh-scope").value || "Company-wide";
+      const amount = parseFloat(document.getElementById("oh-amount").value);
+      const freq = document.getElementById("oh-freq").value;
+      if (!name) { showToast("Give the bill a name.", "⚠️"); return; }
+      if (isNaN(amount) || amount <= 0) { showToast("Enter a valid positive amount (£).", "⚠️"); return; }
+      (state.overheads = state.overheads || []).push({
+        id: "oh-" + Date.now().toString(36) + Math.floor(Math.random() * 1e4).toString(36),
+        name, category, scope,
+        amount: Math.round(amount * 100) / 100, freq
+      });
+      document.getElementById("oh-name").value = "";
+      document.getElementById("oh-amount").value = "";
+      saveState();
+      renderAll();
+      showToast(`Added "${name}" (${formatGBP(freq === "monthly" ? amount / 30 : amount, 2)}/day) to overheads!`, "✅");
+    }
+
+    function editOverhead(id) {
+      editingOhId = id;
+      renderExpenses();
+    }
+
+    function cancelOverheadEdit() {
+      editingOhId = null;
+      renderExpenses();
+    }
+
+    function saveOverheadEdit(id) {
+      const o = (state.overheads || []).find(x => x.id === id);
+      if (!o) return;
+      const name = document.getElementById("edit-oh-name").value.trim();
+      const amount = parseFloat(document.getElementById("edit-oh-amount").value);
+      if (!name) { showToast("Give the bill a name.", "⚠️"); return; }
+      if (isNaN(amount) || amount <= 0) { showToast("Enter a valid positive amount (£).", "⚠️"); return; }
+      o.name = name;
+      o.category = document.getElementById("edit-oh-category").value;
+      o.scope = document.getElementById("edit-oh-scope").value || "Company-wide";
+      o.amount = Math.round(amount * 100) / 100;
+      o.freq = document.getElementById("edit-oh-freq").value;
+      editingOhId = null;
+      saveState();
+      renderAll();
+      showToast("Overhead updated!", "✅");
+    }
+
+    function deleteOverhead(id) {
+      const o = (state.overheads || []).find(x => x.id === id);
+      if (!o) return;
+      if (!confirm(`Remove "${o.name}" (${formatGBP(overheadDaily(o), 2)}/day) from overheads?`)) return;
+      state.overheads = state.overheads.filter(x => x.id !== id);
+      if (editingOhId === id) editingOhId = null;
+      saveState();
+      renderAll();
+      showToast("Overhead removed!", "✅");
     }
 
     // =========================================================================
@@ -1907,31 +2577,75 @@
     // =========================================================================
     function populateFareRegions() {
       const sel = document.getElementById("fare-region-select");
+      const prev = sel.value;
       sel.innerHTML = Object.keys(state.fares).map(r => `<option value="${r}">${r}</option>`).join("");
+      if (prev && state.fares[prev]) sel.value = prev;
+    }
+
+    // Each fare zone is backed by the depots named in it — their actual
+    // takings are what "Calibrate pax" scales the table to.
+    const FARE_REGION_DEPOTS = {
+      "Notts & Derby (Purple Line / Robin Hood)": ["Cossall", "Cotes Park"],
+      "Telford & Wrekin (Hadley / Wellington / PRH)": ["Hadley", "Wellington", "Shifnal", "Bridgnorth"],
+      "West Midlands & Black Country (Dudley / Willenhall / X807)": ["Dudley", "Willenhall", "Stoke"],
+      "South London (Elmers End / TfL)": ["Elmers End"],
+      "Wales & UT Coach (Talbot Green / Wrexham / Colwyn Bay)": ["Talbot Green", "Wrexham", "Colwyn Bay"],
+      "Swift Connecting Railway": ["Swift Connecting Railway"]
+    };
+
+    function currentFareRegion() {
+      const names = Object.keys(state.fares);
+      const sel = document.getElementById("fare-region-select");
+      return (sel && sel.value && state.fares[sel.value]) ? sel.value : names[0];
+    }
+
+    function fareDepotStats(regionName) {
+      const names = FARE_REGION_DEPOTS[regionName] || [];
+      const deps = (state.depots || []).filter(d => names.includes(d.name));
+      let vehicles = 0, income = 0;
+      deps.forEach(d => {
+        const base = INITIAL_STATE.depots.find(x => x.name === d.name);
+        const revPerBus = d.baseIncome / Math.max(1, (base && base.vehicles) || d.vehicles);
+        vehicles += d.vehicles || 0;
+        income += revPerBus * (d.vehicles || 0);
+      });
+      return { names, vehicles, income, incomePerBus: vehicles ? income / vehicles : 0 };
     }
 
     function renderFareTable() {
-      const regionName = document.getElementById("fare-region-select")?.value || Object.keys(state.fares)[0];
+      const regionName = currentFareRegion();
       const region = state.fares[regionName];
       if (!region) return;
+      const sel = document.getElementById("fare-region-select");
+      if (sel && sel.value !== regionName) sel.value = regionName;
 
       let totalRevPerBus = 0;
+      let totalPax = 0;
       const tbody = document.getElementById("fares-tbody");
       tbody.innerHTML = region.tickets.map((t, idx) => {
-        const dailyIncome = t.price * t.pax * t.factor;
+        const factor = t.factor || 1;
+        const dailyIncome = t.price * t.pax * factor;
         totalRevPerBus += dailyIncome;
+        totalPax += parseFloat(t.pax) || 0;
+        const factorTag = factor === 1 ? "" : (factor === 1 / 7 ? "÷7" : (factor === 1 / 28 ? "÷28" : `×${factor}`));
         return `
           <tr class="hover:bg-slate-100">
-            <td class="py-2.5 px-4 font-semibold text-slate-900">${t.name}</td>
+            <td class="py-2.5 px-4">
+              <input type="text" value="${escAttr(t.name)}" onchange="updateFareName('${regionName}', ${idx}, this.value)"
+                class="bg-transparent hover:bg-white focus:bg-white border border-transparent hover:border-slate-300 focus:border-sky-500 rounded-lg px-2 py-1 font-semibold text-slate-900 text-xs md:text-sm w-full max-w-[220px] focus:outline-none" />${factorTag ? `<span class="ml-1 px-1.5 py-0.5 rounded bg-slate-100 text-slate-500 text-[10px] mono whitespace-nowrap">${factorTag}</span>` : ""}
+            </td>
             <td class="py-2.5 px-4 text-right">
               <input type="number" step="0.10" value="${t.price}" onchange="updateFareItem('${regionName}', ${idx}, 'price', this.value)"
                 class="bg-white border border-slate-300 rounded-lg px-2 py-1 text-right mono text-xs text-sky-700 w-24" />
             </td>
             <td class="py-2.5 px-4 text-right">
-              <input type="number" step="1" value="${t.pax}" onchange="updateFareItem('${regionName}', ${idx}, 'pax', this.value)"
+              <input type="number" step="0.1" value="${t.pax}" onchange="updateFareItem('${regionName}', ${idx}, 'pax', this.value)"
                 class="bg-white border border-slate-300 rounded-lg px-2 py-1 text-right mono text-xs text-amber-700 w-24" />
             </td>
             <td class="py-2.5 px-4 mono text-right font-bold text-emerald-700">${formatGBP(dailyIncome, 2)}</td>
+            <td class="py-2.5 px-4 text-right whitespace-nowrap">
+              <button onclick="deleteFareTicket('${regionName}', ${idx})" title="Remove this ticket" class="text-[11px] font-semibold text-rose-700 hover:underline px-1">Remove</button>
+            </td>
           </tr>
         `;
       }).join("");
@@ -1940,22 +2654,115 @@
       document.getElementById("fare-rev-bus").textContent = formatGBP(totalRevPerBus, 2);
       document.getElementById("fare-cost-bus").textContent = formatGBP(region.opExPerBus, 2);
       document.getElementById("fare-profit-bus").textContent = formatGBP(profitPerBus, 2);
+
+      const stats = fareDepotStats(regionName);
+      document.getElementById("fare-calib-depots").textContent = stats.names.length ? stats.names.join(", ") : "—";
+      document.getElementById("fare-calib-actual").textContent = stats.vehicles
+        ? `${formatGBP(stats.incomePerBus, 2)} across ${stats.vehicles} buses`
+        : "No depots mapped";
+      document.getElementById("fare-calib-table").textContent = `${formatGBP(totalRevPerBus, 2)} (${totalPax.toFixed(1)} boardings)`;
+      const opexInput = document.getElementById("fare-opex-input");
+      if (opexInput && document.activeElement !== opexInput) opexInput.value = region.opExPerBus;
+      const badge = document.getElementById("fare-pax-badge");
+      if (badge) badge.innerHTML = region.paxSource === "calibrated"
+        ? `<span class="px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-500/20 text-[10px] font-bold whitespace-nowrap">REAL · depot-backed</span>`
+        : `<span class="px-1.5 py-0.5 rounded bg-amber-50 text-amber-700 border border-amber-500/20 text-[10px] font-bold whitespace-nowrap">estimates</span>`;
+      const addRegion = document.getElementById("fare-add-region");
+      if (addRegion) addRegion.textContent = regionName;
     }
 
     function updateFareItem(regionName, idx, field, val) {
       const num = parseFloat(val);
-      if (isNaN(num) || num < 0) return;
+      if (isNaN(num) || num < 0) { renderFareTable(); return; }
       state.fares[regionName].tickets[idx][field] = num;
+      if (field === "pax") state.fares[regionName].paxSource = "manual";
       saveState();
       renderFareTable();
       showToast(`Updated ${state.fares[regionName].tickets[idx].name} in ${regionName}!`, "✅");
+    }
+
+    function updateFareName(regionName, idx, val) {
+      const t = state.fares[regionName] && state.fares[regionName].tickets[idx];
+      const name = String(val || "").trim();
+      if (!t || !name) { renderFareTable(); return; }
+      t.name = name;
+      saveState();
+      renderFareTable();
+      showToast(`Renamed ticket to "${name}"!`, "✅");
+    }
+
+    function updateFareOpEx(val) {
+      const regionName = currentFareRegion();
+      const num = parseFloat(val);
+      if (isNaN(num) || num < 0) { renderFareTable(); return; }
+      state.fares[regionName].opExPerBus = Math.round(num * 100) / 100;
+      saveState();
+      renderFareTable();
+      showToast(`OpEx updated for ${regionName}!`, "✅");
+    }
+
+    function addFareTicket() {
+      const regionName = currentFareRegion();
+      const region = state.fares[regionName];
+      if (!region) return;
+      const name = document.getElementById("fare-new-name").value.trim();
+      const price = parseFloat(document.getElementById("fare-new-price").value);
+      const paxRaw = document.getElementById("fare-new-pax").value;
+      const pax = paxRaw === "" ? 0 : parseFloat(paxRaw);
+      const factor = parseFloat(document.getElementById("fare-new-factor").value) || 1;
+      if (!name) { showToast("Give the new ticket a name.", "⚠️"); return; }
+      if (isNaN(price) || price < 0) { showToast("Enter a valid ticket price (£).", "⚠️"); return; }
+      if (isNaN(pax) || pax < 0) { showToast("Enter a valid passenger count (0+).", "⚠️"); return; }
+      region.tickets.push({ name, price: Math.round(price * 100) / 100, pax, factor });
+      region.paxSource = "manual";
+      document.getElementById("fare-new-name").value = "";
+      document.getElementById("fare-new-price").value = "";
+      document.getElementById("fare-new-pax").value = "";
+      saveState();
+      renderFareTable();
+      showToast(`Added "${name}" to ${regionName}!`, "✅");
+    }
+
+    function deleteFareTicket(regionName, idx) {
+      const t = state.fares[regionName] && state.fares[regionName].tickets[idx];
+      if (!t) return;
+      if (!confirm(`Remove "${t.name}" from ${regionName}?`)) return;
+      state.fares[regionName].tickets.splice(idx, 1);
+      saveState();
+      renderFareTable();
+      showToast("Ticket removed!", "✅");
+    }
+
+    function calibrateFarePax() {
+      const regionName = currentFareRegion();
+      const region = state.fares[regionName];
+      if (!region) return;
+      const stats = fareDepotStats(regionName);
+      if (!stats.vehicles) {
+        showToast(`No depots mapped to ${regionName} — cannot calibrate.`, "⚠️");
+        return;
+      }
+      const weights = region.tickets.map(t => (parseFloat(t.pax) || 0) * t.price * (t.factor || 1));
+      const totalW = weights.reduce((a, w) => a + w, 0);
+      if (totalW <= 0) {
+        showToast("Set estimated passengers on at least one ticket first — calibration keeps your ticket mix.", "⚠️");
+        return;
+      }
+      region.tickets.forEach((t, i) => {
+        const eff = t.price * (t.factor || 1);
+        t.pax = eff > 0 ? Math.round((stats.incomePerBus * (weights[i] / totalW) / eff) * 10) / 10 : 0;
+      });
+      region.paxSource = "calibrated";
+      saveState();
+      renderFareTable();
+      showToast(`Calibrated ${region.tickets.length} tickets to REAL depot takings (${formatGBP(stats.incomePerBus, 2)}/bus/day across ${stats.vehicles} buses)!`, "✅");
     }
 
     // =========================================================================
     // 10. NAVIGATION & UTILITIES
     // =========================================================================
     function switchTab(tabId) {
-      const tabs = ["dashboard", "depots", "fleet", "dealership", "workshop", "fares", "mybustimes"];
+      const tabs = ["dashboard", "depots", "expenses", "fleet", "dealership", "workshop", "fares", "mybustimes"];
       tabs.forEach(t => {
         document.getElementById(`view-${t}`).classList.toggle("hidden", t !== tabId);
         const btn = document.getElementById(`tab-${t}`);
@@ -1965,6 +2772,10 @@
           btn.className = "tab-btn px-4 py-2.5 text-xs md:text-sm font-semibold border-b-2 border-transparent text-slate-500 hover:text-slate-900 whitespace-nowrap";
         }
       });
+      // Leaflet mis-sizes tiles when initialised in a hidden tab — refresh on show.
+      if (tabId === "depots") setTimeout(() => {
+        try { initDepotMap(); if (window._depotMap) window._depotMap.invalidateSize(); } catch (e) {}
+      }, 60);
     }
 
     function exportSaveData() {
@@ -1976,7 +2787,7 @@
       a.download = `swift_connect_db_${state.simDate}.json`;
       a.click();
       URL.revokeObjectURL(url);
-      showToast("Database exported (9 tables)!", "\u2b07");
+      showToast("Database exported (10 tables)!", "\u2b07");
     }
 
     function exportSingleTable(name) {
@@ -1990,9 +2801,34 @@
       URL.revokeObjectURL(url);
     }
 
+    // Browsers can't overwrite database/*.js on disk, so this generates an
+    // exact depots.js seed file (all live depot rows incl. site survey
+    // fields) for download — replace database/depots.js with it to persist.
+    function exportDepotsSeedFile() {
+      const rows = (state.depots || []).map(d => {
+        const parts = Object.keys(d).map(k => {
+          const key = /^[A-Za-z_$][A-Za-z0-9_$]*$/.test(k) ? k : JSON.stringify(k);
+          return `${key}: ${JSON.stringify(d[k])}`;
+        });
+        return `  { ${parts.join(", ")} }`;
+      });
+      const content =
+        `/* Swift Connect — database: depots seed (exported ${state.simDate} — includes site survey fields) */\n` +
+        `window.DB_SEED_DEPOTS = [\n${rows.join(",\n")}\n];\n`;
+      const blob = new Blob([content], { type: "application/javascript" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "depots.js";
+      a.click();
+      URL.revokeObjectURL(url);
+      showToast(`depots.js exported (${rows.length} depots) — replace database/depots.js with it, then Reset from seeds to load it!`, "⬇");
+    }
+
     function resetDatabaseToSeeds() {
       if (!confirm("Reload factory defaults from the individual database/*.js seed files? Unsaved edits will be lost.")) return;
       state = window.DB.resetToSeeds();
+      if (window.DB.saveToServer) window.DB.saveToServer(state);
       populateDealerSelect();
       syncCalcModel();
       populateWorkshopServices();
@@ -2016,6 +2852,7 @@
             window.DB.save("busCatalogue", data.busCatalogue);
             window.DB.save("fleetRegistry", data.fleetRegistry);
             window.DB.save("fares", data.fares);
+            window.DB.save("overheads", data.overheads || []);
             window.DB.save("workshopQueue", data.workshopQueue || []);
             window.DB.save("workshopCompleted", data.workshopCompleted || []);
             if (data.mbtOperators) window.DB.save("mbtOperators", data.mbtOperators);
@@ -2026,6 +2863,7 @@
             if (data.busCatalogue) window.DB.save("busCatalogue", data.busCatalogue);
             if (data.fleetRegistry) window.DB.save("fleetRegistry", data.fleetRegistry);
             if (data.fares) window.DB.save("fares", data.fares);
+            if (data.overheads) window.DB.save("overheads", data.overheads);
             if (data.workshopQueue) window.DB.save("workshopQueue", data.workshopQueue);
             if (data.workshopCompleted) window.DB.save("workshopCompleted", data.workshopCompleted);
             if (data.mbtOperators) window.DB.save("mbtOperators", data.mbtOperators);
@@ -2034,12 +2872,14 @@
             return;
           }
           loadState();
+          if (window.DB.saveToServer) window.DB.saveToServer(state);
           populateDealerSelect();
           syncCalcModel();
           populateWorkshopServices();
-      populateWorkshopVehicles();
+          populateWorkshopVehicles();
           populateFareRegions();
           renderAll();
+          try { initDepotMap(); } catch (e) {}
           showToast("Database imported and saved!", "\u2b06");
         } catch (e) {
           console.error(e);
@@ -2185,6 +3025,8 @@
         const [yyyy, mm, dd] = state.simDate.split("-");
         showToast(`Overnight income posted for ${catchup.days} day(s): ${formatGBP(catchup.totalNet, 2)} — sim date now ${dd}/${mm}/${yyyy}.`, "✅");
       }
+      // Disk backend detection (server.js). Silent when on static hosting.
+      if (window.DB.checkServer) window.DB.checkServer();
       bootSplash();
       // Automatic midnight rollover: while the app is open, post each new
       // UK day's income (for the day prior) as soon as it begins.
