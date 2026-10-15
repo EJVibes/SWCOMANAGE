@@ -92,9 +92,9 @@
   <!-- BOOT SPLASH -->
   <div id="splash" class="fixed inset-0 z-50 flex flex-col items-center justify-center gap-8 px-6 text-center" style="background-color:#0e2a52; transition: opacity .7s ease;">
     <div id="splash-imgs" class="relative w-48 h-48 md:w-64 md:h-64">
-      <img src="icons/1.png" alt="" class="splash-img" />
+      <img src="icons/1.png" alt="" class="splash-img" style="margin-left:25px;" />
     </div>
-    <div id="splash-title" class="text-white font-extrabold tracking-tight text-4xl md:text-6xl">Operations Portal</div>
+    <img id="splash-title" src="icons/Operations Portal.png" alt="Operations Portal" class="w-72 md:w-96 max-w-full h-auto" />
     <div class="w-14 h-14 rounded-full border-4 border-slate-500 border-t-sky-400 animate-spin"></div>
     <div id="splash-status" class="mono text-sm md:text-base text-slate-400">Starting…</div>
     <button id="splash-enter" onclick="splashEnter()" class="hidden text-sm bg-sky-600 hover:bg-sky-500 text-white px-6 py-3 rounded-xl font-bold">Enter site →</button>
@@ -413,7 +413,7 @@
             <h2 class="text-base font-bold text-slate-900">Used Bus Valuation & Trade Calculator</h2>
             <span id="calc-rate-badge" class="text-[11px] px-2 py-0.5 rounded bg-amber-50 text-amber-700 border border-amber-500/20">—</span>
           </div>
-          <p class="text-xs text-slate-500">Selling depreciates from year of manufacture (base year 2026) at a rolled annual rate for the vehicle's class/fuel. Buying pays a rolled % of original price for the vehicle's age band. Rates re-roll automatically on any change — or hit 🎲.</p>
+          <p class="text-xs text-slate-500">Selling depreciates from year of manufacture (base year 2026) at a rolled annual rate for the vehicle's class/fuel, plus 20% VAT — always below buy price for used vehicles. Buying pays a rolled % of original price for the vehicle's age band. Rates re-roll automatically on any change — or hit 🎲.</p>
 
           <div>
             <label class="block text-xs font-semibold text-slate-600 mb-1">Select Model from Catalogue</label>
@@ -434,7 +434,7 @@
           <div class="grid grid-cols-2 gap-3">
             <div>
               <label class="block text-xs font-semibold text-slate-600 mb-1">Quantity</label>
-              <input id="calc-qty" oninput="updateDepreciationCalc()" type="number" min="1" max="100" value="1" class="w-full bg-white border border-slate-300 rounded-md px-3 py-2 text-xs text-slate-900 mono" />
+              <input id="calc-qty" oninput="rerollTradeRates()" type="number" min="1" max="100" value="1" class="w-full bg-white border border-slate-300 rounded-md px-3 py-2 text-xs text-slate-900 mono" />
             </div>
             <div>
               <label class="block text-xs font-semibold text-slate-600 mb-1">Assign Region</label>
@@ -463,7 +463,7 @@
               <span id="calc-sell-rate-out" class="mono font-bold text-sky-700">—</span>
             </div>
             <div class="flex justify-between text-xs">
-              <span class="text-slate-500">Sell Value (Ex VAT):</span>
+              <span class="text-slate-500">Sell Value (Incl. VAT):</span>
               <span id="calc-depr-out" class="mono font-bold text-sky-700">£270,000</span>
             </div>
             <div class="flex justify-between text-xs">
@@ -474,6 +474,7 @@
               <span class="text-slate-700 font-semibold">Buy Price (Total):</span>
               <span id="calc-vat-out" class="mono font-extrabold text-emerald-700">£324,000</span>
             </div>
+            <div id="calc-cap-note" class="hidden text-[11px] text-slate-400">Sell value capped at buy price — no buy/sell arbitrage.</div>
             <button onclick="rerollTradeRates()" title="Roll fresh random sell & buy rates" class="w-full text-[11px] font-semibold text-slate-500 hover:text-slate-900 bg-slate-100 hover:bg-slate-200 rounded-md py-1.5 transition">🎲 Re-roll rates</button>
           </div>
 
@@ -1422,8 +1423,7 @@
     }
 
     // ---- Used Bus Valuation: separate SELL (class/fuel depreciation) & BUY (age-band VAT) ----
-    // Rolled rates are locked per selection and only re-rolled on model/year
-    // change (or via the Re-roll button), so typing qty/price never reprices.
+    // Rates re-roll automatically on any calculator change (or via Re-roll).
     let calcSell = null; // { rate (% p.a.), band }
     let calcBuy = null;  // { rate (% of original), band }
 
@@ -1469,11 +1469,6 @@
       updateDepreciationCalc();
     }
 
-    function onCalcYearChange() {
-      rollBuyRate();
-      updateDepreciationCalc();
-    }
-
     function updateDepreciationCalc() {
       const origPrice = parseFloat(document.getElementById("calc-orig-price").value) || 0;
       const year = parseInt(document.getElementById("calc-year").value, 10) || 2026;
@@ -1482,11 +1477,19 @@
       const age = Math.max(0, 2026 - year);
       if (!calcSell) rollSellRate();
       if (!calcBuy) rollBuyRate();
-      // SELL: compound annual depreciation at the rolled class/fuel rate.
-      const unitSellValue = origPrice * Math.pow(1 - calcSell.rate / 100, age);
-      const totalSell = unitSellValue * qty;
+      // SELL: compound annual depreciation at the rolled class/fuel rate, plus 20% VAT.
+      const unitSellValue = origPrice * Math.pow(1 - calcSell.rate / 100, age) * 1.20;
       // BUY: rolled % of original price for the age band (VAT-inclusive).
       const unitBuyPrice = origPrice * (calcBuy.rate / 100);
+      // No-arbitrage rule: sell must always sit below buy (a dealer margin),
+      // except brand new where they're equal. Caps only bind where the two
+      // schedules cross.
+      let capped = false;
+      let unitSellFinal = unitSellValue;
+      if (age === 0) {
+        if (unitSellFinal > unitBuyPrice) { unitSellFinal = unitBuyPrice; capped = "at"; }
+      } else if (unitSellFinal >= unitBuyPrice) { unitSellFinal = unitBuyPrice * 0.99; capped = "below"; }
+      const totalSell = unitSellFinal * qty;
       const totalBuy = unitBuyPrice * qty;
 
       document.getElementById("calc-age-out").textContent = age === 0 ? "0 yrs (Brand New)" : `${age} yr(s)`;
@@ -1496,9 +1499,15 @@
       document.getElementById("calc-buy-band").textContent = `(${calcBuy.band})`;
       document.getElementById("calc-buy-rate-out").textContent = `${calcBuy.rate}% of new`;
       document.getElementById("calc-vat-out").textContent = formatGBP(totalBuy, 2);
+      const capNote = document.getElementById("calc-cap-note");
+      if (capNote) {
+        capNote.classList.toggle("hidden", !capped);
+        if (capped === "below") capNote.textContent = "Sell value capped below buy price (dealer margin) — no arbitrage.";
+        else if (capped === "at") capNote.textContent = "Brand new: sell value capped at buy price.";
+      }
       const badge = document.getElementById("calc-rate-badge");
       if (badge) badge.textContent = `Sell ${calcSell.rate}% · Buy ${calcBuy.rate}%`;
-      return { origPrice, year, qty, age, totalSell, totalBuy };
+      return { origPrice, year, qty, age, totalSell, totalBuy, capped };
     }
 
     function executeBusTrade(mode) {
@@ -2108,7 +2117,7 @@
         img.classList.add("active");
       }
 
-      // "Operations Portal" fades in a second later (1s fade via CSS).
+      // Operations Portal logo fades in a second later (1s fade via CSS).
       setTimeout(() => document.getElementById("splash-title")?.classList.add("visible"), 1000);
 
       // Failsafe: never trap the user behind the splash.
