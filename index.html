@@ -787,9 +787,10 @@
         <div class="flex flex-wrap items-center justify-between gap-4">
           <div>
             <h2 class="text-lg font-bold text-slate-900">Regional Fare Tables & Per-Bus Revenue Simulator</h2>
-            <p class="text-xs text-slate-500">Add tickets per zone, edit prices and passenger counts from <code>Ticket_Prices.csv</code>, or calibrate counts to REAL depot takings — and see live per-bus profit changes.</p>
+            <p class="text-xs text-slate-500">Tickets live on company tables (By Company) — zones aggregate them read-only. Ticket sales ARE company income: each depot earns its zone's per-bus revenue × its buses.</p>
           </div>
           <select id="fare-region-select" onchange="renderFareTable()" class="bg-white border border-slate-300 rounded-md px-4 py-2 text-xs md:text-sm text-slate-900 font-semibold"></select>
+          <button onclick="clearAllFareTickets()" title="Remove every ticket from every zone/company table" class="text-xs bg-rose-50 hover:bg-rose-100 text-rose-700 px-3 py-2 rounded-md border border-rose-500/20 font-semibold whitespace-nowrap">Clear all tickets</button>
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -798,41 +799,13 @@
             <div id="fare-rev-bus" class="mono text-xl font-extrabold text-emerald-700 mt-1">£1,081.05</div>
           </div>
           <div class="bg-white border border-slate-200 p-4 rounded-md">
-            <div class="text-xs text-slate-500">Est. Daily OpEx (Staff, Fuel, Maint, Insur)</div>
-            <div id="fare-cost-bus" class="mono text-xl font-extrabold text-rose-700 mt-1">£713.00</div>
+            <div class="text-xs text-slate-500">Est. Daily OpEx / Bus (editable)</div>
+            <input id="fare-opex-input" type="number" step="0.01" min="0" onchange="updateFareOpEx(this.value)"
+              class="mono text-xl font-extrabold text-rose-700 mt-1 w-full bg-transparent focus:outline-none" />
           </div>
           <div class="bg-white border border-slate-200 p-4 rounded-md">
             <div class="text-xs text-slate-500">Est. Daily Net Profit (Per Bus)</div>
             <div id="fare-profit-bus" class="mono text-xl font-extrabold text-sky-700 mt-1">£368.05</div>
-          </div>
-        </div>
-
-        <div class="bg-white border border-slate-200 rounded-md p-4 space-y-3">
-          <div class="flex flex-wrap items-center justify-between gap-3">
-            <div>
-              <h3 class="text-sm font-bold text-slate-900">Real Patronage Calibration</h3>
-              <p class="text-xs text-slate-500">Scales every ticket's pax so table revenue matches the mapped depots' actual takings — keeping the current ticket mix. Resulting counts are REAL (depot-backed).</p>
-            </div>
-            <button onclick="calibrateFarePax()" title="Derive per-ticket passengers from actual depot income per bus" class="text-xs bg-indigo-700 hover:bg-indigo-800 text-white font-bold px-3 py-2 rounded-md shadow-sm whitespace-nowrap">📊 Calibrate pax to depot income</button>
-          </div>
-          <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
-            <div class="bg-white border border-slate-200 rounded-md px-3 py-2">
-              <div class="text-slate-500">Mapped Depots</div>
-              <div id="fare-calib-depots" class="font-semibold text-slate-900 mt-0.5">—</div>
-            </div>
-            <div class="bg-white border border-slate-200 rounded-md px-3 py-2">
-              <div class="text-slate-500">Actual Depot Income / Bus / Day</div>
-              <div id="fare-calib-actual" class="mono font-bold text-sky-700 mt-0.5">—</div>
-            </div>
-            <div class="bg-white border border-slate-200 rounded-md px-3 py-2">
-              <div class="text-slate-500">Ticket Table Revenue / Bus / Day</div>
-              <div id="fare-calib-table" class="mono font-bold text-emerald-700 mt-0.5">—</div>
-            </div>
-            <div class="bg-white border border-slate-200 rounded-md px-3 py-2">
-              <div class="text-slate-500">OpEx / Bus / Day (editable)</div>
-              <input id="fare-opex-input" type="number" step="0.01" min="0" onchange="updateFareOpEx(this.value)"
-                class="mono font-bold text-rose-700 mt-0.5 w-full bg-transparent border-b border-slate-300 focus:outline-none focus:border-rose-500" />
-            </div>
           </div>
         </div>
 
@@ -842,7 +815,7 @@
               <tr>
                 <th class="py-3 px-4">Ticket Type</th>
                 <th class="py-3 px-4 text-right">Ticket Price (£)</th>
-                <th class="py-3 px-4 text-right">Est. Daily Passengers (Per Bus) <span id="fare-pax-badge"></span></th>
+                <th class="py-3 px-4 text-right">Est. Daily Passengers (Per Bus)</th>
                 <th class="py-3 px-4 text-right">Effective Daily Income (£)</th>
                 <th class="py-3 px-4 text-right">Actions</th>
               </tr>
@@ -851,7 +824,7 @@
           </table>
         </div>
 
-        <div class="bg-white border border-slate-200 rounded-md p-4 space-y-3">
+        <div id="fare-add-wrap" class="bg-white border border-slate-200 rounded-md p-4 space-y-3">
           <h3 class="text-sm font-bold text-slate-900">Add Ticket to <span id="fare-add-region" class="text-indigo-700"></span></h3>
           <div class="grid grid-cols-2 md:grid-cols-6 gap-2">
             <input id="fare-new-name" type="text" placeholder="Ticket name (e.g. Evening Saver)" class="md:col-span-2 bg-white border border-slate-300 rounded-md px-3 py-2 text-xs text-slate-900" />
@@ -865,6 +838,7 @@
             <button onclick="addFareTicket()" class="bg-emerald-700 hover:bg-emerald-800 text-white font-bold py-2 rounded-md text-xs transition shadow-sm">+ Add Ticket</button>
           </div>
         </div>
+        <div id="fare-add-note" class="bg-white border border-slate-200 rounded-md px-4 py-3 text-xs text-slate-500" style="display:none;">Zones are read-only aggregates — pick a table under <b>By Company</b> to add, edit or remove its tickets.</div>
       </div>
     </section>
 
@@ -968,6 +942,8 @@
                     <th class="py-2 px-3">Fleet No</th>
                     <th class="py-2 px-3">Reg</th>
                     <th class="py-2 px-3">Type</th>
+                    <th class="py-2 px-3">Engine</th>
+                    <th class="py-2 px-3">Gearbox</th>
                     <th class="py-2 px-3">Depot</th>
                     <th class="py-2 px-3">Op</th>
                   </tr>
@@ -1125,9 +1101,8 @@
       let totalBuses = 0;
 
       state.depots.forEach(d => {
-        const revPerBus = d.baseIncome / Math.max(1, INITIAL_STATE.depots.find(x => x.name === d.name)?.vehicles || d.vehicles);
         const expPerBus = d.baseExpenses / Math.max(1, INITIAL_STATE.depots.find(x => x.name === d.name)?.vehicles || d.vehicles);
-        const inc = revPerBus * d.vehicles;
+        const inc = depotDailyIncome(d);
         const exp = expPerBus * d.vehicles;
         totalIncome += inc;
         totalOpEx += exp;
@@ -1430,9 +1405,9 @@
 
       tbody.innerHTML = state.depots.map((d, idx) => {
         const orig = INITIAL_STATE.depots[idx] || d;
-        const revPerBus = d.baseIncome / Math.max(1, orig.vehicles);
+        const revPerBus = d.vehicles ? depotDailyIncome(d) / d.vehicles : 0;
         const expPerBus = d.baseExpenses / Math.max(1, orig.vehicles);
-        const inc = revPerBus * d.vehicles;
+        const inc = depotDailyIncome(d);
         const exp = expPerBus * d.vehicles;
         const oh = depotOh[d.name] || 0;
         const profit = inc - exp - d.rent - oh;
@@ -1981,8 +1956,11 @@
         const idNum = typeof v.id === "number" ? v.id : (/^\d+$/.test(String(v.id)) ? parseInt(v.id, 10) : null);
         const isEV = (v.type || "").includes("EV") || (v.type || "").includes("Electroliner") || (v.type || "").includes("eCitaro") || (idNum !== null && ((idNum >= 2700 && idNum < 2800) || (idNum >= 3700 && idNum < 3800)));
         const dt = getDrivetrain(v.type);
-        const engine = dt.engine !== "—" ? dt.engine : (v.engine || "—");
-        const gearbox = dt.gearbox !== "—" ? dt.gearbox : (v.gearbox || "—");
+        // API-synced values stored on the registry entry win; the static
+        // drivetrain specs are fallback. Euro number sits underneath.
+        const engine = (v.engine && v.engine !== "—") ? v.engine : ((dt.engine && dt.engine !== "—") ? dt.engine : "—");
+        const gearbox = (v.gearbox && v.gearbox !== "—") ? v.gearbox : ((dt.gearbox && dt.gearbox !== "—") ? dt.gearbox : "—");
+        const euro = v.euro || dt.euro || "—";
         return `
           <tr class="hover:bg-slate-100">
             <td class="py-2.5 px-3 mono font-bold text-sky-700">${v.id}</td>
@@ -1998,7 +1976,7 @@
             <td class="py-2.5 px-3">
               <div class="font-semibold text-slate-900">${engine}</div>
               <div class="text-slate-500">${gearbox}</div>
-              <div class="mt-1">${euroPill(dt.euro)}</div>
+              <div class="mt-1" title="${v.euroYear ? `Reg year ${v.euroYear} → ${euro}` : "Euro from type specs"}">${euroPill(euro)}</div>
             </td>
             <td class="py-2.5 px-3 text-right">
               ${actionCell(v)}
@@ -2576,22 +2554,97 @@
     // 9. REGIONAL FARE CALCULATOR
     // =========================================================================
     function populateFareRegions() {
+      ensureFareCoverage();
       const sel = document.getElementById("fare-region-select");
+      if (!sel) return;
       const prev = sel.value;
-      sel.innerHTML = Object.keys(state.fares).map(r => `<option value="${r}">${r}</option>`).join("");
+      const zones = [], companies = [];
+      Object.keys(state.fares).forEach(k => ((state.fares[k] && state.fares[k].companyCode) ? companies : zones).push(k));
+      const opt = r => `<option value="${escAttr(r)}">${escAttr(r)}</option>`;
+      sel.innerHTML = `<optgroup label="By Zone">${zones.map(opt).join("")}</optgroup>` +
+        (companies.length ? `<optgroup label="By Company">${companies.map(opt).join("")}</optgroup>` : "");
       if (prev && state.fares[prev]) sel.value = prev;
     }
 
-    // Each fare zone is backed by the depots named in it — their actual
-    // takings are what "Calibrate pax" scales the table to.
+    // Each fare zone is backed by the depots named in it — zone revenue is
+    // the sum of its member companies' ticket sales, and each depot earns
+    // its zone's per-bus revenue × its buses.
     const FARE_REGION_DEPOTS = {
-      "Notts & Derby (Purple Line / Robin Hood)": ["Cossall", "Cotes Park"],
+      "Notts & Derby (Purple Line / Robin Hood)": ["Cossall", "Cotes Park", "Phoenix Park"],
       "Telford & Wrekin (Hadley / Wellington / PRH)": ["Hadley", "Wellington", "Shifnal", "Bridgnorth"],
       "West Midlands & Black Country (Dudley / Willenhall / X807)": ["Dudley", "Willenhall", "Stoke"],
       "South London (Elmers End / TfL)": ["Elmers End"],
       "Wales & UT Coach (Talbot Green / Wrexham / Colwyn Bay)": ["Talbot Green", "Wrexham", "Colwyn Bay"],
+      "East Anglia (Cromer / Fakenham / Lincs)": ["Cromer", "Fakenham", "Islas of Lincolnshire"],
       "Swift Connecting Railway": ["Swift Connecting Railway"]
     };
+    const UNZONED_FARE_REGION = "Other Depots (Unzoned)";
+
+    // Depots with vehicles that no fare zone covers (e.g. Las Chumberas,
+    // MyBusTimes-created yards). They get a catch-all zone so every depot
+    // has somewhere to price tickets. "Unallocated" is a holding row, not
+    // an operating depot, and is excluded.
+    function uncoveredFareDepots() {
+      const covered = {};
+      Object.keys(FARE_REGION_DEPOTS).forEach(r => FARE_REGION_DEPOTS[r].forEach(d => { covered[d] = true; }));
+      return (state.depots || [])
+        .filter(d => (d.vehicles || 0) > 0 && d.name !== "Unallocated" && !covered[d.name])
+        .map(d => d.name);
+    }
+
+    function ensureFareCoverage() {
+      let added = false;
+      // Merge any seed zones added since this save was created (never
+      // overwrites the user's live edits — only fills in missing keys).
+      const seeds = window.DB_SEED_FARES || {};
+      Object.keys(seeds).forEach(k => {
+        if (!state.fares[k]) {
+          state.fares[k] = JSON.parse(JSON.stringify(seeds[k]));
+          added = true;
+        }
+      });
+      // Catch-all zone for depots no static zone covers.
+      if (!state.fares[UNZONED_FARE_REGION] && uncoveredFareDepots().length) {
+        state.fares[UNZONED_FARE_REGION] = { opExPerBus: 0, opExAuto: true, unzoned: true, tickets: [] };
+        added = true;
+      }
+      const uz = state.fares[UNZONED_FARE_REGION];
+      if (uz && uz.opExAuto !== false) {
+        // Auto-track average OpEx across the currently uncovered depots.
+        const avg = avgDepotOpEx(uncoveredFareDepots());
+        if (uz.opExPerBus !== avg) { uz.opExPerBus = avg; }
+      }
+      // One fare table per operating company, calibrated against its own
+      // depots (resolved from its depot hints). Renamed automatically if
+      // the operator name changes; never deletes the user's tickets.
+      const ops = (window.MBT && window.MBT.getOperators) ? window.MBT.getOperators() : [];
+      ops.forEach(o => {
+        if (!o.code) return;
+        const wantKey = `${o.name || o.code} (${o.code})`;
+        let haveKey = Object.keys(state.fares).find(k => state.fares[k] && state.fares[k].companyCode === o.code);
+        if (haveKey && haveKey !== wantKey) {
+          state.fares[wantKey] = state.fares[haveKey];
+          delete state.fares[haveKey];
+          haveKey = wantKey;
+          added = true;
+        }
+        if (!haveKey) {
+          state.fares[wantKey] = {
+            companyCode: o.code,
+            companyName: o.name || o.code,
+            opExPerBus: avgDepotOpEx(companyDepots(o.code)),
+            opExAuto: true,
+            tickets: []
+          };
+          added = true;
+        } else if (state.fares[haveKey].opExAuto !== false) {
+          const avg = avgDepotOpEx(companyDepots(o.code));
+          if (state.fares[haveKey].opExPerBus !== avg) state.fares[haveKey].opExPerBus = avg;
+        }
+      });
+      if (added) saveState();
+      return added;
+    }
 
     function currentFareRegion() {
       const names = Object.keys(state.fares);
@@ -2599,40 +2652,112 @@
       return (sel && sel.value && state.fares[sel.value]) ? sel.value : names[0];
     }
 
-    function fareDepotStats(regionName) {
-      const names = FARE_REGION_DEPOTS[regionName] || [];
-      const deps = (state.depots || []).filter(d => names.includes(d.name));
-      let vehicles = 0, income = 0;
-      deps.forEach(d => {
-        const base = INITIAL_STATE.depots.find(x => x.name === d.name);
-        const revPerBus = d.baseIncome / Math.max(1, (base && base.vehicles) || d.vehicles);
-        vehicles += d.vehicles || 0;
-        income += revPerBus * (d.vehicles || 0);
-      });
-      return { names, vehicles, income, incomePerBus: vehicles ? income / vehicles : 0 };
+    function resolveHintDepot(hint) {
+      const n = String(hint || "").toLowerCase().trim();
+      const depots = state.depots || [];
+      let hit = depots.find(d => String(d.name).toLowerCase() === n);
+      if (!hit) {
+        const stripped = n.replace(/\s+(depot|garage|bus depot|bus garage)$/, "");
+        hit = depots.find(d => String(d.name).toLowerCase() === stripped);
+      }
+      return hit ? hit.name : null;
     }
 
-    function renderFareTable() {
-      const regionName = currentFareRegion();
-      const region = state.fares[regionName];
-      if (!region) return;
-      const sel = document.getElementById("fare-region-select");
-      if (sel && sel.value !== regionName) sel.value = regionName;
+    function companyDepots(code) {
+      const op = (window.MBT && window.MBT.getOperators ? window.MBT.getOperators() : []).find(o => o.code === code);
+      if (!op || !op.depotHint) return [];
+      return op.depotHint.map(resolveHintDepot).filter(Boolean);
+    }
 
-      let totalRevPerBus = 0;
-      let totalPax = 0;
-      const tbody = document.getElementById("fares-tbody");
-      tbody.innerHTML = region.tickets.map((t, idx) => {
-        const factor = t.factor || 1;
-        const dailyIncome = t.price * t.pax * factor;
-        totalRevPerBus += dailyIncome;
-        totalPax += parseFloat(t.pax) || 0;
-        const factorTag = factor === 1 ? "" : (factor === 1 / 7 ? "÷7" : (factor === 1 / 28 ? "÷28" : `×${factor}`));
+    // ---- Ticket-driven income: company ticket revenue → zone revenue →
+    // depot takings. No tickets sold anywhere = £0 income. The "Unallocated"
+    // holding row never earns.
+    function companyRevPerBus(companyKey) {
+      const co = state.fares[companyKey];
+      if (!co) return 0;
+      return (co.tickets || []).reduce((a, t) => a + t.price * (parseFloat(t.pax) || 0) * (t.factor || 1), 0);
+    }
+
+    function fareZoneRevPerBus(zoneName) {
+      const r = state.fares[zoneName];
+      if (!r) return 0;
+      if (r.companyCode) return companyRevPerBus(zoneName);
+      return zoneMemberCompanies(zoneName).reduce((a, k) => a + companyRevPerBus(k), 0);
+    }
+
+    function depotZoneOf(depotName) {
+      const hit = Object.keys(FARE_REGION_DEPOTS).find(z => (FARE_REGION_DEPOTS[z] || []).includes(depotName));
+      return hit || UNZONED_FARE_REGION;
+    }
+
+    function depotDailyIncome(d) {
+      if (!d || d.name === "Unallocated") return 0;
+      return fareZoneRevPerBus(depotZoneOf(d.name)) * (d.vehicles || 0);
+    }
+
+    function avgDepotOpEx(names) {
+      let v = 0, e = 0;
+      (state.depots || []).forEach(d => {
+        if (names.includes(d.name)) {
+          const base = INITIAL_STATE.depots.find(x => x.name === d.name);
+          const perBus = d.baseExpenses / Math.max(1, (base && base.vehicles) || d.vehicles);
+          v += d.vehicles || 0;
+          e += perBus * (d.vehicles || 0);
+        }
+      });
+      return v ? Math.round(e / v * 100) / 100 : 0;
+    }
+
+    function isCompanyTable(regionName) {
+      const r = state.fares[regionName];
+      return !!(r && r.companyCode);
+    }
+
+    // Which zone a company rolls up into: the zone holding ALL of its
+    // depots, else the unzoned catcher. Zones never own tickets — they
+    // only display their member companies' tickets, read-only.
+    function companyZone(code) {
+      const deps = companyDepots(code);
+      if (!deps.length) return UNZONED_FARE_REGION;
+      const hit = Object.keys(FARE_REGION_DEPOTS).find(zn =>
+        deps.every(d => (FARE_REGION_DEPOTS[zn] || []).includes(d)));
+      return hit || UNZONED_FARE_REGION;
+    }
+
+    function zoneMemberCompanies(zoneName) {
+      return Object.keys(state.fares).filter(k => {
+        const r = state.fares[k];
+        return r && r.companyCode && companyZone(r.companyCode) === zoneName;
+      });
+    }
+
+    function selectFareTable(key) {
+      const sel = document.getElementById("fare-region-select");
+      if (sel && state.fares[key]) sel.value = key;
+      renderFareTable();
+    }
+
+    function fareTicketRow(t, regionName, idx, editable) {
+      const factor = t.factor || 1;
+      const dailyIncome = t.price * t.pax * factor;
+      const factorTag = factor === 1 ? "" : (factor === 1 / 7 ? "÷7" : (factor === 1 / 28 ? "÷28" : `×${factor}`));
+      const tag = factorTag ? `<span class="ml-1 px-1.5 py-0.5 rounded bg-slate-100 text-slate-500 text-[10px] mono whitespace-nowrap">${factorTag}</span>` : "";
+      if (!editable) {
         return `
+          <tr class="hover:bg-slate-100">
+            <td class="py-2.5 px-4 font-semibold text-slate-900">${escAttr(t.name)}${tag}</td>
+            <td class="py-2.5 px-4 mono text-right text-sky-700">${formatGBP(t.price, 2)}</td>
+            <td class="py-2.5 px-4 mono text-right text-amber-700">${t.pax}</td>
+            <td class="py-2.5 px-4 mono text-right font-bold text-emerald-700">${formatGBP(dailyIncome, 2)}</td>
+            <td class="py-2.5 px-4 text-right whitespace-nowrap text-slate-300 text-[11px]">🔒 zone total</td>
+          </tr>
+        `;
+      }
+      return `
           <tr class="hover:bg-slate-100">
             <td class="py-2.5 px-4">
               <input type="text" value="${escAttr(t.name)}" onchange="updateFareName('${regionName}', ${idx}, this.value)"
-                class="bg-transparent hover:bg-white focus:bg-white border border-transparent hover:border-slate-300 focus:border-sky-500 rounded-lg px-2 py-1 font-semibold text-slate-900 text-xs md:text-sm w-full max-w-[220px] focus:outline-none" />${factorTag ? `<span class="ml-1 px-1.5 py-0.5 rounded bg-slate-100 text-slate-500 text-[10px] mono whitespace-nowrap">${factorTag}</span>` : ""}
+                class="bg-transparent hover:bg-white focus:bg-white border border-transparent hover:border-slate-300 focus:border-sky-500 rounded-lg px-2 py-1 font-semibold text-slate-900 text-xs md:text-sm w-full max-w-[220px] focus:outline-none" />${tag}
             </td>
             <td class="py-2.5 px-4 text-right">
               <input type="number" step="0.10" value="${t.price}" onchange="updateFareItem('${regionName}', ${idx}, 'price', this.value)"
@@ -2648,40 +2773,66 @@
             </td>
           </tr>
         `;
-      }).join("");
+    }
+
+    function renderFareTable() {
+      if (ensureFareCoverage()) populateFareRegions();
+      const regionName = currentFareRegion();
+      const region = state.fares[regionName];
+      if (!region) return;
+      const sel = document.getElementById("fare-region-select");
+      if (sel && sel.value !== regionName) sel.value = regionName;
+
+      let totalRevPerBus = 0;
+      let totalPax = 0;
+      const tbody = document.getElementById("fares-tbody");
+      if (isCompanyTable(regionName)) {
+        tbody.innerHTML = region.tickets.map((t, idx) => {
+          totalRevPerBus += t.price * t.pax * (t.factor || 1);
+          totalPax += parseFloat(t.pax) || 0;
+          return fareTicketRow(t, regionName, idx, true);
+        }).join("");
+      } else {
+        const members = zoneMemberCompanies(regionName);
+        tbody.innerHTML = members.length ? members.map(ck => {
+          const co = state.fares[ck];
+          const sub = (co.tickets || []).map(t => {
+            totalRevPerBus += t.price * t.pax * (t.factor || 1);
+            totalPax += parseFloat(t.pax) || 0;
+            return fareTicketRow(t, ck, -1, false);
+          }).join("");
+          return `<tr class="bg-slate-50">
+              <td colspan="4" class="py-2 px-4 text-xs font-bold text-slate-900">${escAttr(co.companyName || ck)} <span class="font-normal text-slate-400 mono">(${(co.tickets || []).length} tickets)</span></td>
+              <td class="py-2 px-4 text-right"><button onclick="selectFareTable('${escAttr(ck)}')" title="Jump to this company table to edit" class="text-[11px] font-semibold text-sky-700 hover:underline whitespace-nowrap">Edit →</button></td>
+            </tr>` + (sub || `<tr><td colspan="5" class="py-2 px-4 text-[11px] text-slate-400">No tickets yet in ${escAttr(co.companyName || ck)}.</td></tr>`);
+        }).join("") : `<tr><td colspan="5" class="py-4 px-4 text-xs text-slate-400">No companies roll up here yet. Tickets live on company tables — add them under By Company.</td></tr>`;
+      }
 
       const profitPerBus = totalRevPerBus - region.opExPerBus;
       document.getElementById("fare-rev-bus").textContent = formatGBP(totalRevPerBus, 2);
-      document.getElementById("fare-cost-bus").textContent = formatGBP(region.opExPerBus, 2);
-      document.getElementById("fare-profit-bus").textContent = formatGBP(profitPerBus, 2);
-
-      const stats = fareDepotStats(regionName);
-      document.getElementById("fare-calib-depots").textContent = stats.names.length ? stats.names.join(", ") : "—";
-      document.getElementById("fare-calib-actual").textContent = stats.vehicles
-        ? `${formatGBP(stats.incomePerBus, 2)} across ${stats.vehicles} buses`
-        : "No depots mapped";
-      document.getElementById("fare-calib-table").textContent = `${formatGBP(totalRevPerBus, 2)} (${totalPax.toFixed(1)} boardings)`;
       const opexInput = document.getElementById("fare-opex-input");
       if (opexInput && document.activeElement !== opexInput) opexInput.value = region.opExPerBus;
-      const badge = document.getElementById("fare-pax-badge");
-      if (badge) badge.innerHTML = region.paxSource === "calibrated"
-        ? `<span class="px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-500/20 text-[10px] font-bold whitespace-nowrap">REAL · depot-backed</span>`
-        : `<span class="px-1.5 py-0.5 rounded bg-amber-50 text-amber-700 border border-amber-500/20 text-[10px] font-bold whitespace-nowrap">estimates</span>`;
+      document.getElementById("fare-profit-bus").textContent = formatGBP(profitPerBus, 2);
       const addRegion = document.getElementById("fare-add-region");
       if (addRegion) addRegion.textContent = regionName;
+      const addWrap = document.getElementById("fare-add-wrap");
+      if (addWrap) addWrap.style.display = isCompanyTable(regionName) ? "" : "none";
+      const addNote = document.getElementById("fare-add-note");
+      if (addNote) addNote.style.display = isCompanyTable(regionName) ? "none" : "";
     }
 
     function updateFareItem(regionName, idx, field, val) {
+      if (!isCompanyTable(regionName)) return; // zones are read-only aggregates
       const num = parseFloat(val);
       if (isNaN(num) || num < 0) { renderFareTable(); return; }
       state.fares[regionName].tickets[idx][field] = num;
-      if (field === "pax") state.fares[regionName].paxSource = "manual";
       saveState();
       renderFareTable();
       showToast(`Updated ${state.fares[regionName].tickets[idx].name} in ${regionName}!`, "✅");
     }
 
     function updateFareName(regionName, idx, val) {
+      if (!isCompanyTable(regionName)) return; // zones are read-only aggregates
       const t = state.fares[regionName] && state.fares[regionName].tickets[idx];
       const name = String(val || "").trim();
       if (!t || !name) { renderFareTable(); return; }
@@ -2696,6 +2847,7 @@
       const num = parseFloat(val);
       if (isNaN(num) || num < 0) { renderFareTable(); return; }
       state.fares[regionName].opExPerBus = Math.round(num * 100) / 100;
+      state.fares[regionName].opExAuto = false;
       saveState();
       renderFareTable();
       showToast(`OpEx updated for ${regionName}!`, "✅");
@@ -2705,6 +2857,10 @@
       const regionName = currentFareRegion();
       const region = state.fares[regionName];
       if (!region) return;
+      if (!isCompanyTable(regionName)) {
+        showToast("Zones are read-only — pick a company table to add tickets.", "⚠️");
+        return;
+      }
       const name = document.getElementById("fare-new-name").value.trim();
       const price = parseFloat(document.getElementById("fare-new-price").value);
       const paxRaw = document.getElementById("fare-new-pax").value;
@@ -2714,7 +2870,6 @@
       if (isNaN(price) || price < 0) { showToast("Enter a valid ticket price (£).", "⚠️"); return; }
       if (isNaN(pax) || pax < 0) { showToast("Enter a valid passenger count (0+).", "⚠️"); return; }
       region.tickets.push({ name, price: Math.round(price * 100) / 100, pax, factor });
-      region.paxSource = "manual";
       document.getElementById("fare-new-name").value = "";
       document.getElementById("fare-new-price").value = "";
       document.getElementById("fare-new-pax").value = "";
@@ -2724,6 +2879,7 @@
     }
 
     function deleteFareTicket(regionName, idx) {
+      if (!isCompanyTable(regionName)) return; // zones are read-only aggregates
       const t = state.fares[regionName] && state.fares[regionName].tickets[idx];
       if (!t) return;
       if (!confirm(`Remove "${t.name}" from ${regionName}?`)) return;
@@ -2733,29 +2889,17 @@
       showToast("Ticket removed!", "✅");
     }
 
-    function calibrateFarePax() {
-      const regionName = currentFareRegion();
-      const region = state.fares[regionName];
-      if (!region) return;
-      const stats = fareDepotStats(regionName);
-      if (!stats.vehicles) {
-        showToast(`No depots mapped to ${regionName} — cannot calibrate.`, "⚠️");
-        return;
-      }
-      const weights = region.tickets.map(t => (parseFloat(t.pax) || 0) * t.price * (t.factor || 1));
-      const totalW = weights.reduce((a, w) => a + w, 0);
-      if (totalW <= 0) {
-        showToast("Set estimated passengers on at least one ticket first — calibration keeps your ticket mix.", "⚠️");
-        return;
-      }
-      region.tickets.forEach((t, i) => {
-        const eff = t.price * (t.factor || 1);
-        t.pax = eff > 0 ? Math.round((stats.incomePerBus * (weights[i] / totalW) / eff) * 10) / 10 : 0;
+    function clearAllFareTickets() {
+      const names = Object.keys(state.fares);
+      const count = names.reduce((a, k) => a + ((state.fares[k].tickets || []).length), 0);
+      if (!count) { showToast("No tickets to clear — all tables are already empty.", "✅"); return; }
+      if (!confirm(`Remove ALL ${count} ticket(s) from all ${names.length} fare table(s)? Zones and OpEx stay; depot income drops to £0 until tickets are re-added. This cannot be undone.`)) return;
+      names.forEach(k => {
+        state.fares[k].tickets = [];
       });
-      region.paxSource = "calibrated";
       saveState();
-      renderFareTable();
-      showToast(`Calibrated ${region.tickets.length} tickets to REAL depot takings (${formatGBP(stats.incomePerBus, 2)}/bus/day across ${stats.vehicles} buses)!`, "✅");
+      renderAll();
+      showToast(`Cleared ${count} ticket(s) from ${names.length} table(s) — depot income is now £0 until tickets are sold again!`, "✅");
     }
 
     // =========================================================================

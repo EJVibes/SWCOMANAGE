@@ -9,8 +9,10 @@
  *      (paginated, filtered per-operator by numeric operator ID).
  *   2. Groups vehicles by their `depot` field -> feeds the Depot Network
  *      table (Depot Network & Daily Financial Performance) automatically.
- *   3. Maps every vehicle (fleet_number / reg / type) -> Master Fleet
- *      Registry entries.
+  *   3. Maps every vehicle (fleet_number / reg / type, plus the API's
+  *      engine / gearbox fields with local-spec fallback, and a Euro
+  *      standard cross-checked from the reg-plate year) -> Master Fleet
+  *      Registry entries.
  * Writes go through the app's state + saveState() so they persist via DB.
  * ========================================================================= */
 (function () {
@@ -40,6 +42,49 @@
       return { id: n, idNum: n, raw: raw };
     }
     return { id: raw, idNum: null, raw: raw };
+  }
+
+  /* ---------------- Euro standard from reg plate + fuel ----------------
+   * Decodes the UK registration year, then bands it against the engine's
+   * emission regime (heavy-duty for buses/coaches, light-duty dates for
+   * minibuses/vans, zero-emission for electrics/hydrogen). */
+
+  var PREFIX_YEAR = { A: 1983, B: 1984, C: 1985, D: 1986, E: 1987, F: 1988, G: 1989, H: 1990, J: 1991, K: 1992, L: 1993, M: 1994, N: 1995, P: 1996, R: 1997, S: 1998, T: 1999, V: 2000, W: 2000, X: 2001, Y: 2001 };
+  var SUFFIX_YEAR = { A: 1963, B: 1964, C: 1965, D: 1966, E: 1967, F: 1968, G: 1969, H: 1970, J: 1971, K: 1972, L: 1973, M: 1974, N: 1975, P: 1976, R: 1977, S: 1978, T: 1979, V: 1980, W: 1981, X: 1982, Y: 1983 };
+
+  function regYearFromPlate(reg) {
+    var r = String(reg || "").toUpperCase().replace(/[\s\-.]/g, "");
+    var m;
+    // Current style AB12CDE (Sept 2001 on; 50+ = Sept–Feb release).
+    if ((m = /^([A-Z]{2})(\d{2})([A-Z]{3})$/.exec(r))) {
+      var dd = parseInt(m[2], 10);
+      if (dd < 1 || dd > 99) return null;
+      return dd >= 50 ? 2000 + (dd - 50) : 2000 + dd;
+    }
+    // Prefix style A123BCD (Aug 1983 – Aug 2001). Q = age unknown.
+    if ((m = /^([A-Z])(\d{1,3})([A-Z]{3})$/.exec(r))) {
+      if (m[1] === "Q") return null;
+      return PREFIX_YEAR[m[1]] || null;
+    }
+    // Suffix style ABC123D (1963 – 1983).
+    if ((m = /^([A-Z]{1,3})(\d{1,3})([A-Z])$/.exec(r))) {
+      return SUFFIX_YEAR[m[3]] || null;
+    }
+    return null; // NI, dateless, cherished, UNREG…
+  }
+
+  function euroFromYearFuel(year, fuel, engineText, isMinibus) {
+    var f = String(fuel || "").toLowerCase();
+    var e = String(engineText || "").toLowerCase();
+    if (f === "electric" || f.indexOf("electric") !== -1 || f.indexOf("hydrogen") !== -1 || f.indexOf("fuel cell") !== -1 ||
+        /\belectric\b|\bbattery\b|\bbev\b|zero emission|veds|electroliner|ecitaro|equipmake|kleandrive/.test(e)) return "Zero emission";
+    if (year === null || year === undefined || isNaN(year)) return "";
+    var cuts = isMinibus ? [1992, 1996, 2000, 2005, 2011, 2015] : [1992, 1996, 2000, 2005, 2008, 2013];
+    if (year < cuts[0]) return "Pre-Euro";
+    for (var i = cuts.length - 1; i >= 0; i--) {
+      if (year >= cuts[i]) return "Euro " + (i + 1);
+    }
+    return "";
   }
 
   /* ---------------- operators ---------------- */
@@ -350,24 +395,40 @@
     var type = (apiVehicle.vehicle_type_data && apiVehicle.vehicle_type_data.type_name) || apiVehicle.type_details || "Unknown Type";
     var spec = (specs || {})[type] || null;
     var dt = drivetrainFor(type);
+    // Engine/gearbox come from the Fleet API when present: per-vehicle
+    // `engine`/`gearbox` first, then `vehicle_type_data`, falling back to
+    // the local drivetrain/vehicle specs (and their defaults).
+    var apiEngine = String(apiVehicle.engine || "").trim() ||
+      String((apiVehicle.vehicle_type_data && apiVehicle.vehicle_type_data.engine) || "").trim();
+    var apiGearbox = String(apiVehicle.gearbox || "").trim() ||
+      String((apiVehicle.vehicle_type_data && apiVehicle.vehicle_type_data.gearbox) || "").trim();
     var liv = apiVehicle.livery || null;
     var etm = isEquipmentType(apiVehicle);
+    var cat = categoryFor(apiVehicle, parsed.idNum);
+    // Cross-check the Euro standard: registration year decoded from the
+    // plate, banded for the fuel/engine (minibuses use light-duty dates).
+    // Falls back to the drivetrain DB when the plate gives no year.
+    var regYear = regYearFromPlate(apiVehicle.reg);
+    var apiFuel = (apiVehicle.vehicle_type_data && apiVehicle.vehicle_type_data.fuel) || "";
+    var mini = (cat === "Mini/Midi") || /sprinter|transit|mellor|treo|strata|\bevm\b|minibus/i.test(type);
+    var computedEuro = euroFromYearFuel(regYear, apiFuel, (apiEngine || "") + " " + type, mini);
     return {
       id: parsed.id,
       idNum: parsed.idNum,
       fleetNumberRaw: fleetStr,
       reg: String(apiVehicle.reg || "").trim().toUpperCase(),
       type: type,
-      cat: categoryFor(apiVehicle, parsed.idNum),
+      cat: cat,
       livery: etm ? "" : liveryFor(apiVehicle),
       liveryCssL: etm ? null : (liv && liv.left_css ? liv.left_css : null),
       liveryCssR: etm ? null : (liv && liv.right_css ? liv.right_css : null),
       liveryColour: etm ? "" : (liv && liv.colour ? liv.colour : ""),
       liveryText: etm ? "" : (liv && liv.text_colour ? liv.text_colour : ""),
       liveryStroke: etm ? "" : (liv && liv.stroke_colour ? liv.stroke_colour : ""),
-      engine: etm ? "" : ((dt && dt.engine && dt.engine !== "—") ? dt.engine : (spec ? spec.engine : "Euro VI Standard")),
-      gearbox: etm ? "" : ((dt && dt.gearbox && dt.gearbox !== "—") ? dt.gearbox : (spec ? spec.gearbox : "ZF EcoLife / Voith")),
-      euro: etm ? "" : ((dt && dt.euro) || ""),
+      engine: etm ? "" : (apiEngine || ((dt && dt.engine && dt.engine !== "—") ? dt.engine : (spec ? spec.engine : "Euro VI Standard"))),
+      gearbox: etm ? "" : (apiGearbox || ((dt && dt.gearbox && dt.gearbox !== "—") ? dt.gearbox : (spec ? spec.gearbox : "ZF EcoLife / Voith"))),
+      euro: etm ? "" : (computedEuro || ((dt && dt.euro) || "")),
+      euroYear: etm ? null : regYear,
       fuel: (apiVehicle.vehicle_type_data && apiVehicle.vehicle_type_data.fuel) || "",
       depot: etm ? "" : (String(apiVehicle.depot || "").trim() || UNALLOCATED),
       inService: apiVehicle.in_service !== false,
@@ -495,7 +556,9 @@
           existing.liveryText = m.liveryText;
           existing.liveryStroke = m.liveryStroke;
         }
-        if (m.euro) existing.euro = m.euro;
+        if (m.euro) { existing.euro = m.euro; existing.euroYear = m.euroYear; }
+        if (m.engine) existing.engine = m.engine;
+        if (m.gearbox) existing.gearbox = m.gearbox;
         existing.depot = m.depot;
         existing.operatorCode = m.operatorCode;
         existing.operatorName = m.operatorName;
@@ -519,6 +582,7 @@
           engine: m.engine,
           gearbox: m.gearbox,
           euro: m.euro,
+          euroYear: m.euroYear,
           fuel: m.fuel,
           depot: m.depot,
           operatorCode: m.operatorCode,
@@ -684,6 +748,8 @@
           '<td class="py-2 px-3 mono text-sky-400 font-bold">' + esc(m.fleetNumberRaw || "—") + '</td>' +
           '<td class="py-2 px-3 mono text-slate-300">' + esc(m.reg || "—") + '</td>' +
           '<td class="py-2 px-3 text-white">' + esc(m.type) + '</td>' +
+          '<td class="py-2 px-3 text-slate-300">' + esc(m.engine || "—") + '</td>' +
+          '<td class="py-2 px-3 text-slate-300">' + esc(m.gearbox || "—") + '</td>' +
           '<td class="py-2 px-3 text-slate-300">' + esc(m.depot) + '</td>' +
           '<td class="py-2 px-3 mono text-slate-500">' + esc(m.operatorCode) + '</td></tr>';
       }).join("");
