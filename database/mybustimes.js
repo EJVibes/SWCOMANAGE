@@ -321,10 +321,10 @@
       ids.forEach(function (id) {
         chain = chain.then(function () {
           return fetchJson(API_BASE + "/get_trip_times/?format=json&timetable_id=" + encodeURIComponent(id)).then(function (t) {
-            var n = (t && t.times) ? Object.keys(t.times).length : 0;
-            out.push({ id: id, label: tables[id], days: parseTimetableDays(tables[id]), trips: n });
+            var deps = (t && t.times) ? Object.keys(t.times) : [];
+            out.push({ id: id, label: tables[id], days: parseTimetableDays(tables[id]), trips: deps.length, deps: deps });
           }).catch(function () {
-            out.push({ id: id, label: tables[id], days: parseTimetableDays(tables[id]), trips: 0 });
+            out.push({ id: id, label: tables[id], days: parseTimetableDays(tables[id]), trips: 0, deps: [] });
           });
         });
       });

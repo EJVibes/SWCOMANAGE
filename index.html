@@ -2922,9 +2922,18 @@
     // =========================================================================
     // 9b. DEMAND FORECAST (MBT routes + timetables → predicted boardings)
     // Model, per route: trips/day (timetabled departures × days/7) × seats
-    // (company fleet mix) × load factor (school 85%, key destinations and
-    // express 55%, standard 45%). Company total ÷ company buses = per-bus
-    // pax, distributed across that company's tickets by current mix.
+    // (company fleet mix) × load factor (school 70%, express/coach 35%,
+    // key destinations 30%, standard 20% all-day average). Same direction +
+    // same days = timetable versions, never additive: only the newest
+    // (highest id) counts, since superseded timetables stay in the API.
+    // Peak split: every timetabled departure is banded (AM 07:00–09:29,
+    // PM 16:00–18:59 peaks; interpeak, evening, night dead times) with
+    // per-band loads, so peaks run full and dead runs nearly empty.
+    // Per-bus reality check: one bus physically runs ~16 timetabled trips a
+    // day at most, so per-bus pax is capped there — raw timetable totals can
+    // exceed what the fleet could ever operate. Company total ÷ company
+    // buses (capped) = per-bus pax, distributed across that company's
+    // tickets by current mix.
     // =========================================================================
     const DEMAND_SEATS = { "Mini/Midi": 30, Single: 70, Decker: 95, Coach: 60, Training: 0, ETM: 0 };
 
@@ -3063,28 +3072,99 @@
 
     function routeLoadFactor(r) {
       const text = ((r.name || "") + " " + (r.inbound || "") + " " + (r.outbound || "")).toLowerCase();
-      if (r.school) return { load: 0.85, why: "school service" };
-      if (/hospital|prh|station|college|university|school|airport/.test(text)) return { load: 0.55, why: "key destination" };
-      if (/^x\d/i.test(r.num || "") || /express|coach|link/.test(text)) return { load: 0.55, why: "express/coach" };
-      return { load: 0.45, why: "standard service" };
+      if (r.school) return { load: 0.70, why: "school service" };
+      if (/hospital|prh|station|college|university|school|airport/.test(text)) return { load: 0.30, why: "key destination" };
+      if (/^x\d/i.test(r.num || "") || /express|coach|link/.test(text)) return { load: 0.35, why: "express/coach" };
+      return { load: 0.20, why: "standard service" };
+    }
+
+    // Departure-time bands and their all-day loads. School routes skip
+    // banding (flat 80% — school runs are peaks by definition).
+    const BAND_LOAD = { night: 0.05, am: 0.55, mid: 0.25, pm: 0.60, eve: 0.12 };
+
+    function bandOf(dep) {
+      const m = String(dep || "").match(/^(\d{1,2}):(\d{2})/);
+      if (!m) return "mid";
+      const t = parseInt(m[1], 10) * 60 + parseInt(m[2], 10);
+      if (t < 420) return "night";
+      if (t < 570) return "am";
+      if (t < 960) return "mid";
+      if (t < 1140) return "pm";
+      return "eve";
+    }
+
+    function routeClassMult(r) {
+      const text = ((r.name || "") + " " + (r.inbound || "") + " " + (r.outbound || "")).toLowerCase();
+      if (/hospital|prh|station|college|university|school|airport/.test(text)) return 1.2;
+      if (/^x\d/i.test(r.num || "") || /express|coach|link/.test(text)) return 1.25;
+      return 1;
     }
 
     function companyDemand(code) {
       const cache = (window.MBT && window.MBT.getDemandCache) ? window.MBT.getDemandCache() : { routes: {}, timetables: {} };
       const routes = (((cache.routes || {})[code] || {}).list) || [];
       const seats = companySeatsPerTrip(code);
-      let trips = 0, pax = 0, withData = 0;
+      let trips = 0, pax = 0, peakPax = 0, withData = 0, dupes = 0, banded = false;
       const detail = routes.map(r => {
-        const tt = (((cache.timetables || {})[r.id] || {}).tables) || [];
+        // Same direction + same days = timetable versions, not extra
+        // service: the API keeps superseded timetables, so only the newest
+        // (highest id) per direction/day-group counts. Direction-less
+        // timetables can't be matched, so they always count.
+        const ttAll = (((cache.timetables || {})[r.id] || {}).tables) || [];
+        const groups = {};
+        const tt = [];
+        ttAll.forEach(t => {
+          const m = String(t.label || "").split(" - ");
+          const dir = m.length >= 3 ? m[1].trim().toLowerCase() : "";
+          if (!dir) { tt.push(t); return; }
+          const key = dir + "|" + t.days;
+          if (!groups[key] || Number(t.id) > Number(groups[key].id)) groups[key] = t;
+        });
+        const nGroups = Object.keys(groups).length;
+        const nDirTables = ttAll.filter(t => {
+          const m = String(t.label || "").split(" - ");
+          return m.length >= 3 && m[1].trim() !== "";
+        }).length;
+        dupes += nDirTables - nGroups;
+        Object.keys(groups).forEach(k => tt.push(groups[k]));
         const rt = tt.reduce((a, t) => a + t.trips * (t.days / 7), 0);
         if (tt.length) withData++;
         const lf = routeLoadFactor(r);
-        const rp = rt * seats * lf.load;
+        let rp = 0, rPeak = 0, rBanded = false;
+        if (!r.school && tt.some(t => t.deps && t.deps.length)) {
+          rBanded = true;
+          banded = true;
+          const mult = routeClassMult(r);
+          tt.forEach(t => {
+            (t.deps || []).forEach(dep => {
+              const b = bandOf(dep);
+              const p = seats * Math.min(BAND_LOAD[b] * mult, 0.95) * (t.days / 7);
+              rp += p;
+              if (b === "am" || b === "pm") rPeak += p;
+            });
+          });
+        } else {
+          rp = rt * seats * (r.school ? 0.80 : lf.load);
+          rPeak = r.school ? rp : 0;
+        }
         trips += rt;
         pax += rp;
-        return { num: r.num, inbound: r.inbound, outbound: r.outbound, tripsPerDay: rt, load: lf.load, why: lf.why, pax: rp, hasData: !!tt.length };
+        peakPax += rPeak;
+        return { num: r.num, inbound: r.inbound, outbound: r.outbound, tripsPerDay: rt, load: lf.load, why: lf.why, pax: rp, peakPax: rPeak, banded: rBanded, hasData: !!tt.length };
       });
-      return { routes: detail, tripsPerDay: trips, seatsPerTrip: seats, paxPerDay: pax, coverage: routes.length ? withData + "/" + routes.length + " routes" : "no routes yet" };
+      return { routes: detail, tripsPerDay: trips, seatsPerTrip: seats, paxPerDay: pax, peakPax, offPax: pax - peakPax, banded, dupes, buses: companyBuses(code), coverage: routes.length ? withData + "/" + routes.length + " routes" : "no routes yet" };
+    }
+
+    // Per-bus passengers with the physical reality check applied: a single
+    // bus runs at most ~16 timetabled trips a day, so raw timetable totals
+    // beyond buses × 16 cannot be operated and are trimmed here.
+    function companyPaxPerBus(code) {
+      const d = companyDemand(code);
+      if (!d.buses || !d.tripsPerDay || !d.seatsPerTrip) return { perBus: 0, tripsPerBus: 0, rawTripsPerBus: 0, capped: false };
+      const raw = d.tripsPerDay / d.buses;
+      const tpb = Math.min(raw, 16);
+      const avgLoad = d.paxPerDay / d.tripsPerDay / d.seatsPerTrip;
+      return { perBus: tpb * d.seatsPerTrip * avgLoad, tripsPerBus: tpb, rawTripsPerBus: raw, capped: raw > 16 };
     }
 
     function fareKeyForCompany(code) {
@@ -3154,7 +3234,8 @@
       if (!d.tripsPerDay) { showToast("No timetable data yet — fetch routes & timetables first.", "⚠️"); return; }
       const factors = companyTicketFactors(code);
       const avgF = factors.length ? factors.reduce((a, x) => a + x.factor, 0) / factors.length : 1;
-      const perBus = d.paxPerDay / buses;
+      const pb = companyPaxPerBus(code);
+      const perBus = pb.perBus;
       const weights = region.tickets.map(t => (parseFloat(t.pax) || 0) * t.price * (t.factor || 1));
       const totalW = weights.reduce((a, w) => a + w, 0);
       region.tickets.forEach((t, i) => {
@@ -3163,7 +3244,7 @@
       });
       saveState();
       renderAll();
-      showToast(`Applied forecast to ${region.tickets.length} ticket(s): ${perBus.toFixed(1)} pax/bus/day from ${d.tripsPerDay.toFixed(0)} trips × ~${d.seatsPerTrip.toFixed(0)} seats${avgF !== 1 ? `, price-adjusted avg ×${avgF.toFixed(3)} per ticket` : ""}!`, "✅");
+      showToast(`Applied forecast to ${region.tickets.length} ticket(s): ${perBus.toFixed(1)} pax/bus/day from ${d.tripsPerDay.toFixed(0)} trips × ~${d.seatsPerTrip.toFixed(0)} seats${pb.capped ? ` (trips/bus capped at 16 from ${pb.rawTripsPerBus.toFixed(0)})` : ""}${avgF !== 1 ? `, price-adjusted avg ×${avgF.toFixed(3)} per ticket` : ""}!`, "✅");
     }
 
     function renderDemand() {
@@ -3179,7 +3260,8 @@
         const key = fareKeyForCompany(o.code);
         const region = key && state.fares[key];
         const buses = companyBuses(o.code);
-        const perBus = buses ? d.paxPerDay / buses : 0;
+        const pb = companyPaxPerBus(o.code);
+        const perBus = pb.perBus;
         const top = d.routes.slice().sort((a, b) => b.pax - a.pax).slice(0, 3)
           .map(r => `${escAttr(r.num || "?")} (${r.tripsPerDay.toFixed(0)}/day · ${Math.round(r.load * 100)}% ${escAttr(r.why)} → ${r.pax.toFixed(0)}/day)`).join(" · ");
         const factors = companyTicketFactors(o.code);
@@ -3198,8 +3280,9 @@
             <span class="font-bold text-slate-900">${escAttr(o.name || o.code)} <span class="font-normal text-slate-400 mono">(${escAttr(o.code)})</span></span>
             <button onclick="applyDemandToTickets('${escAttr(o.code)}')" ${(!d.tripsPerDay || !(region && region.tickets && region.tickets.length)) ? "disabled title=\"Needs timetable data and company tickets\"" : ""} class="text-[11px] font-bold bg-emerald-600 hover:bg-emerald-700 disabled:bg-slate-100 disabled:text-slate-400 text-white px-2.5 py-1.5 rounded-md">Apply forecast to tickets</button>
           </div>
-          <div class="text-slate-500">Routes: <b class="mono">${d.routes.length}</b> (${escAttr(d.coverage)}) · Trips/day: <b class="mono">${d.tripsPerDay.toFixed(1)}</b> · Seats/trip: <b class="mono">~${d.seatsPerTrip.toFixed(0)}</b> · Buses: <b class="mono">${buses}</b></div>
-          <div class="text-slate-600">Predicted: <b class="mono text-sky-700">${d.paxPerDay.toFixed(1)}/day</b> (${perBus.toFixed(1)} pax/bus/day)${top ? ` · Top: <span class="mono">${top}</span>` : ""}</div>
+          <div class="text-slate-500">Routes: <b class="mono">${d.routes.length}</b> (${escAttr(d.coverage)}${d.dupes ? `, ${d.dupes} duplicate timetable${d.dupes === 1 ? "" : "s"} ignored` : ""}) · Trips/day: <b class="mono">${d.tripsPerDay.toFixed(1)}</b> · Seats/trip: <b class="mono">~${d.seatsPerTrip.toFixed(0)}</b> · Buses: <b class="mono">${buses}</b></div>
+          <div class="text-slate-600">Predicted: <b class="mono text-sky-700">${d.paxPerDay.toFixed(1)}/day</b> (${perBus.toFixed(1)} pax/bus/day${pb.capped ? `, timetable trips/bus ${pb.rawTripsPerBus.toFixed(0)} → capped at 16` : ""})${perBus > 500 ? ` <span class="px-1.5 py-0.5 rounded bg-amber-50 text-amber-700 border border-amber-500/20 text-[10px] font-bold">⚠️ unusually high — check for duplicate/superseded timetables</span>` : ""}${top ? ` · Top: <span class="mono">${top}</span>` : ""}</div>
+          <div class="text-slate-600">Peak (07:00–09:29, 16:00–18:59): <b class="mono">${d.peakPax.toFixed(1)}/day</b> · Off-peak & dead: <b class="mono">${d.offPax.toFixed(1)}/day</b>${d.routes.length && !d.banded ? ` <span class="text-slate-400">— no departure detail yet, refresh data for the peak split</span>` : ""}</div>
           <div class="text-slate-600">Area rivals: <span class="mono">${rivalNames}</span></div>
           <div class="text-slate-600">Rival benchmarks (£) — blank = area default <span class="text-slate-400">(${(area.src || "defaults")})</span>:
             <span class="inline-grid grid-cols-3 sm:grid-cols-6 gap-1 mt-1">
