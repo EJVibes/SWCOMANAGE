@@ -27,6 +27,7 @@
     "fleetRegistry",
     "fares",
     "overheads",
+    "staffing",
     "workshopQueue",
     "workshopCompleted",
     "mbtOperators"
@@ -44,6 +45,7 @@
       case "workshopCompleted": return clone(window.DB_SEED_WORKSHOP_COMPLETED || []);
       case "fares": return clone(window.DB_SEED_FARES || {});
       case "overheads": return clone(window.DB_SEED_OVERHEADS || []);
+      case "staffing": return clone(window.DB_SEED_STAFFING || []);
       case "mbtOperators": return clone(window.DB_SEED_MBT_OPERATORS || []);
       case "fleetRegistry": {
         // Written by server.js on save (database/fleet-registry.js). Falls
@@ -211,6 +213,7 @@
             fleetRegistry: state.fleetRegistry,
             fares: state.fares,
             overheads: state.overheads || [],
+            staffing: state.staffing || [],
             workshopQueue: state.workshopQueue,
             workshopCompleted: state.workshopCompleted || [],
             mbtOperators: readLS("mbtOperators") !== undefined ? readLS("mbtOperators") : clone(window.DB_SEED_MBT_OPERATORS || [])
@@ -268,6 +271,7 @@
         fleetRegistry: this.load("fleetRegistry"),
         fares: this.load("fares"),
         overheads: this.load("overheads"),
+        staffing: this.load("staffing"),
         workshopQueue: this.load("workshopQueue")
       };
     },
@@ -281,6 +285,7 @@
       writeLS("fleetRegistry", state.fleetRegistry);
       writeLS("fares", state.fares);
       writeLS("overheads", state.overheads || []);
+      writeLS("staffing", state.staffing || []);
       writeLS("workshopQueue", state.workshopQueue);
       writeLS("workshopCompleted", state.workshopCompleted || []);
     },
@@ -298,6 +303,7 @@
         fleetRegistry: this.load("fleetRegistry"),
         fares: this.load("fares"),
         overheads: this.load("overheads"),
+        staffing: this.load("staffing"),
         workshopQueue: this.load("workshopQueue"),
         workshopCompleted: this.load("workshopCompleted"),
         vehicleSpecs: clone(window.DB_SEED_VEHICLE_SPECS || window.DB_SEED_OMSI_SPECS || {}),
@@ -320,6 +326,7 @@
     workshopQueue: clone(window.DB_SEED_WORKSHOP_QUEUE || []),
     workshopCompleted: clone(window.DB_SEED_WORKSHOP_COMPLETED || []),
     overheads: clone(window.DB_SEED_OVERHEADS || []),
+    staffing: clone(window.DB_SEED_STAFFING || []),
     transactions: clone(window.DB_SEED_TRANSACTIONS || []),
     depots: clone(window.DB_SEED_DEPOTS || []),
     busCatalogue: clone(window.DB_SEED_BUS_CATALOGUE || [])

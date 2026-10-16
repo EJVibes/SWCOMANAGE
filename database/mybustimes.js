@@ -619,6 +619,7 @@
             vehicles: row.count,
             baseIncome: Math.round(averages.rev * row.count * 100) / 100,
             baseExpenses: Math.round(averages.exp * row.count * 100) / 100,
+            staffSplit: true,
             rent: 0,
             source: "mybustimes",
             mbtUpdatedAt: now

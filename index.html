@@ -161,6 +161,9 @@
       <button onclick="switchTab('expenses')" id="tab-expenses" class="tab-btn px-4 py-2.5 text-xs md:text-sm font-semibold border-b-2 border-transparent text-slate-500 hover:text-slate-900 whitespace-nowrap">
         Expenses & Overheads
       </button>
+      <button onclick="switchTab('staffing')" id="tab-staffing" class="tab-btn px-4 py-2.5 text-xs md:text-sm font-semibold border-b-2 border-transparent text-slate-500 hover:text-slate-900 whitespace-nowrap">
+        Staffing Costs
+      </button>
       <button onclick="switchTab('fleet')" id="tab-fleet" class="tab-btn px-4 py-2.5 text-xs md:text-sm font-semibold border-b-2 border-transparent text-slate-500 hover:text-slate-900 whitespace-nowrap">
         Fleet Registry & Liveries
       </button>
@@ -203,7 +206,7 @@
         <div class="bg-white border border-slate-200 p-4 rounded-lg">
           <div class="text-xs text-slate-500 font-medium">Today's Operating Expenses</div>
           <div id="kpi-expenses" class="mono text-2xl font-extrabold text-rose-700 mt-1">£340,296</div>
-          <div class="text-[11px] text-slate-500 mt-1">Staff, Fuel, Maint, Insurance & Rent</div>
+          <div class="text-[11px] text-slate-500 mt-1">Fuel, Maint, Parts & Consumables (drivers/engineers in Staffing tab)</div>
         </div>
         <div class="bg-white border border-slate-200 p-4 rounded-lg">
           <div class="text-xs text-slate-500 font-medium">Today's Pre-Tax Profit</div>
@@ -288,7 +291,7 @@
               <p class="text-xs text-slate-500">Includes historical spreadsheet logs (2024–2026) and live game transactions</p>
             </div>
             <div class="flex flex-wrap items-center gap-2">
-              <span id="db-save-status" class="text-[11px] text-slate-500 mono">● Database connected (10 tables)</span>
+              <span id="db-save-status" class="text-[11px] text-slate-500 mono">● Database connected (11 tables)</span>
               <button onclick="exportSaveData()" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded-lg border border-slate-300">⬇ Export DB JSON</button>
               <label class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded-lg border border-slate-300 cursor-pointer">⬆ Import DB<input id="db-import-input" type="file" accept="application/json" class="hidden" onchange="importDatabaseFile(this)" /></label>
               <button onclick="resetDatabaseToSeeds()" class="text-xs bg-slate-100 hover:bg-rose-100 hover:text-rose-700 text-slate-500 px-3 py-1.5 rounded-lg border border-slate-300" title="Reload factory defaults from database/*.js seed files">↺ Reset from seeds</button>
@@ -513,6 +516,57 @@
               <tbody id="oh-tbody" class="divide-y divide-slate-200"></tbody>
             </table>
           </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= TAB: STAFFING COSTS ================= -->
+    <section id="view-staffing" class="hidden space-y-6">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="bg-white border border-slate-200 p-4 rounded-lg">
+          <div class="text-xs text-slate-500 font-medium">Total Staff / Day</div>
+          <div id="st-total-day" class="mono text-2xl font-extrabold text-rose-700 mt-1">£0</div>
+          <div class="text-[11px] text-slate-500 mt-1">Drivers, engineers & admin</div>
+        </div>
+        <div class="bg-white border border-slate-200 p-4 rounded-lg">
+          <div class="text-xs text-slate-500 font-medium">Drivers</div>
+          <div id="st-drivers" class="mono text-2xl font-extrabold text-slate-900 mt-1">0</div>
+          <div class="text-[11px] text-slate-500 mt-1">2.3 per bus · £43k/yr loaded</div>
+        </div>
+        <div class="bg-white border border-slate-200 p-4 rounded-lg">
+          <div class="text-xs text-slate-500 font-medium">Engineers & Admin</div>
+          <div id="st-other" class="mono text-2xl font-extrabold text-slate-900 mt-1">0</div>
+          <div class="text-[11px] text-slate-500 mt-1">1:15 / 1:30 per bus</div>
+        </div>
+        <div class="bg-white border border-slate-200 p-4 rounded-lg">
+          <div class="text-xs text-slate-500 font-medium">Driver-less Depots</div>
+          <div id="st-driverless" class="mono text-2xl font-extrabold text-emerald-700 mt-1">0</div>
+          <div class="text-[11px] text-slate-500 mt-1">Yards need no drivers</div>
+        </div>
+      </div>
+
+      <div class="bg-white border border-slate-200 rounded-lg p-5 flex flex-col">
+        <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
+          <div>
+            <h2 class="text-base font-bold text-slate-900">Depot Roster (auto-filled)</h2>
+            <p class="text-xs text-slate-500">Headcount scales from allocated vehicles. Driver £43k/yr loaded (ONS £36,340 FT + NI/pension); engineer £38k and admin £30k are estimates. Depot operating costs elsewhere cover fuel, maint & parts only.</p>
+          </div>
+          <button onclick="rebuildStaffing()" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded-lg border border-slate-300">↺ Auto-fill from depots</button>
+        </div>
+        <div class="overflow-x-auto max-h-[480px] overflow-y-auto border border-slate-200 rounded-md">
+          <table class="w-full text-left border-collapse text-xs">
+            <thead class="bg-slate-100 text-slate-600 sticky top-0">
+              <tr>
+                <th class="py-2.5 px-3">Depot</th>
+                <th class="py-2.5 px-3">Role</th>
+                <th class="py-2.5 px-3 text-right">Headcount</th>
+                <th class="py-2.5 px-3 text-right">Salary £/yr</th>
+                <th class="py-2.5 px-3 text-right">Cost / Day (£)</th>
+                <th class="py-2.5 px-3 text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="st-tbody" class="divide-y divide-slate-200"></tbody>
+          </table>
         </div>
       </div>
     </section>
@@ -997,6 +1051,7 @@
   <script src="database/workshop-queue.js"></script>
   <script src="database/workshop-completed.js"></script>
   <script src="database/overheads.js"></script>
+  <script src="database/staffing.js"></script>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.js"></script>
   <script src="database/mybustimes-operators.js"></script>
@@ -1046,11 +1101,26 @@
       state = window.DB.loadAllState();
       if (!Array.isArray(state.workshopCompleted)) state.workshopCompleted = [];
       if (!Array.isArray(state.overheads)) state.overheads = [];
-      else if (state.overheads.length === 4 && state.overheads.every(o => /^oh-seed-[1-4]$/.test(o.id || ""))) {
+      if (!Array.isArray(state.staffing)) state.staffing = [];
+      // One-time split: staff moved out of the depot lump into the Staffing
+      // tab, so pre-split depot rows shed the imputed staff share (~55%).
+      let split = false;
+      (state.depots || []).forEach(d => {
+        if (!d.staffSplit) {
+          if ((d.baseExpenses || 0) > 0) {
+            d.baseExpenses = Math.round(d.baseExpenses * 0.55 * 100) / 100;
+            split = true;
+          }
+          d.staffSplit = true;
+        }
+      });
+      if (split) window.DB.save("depots", state.depots);
+      if (state.overheads.length === 4 && state.overheads.every(o => /^oh-seed-[1-4]$/.test(o.id || ""))) {
         // Untouched original 4-row seed bills → upgrade to the researched 2026 bill set.
         state.overheads = JSON.parse(JSON.stringify(window.DB_SEED_OVERHEADS || []));
         window.DB.save("overheads", state.overheads);
       }
+      ensureStaffing();
     }
 
     function saveState() {
@@ -1122,7 +1192,7 @@
         totalBuses += d.vehicles;
       });
 
-      const totalExpenses = totalOpEx + totalRent + overheadTotals().total;
+      const totalExpenses = totalOpEx + totalRent + overheadTotals().total + staffingTotals().total;
       const preTaxProfit = totalIncome - totalExpenses;
       const afterTaxProfit = preTaxProfit > 0 ? preTaxProfit * 0.75 : preTaxProfit;
 
@@ -1224,6 +1294,7 @@
       renderLedger();
       renderDepots();
       renderExpenses();
+      renderStaffing();
       renderFleetTable();
       renderDealerCatalogue();
       renderFareTable();
@@ -1890,6 +1961,175 @@
       saveState();
       renderAll();
       showToast("Overhead removed!", "✅");
+    }
+
+    // =========================================================================
+    // 5d. STAFFING COSTS (auto-filled roster; yards need no drivers)
+    // Staff live here — depot baseExpenses covers NON-staff ops only (fuel,
+    // maint, parts, consumables). Daily cost = headcount × annual ÷ 365.
+    // =========================================================================
+    const STAFF_ROLES = {
+      Driver: { perBus: 2.3, salary: 43000 },
+      Engineer: { perBus: 1 / 15, salary: 38000 },
+      Admin: { perBus: 1 / 30, salary: 30000 }
+    };
+
+    function depotNeedsDrivers(d) {
+      if (!d) return true;
+      if (d.noDrivers === true) return false;
+      if (d.noDrivers === false) return true;
+      return !/yard/i.test(d.name || "");
+    }
+
+    function staffDaily(o) {
+      return (parseInt(o.headcount, 10) || 0) * (parseFloat(o.annualSalary) || 0) / 365;
+    }
+
+    function staffingTotals() {
+      let total = 0, drivers = 0, other = 0;
+      (state.staffing || []).forEach(o => {
+        total += staffDaily(o);
+        if (o.role === "Driver") drivers += parseInt(o.headcount, 10) || 0;
+        else other += parseInt(o.headcount, 10) || 0;
+      });
+      return { total, drivers, other };
+    }
+
+    function ensureStaffing(save) {
+      if (!Array.isArray(state.staffing)) state.staffing = [];
+      let changed = false;
+      (state.depots || []).forEach(d => {
+        if (d.name === "Unallocated" || !(d.vehicles > 0)) return;
+        Object.keys(STAFF_ROLES).forEach(role => {
+          if (role === "Driver" && !depotNeedsDrivers(d)) return;
+          if (state.staffing.some(o => o.depot === d.name && o.role === role)) return;
+          const spec = STAFF_ROLES[role];
+          state.staffing.push({
+            id: "st-" + Date.now().toString(36) + Math.floor(Math.random() * 1e4).toString(36) + role.slice(0, 2),
+            depot: d.name,
+            role,
+            headcount: Math.max(1, Math.round((d.vehicles || 0) * spec.perBus)),
+            annualSalary: spec.salary
+          });
+          changed = true;
+        });
+      });
+      if (changed && save !== false) window.DB.save("staffing", state.staffing);
+      return changed;
+    }
+
+    function toggleDepotDrivers(depotName, needs) {
+      const d = (state.depots || []).find(x => x.name === depotName);
+      if (!d) return;
+      d.noDrivers = !needs;
+      if (!needs) {
+        state.staffing = (state.staffing || []).filter(o => !(o.depot === depotName && o.role === "Driver"));
+      } else {
+        ensureStaffing(false);
+      }
+      saveState();
+      renderAll();
+      showToast(`${depotName}: drivers ${needs ? "required — roster row added" : "not required — driver pay removed"}!`, "✅");
+    }
+
+    let editingStaffId = null;
+
+    function renderStaffing() {
+      ensureStaffing();
+      const t = staffingTotals();
+      document.getElementById("st-total-day").textContent = formatGBP(t.total, 2);
+      document.getElementById("st-drivers").textContent = t.drivers;
+      document.getElementById("st-other").textContent = t.other;
+      document.getElementById("st-driverless").textContent =
+        (state.depots || []).filter(d => d.name !== "Unallocated" && !depotNeedsDrivers(d)).length;
+
+      const byDepot = {};
+      (state.staffing || []).forEach(o => { ((byDepot[o.depot] = byDepot[o.depot] || [])).push(o); });
+      const order = { Driver: 0, Engineer: 1, Admin: 2 };
+      Object.keys(byDepot).forEach(k => byDepot[k].sort((a, b) => (order[a.role] ?? 9) - (order[b.role] ?? 9)));
+      const names = Object.keys(byDepot).sort();
+      const tbody = document.getElementById("st-tbody");
+      tbody.innerHTML = names.length ? names.map(dn => {
+        const head = `<tr class="bg-slate-50">
+            <td colspan="4" class="py-2 px-3 text-xs font-bold text-slate-900">${escAttr(dn)}</td>
+            <td colspan="2" class="py-2 px-3 text-right">
+              <label class="inline-flex items-center gap-1.5 text-[11px] text-slate-600 cursor-pointer">
+                <input type="checkbox" ${depotNeedsDrivers((state.depots || []).find(d => d.name === dn) || { name: dn }) ? "checked" : ""} onchange="toggleDepotDrivers('${escAttr(dn)}', this.checked)" class="rounded" />
+                <span>Drivers needed</span>
+              </label>
+            </td>
+          </tr>`;
+        return head + byDepot[dn].map(o => {
+          if (o.id === editingStaffId) {
+            return `<tr class="bg-amber-50">
+              <td class="py-2 px-3"></td>
+              <td class="py-2 px-3 font-semibold text-slate-900 text-xs">${o.role}</td>
+              <td class="py-2 px-3"><input id="edit-st-headcount" type="number" step="1" min="0" value="${o.headcount}" class="bg-white border border-slate-300 rounded-md px-2 py-1 text-xs mono text-right w-20" /></td>
+              <td class="py-2 px-3"><input id="edit-st-salary" type="number" step="100" min="0" value="${o.annualSalary}" class="bg-white border border-slate-300 rounded-md px-2 py-1 text-xs mono text-right w-28" /></td>
+              <td class="py-2 px-3 mono text-right font-bold text-rose-700 text-xs">${formatGBP(staffDaily(o), 2)}</td>
+              <td class="py-2 px-3 text-right whitespace-nowrap">
+                <button onclick="saveStaffEdit('${o.id}')" class="text-[11px] font-bold bg-emerald-600 hover:bg-emerald-700 text-white px-2 py-1 rounded-md">Save</button>
+                <button onclick="cancelStaffEdit()" class="text-[11px] font-semibold bg-slate-100 hover:bg-slate-200 text-slate-600 px-2 py-1 rounded-md border border-slate-300">Cancel</button>
+              </td>
+            </tr>`;
+          }
+          return `<tr class="hover:bg-slate-100">
+            <td class="py-2.5 px-3"></td>
+            <td class="py-2.5 px-3"><span class="px-2 py-0.5 rounded bg-slate-100 text-slate-600 text-[11px]">${o.role}</span></td>
+            <td class="py-2.5 px-3 mono text-slate-900 text-xs">${o.headcount}</td>
+            <td class="py-2.5 px-3 mono text-slate-600 text-xs">${formatGBP(o.annualSalary, 2)}</td>
+            <td class="py-2.5 px-3 mono text-right font-bold text-rose-700 text-xs">−${formatGBP(staffDaily(o), 2)}</td>
+            <td class="py-2.5 px-3 text-right whitespace-nowrap">
+              <button onclick="editStaff('${o.id}')" class="text-[11px] font-semibold text-sky-700 hover:underline px-1">Edit</button>
+              <button onclick="deleteStaff('${o.id}')" class="text-[11px] font-semibold text-rose-700 hover:underline px-1">Remove</button>
+            </td>
+          </tr>`;
+        }).join("");
+      }).join("") : `<tr><td colspan="6" class="py-6 px-3 text-center text-slate-400 text-xs">No staff rows yet.</td></tr>`;
+    }
+
+    function editStaff(id) {
+      editingStaffId = id;
+      renderStaffing();
+    }
+
+    function cancelStaffEdit() {
+      editingStaffId = null;
+      renderStaffing();
+    }
+
+    function saveStaffEdit(id) {
+      const o = (state.staffing || []).find(x => x.id === id);
+      if (!o) return;
+      const hc = parseInt(document.getElementById("edit-st-headcount").value, 10);
+      const sal = parseFloat(document.getElementById("edit-st-salary").value);
+      if (isNaN(hc) || hc < 0 || isNaN(sal) || sal < 0) { showToast("Enter a valid headcount and salary.", "⚠️"); return; }
+      o.headcount = hc;
+      o.annualSalary = Math.round(sal * 100) / 100;
+      editingStaffId = null;
+      saveState();
+      renderAll();
+      showToast("Staff row updated!", "✅");
+    }
+
+    function deleteStaff(id) {
+      const o = (state.staffing || []).find(x => x.id === id);
+      if (!o) return;
+      if (!confirm(`Remove ${o.role} row for ${o.depot}?`)) return;
+      state.staffing = state.staffing.filter(x => x.id !== id);
+      if (editingStaffId === id) editingStaffId = null;
+      saveState();
+      renderAll();
+      showToast("Staff row removed!", "✅");
+    }
+
+    function rebuildStaffing() {
+      if (!confirm("Rebuild the whole roster from depot sizes? Manual edits will be lost.")) return;
+      state.staffing = [];
+      ensureStaffing(false);
+      saveState();
+      renderAll();
+      showToast("Roster rebuilt from depots!", "✅");
     }
 
     // =========================================================================
@@ -3340,7 +3580,7 @@
     // 10. NAVIGATION & UTILITIES
     // =========================================================================
     function switchTab(tabId) {
-      const tabs = ["dashboard", "depots", "expenses", "fleet", "dealership", "workshop", "fares", "mybustimes"];
+      const tabs = ["dashboard", "depots", "expenses", "staffing", "fleet", "dealership", "workshop", "fares", "mybustimes"];
       tabs.forEach(t => {
         document.getElementById(`view-${t}`).classList.toggle("hidden", t !== tabId);
         const btn = document.getElementById(`tab-${t}`);
@@ -3365,7 +3605,7 @@
       a.download = `swift_connect_db_${state.simDate}.json`;
       a.click();
       URL.revokeObjectURL(url);
-      showToast("Database exported (10 tables)!", "\u2b07");
+      showToast("Database exported (11 tables)!", "\u2b07");
     }
 
     function exportSingleTable(name) {
@@ -3431,6 +3671,7 @@
             window.DB.save("fleetRegistry", data.fleetRegistry);
             window.DB.save("fares", data.fares);
             window.DB.save("overheads", data.overheads || []);
+            window.DB.save("staffing", data.staffing || []);
             window.DB.save("workshopQueue", data.workshopQueue || []);
             window.DB.save("workshopCompleted", data.workshopCompleted || []);
             if (data.mbtOperators) window.DB.save("mbtOperators", data.mbtOperators);
@@ -3442,6 +3683,7 @@
             if (data.fleetRegistry) window.DB.save("fleetRegistry", data.fleetRegistry);
             if (data.fares) window.DB.save("fares", data.fares);
             if (data.overheads) window.DB.save("overheads", data.overheads);
+            if (data.staffing) window.DB.save("staffing", data.staffing);
             if (data.workshopQueue) window.DB.save("workshopQueue", data.workshopQueue);
             if (data.workshopCompleted) window.DB.save("workshopCompleted", data.workshopCompleted);
             if (data.mbtOperators) window.DB.save("mbtOperators", data.mbtOperators);

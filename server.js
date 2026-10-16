@@ -28,8 +28,9 @@ const TABLES = {
   depots:            { file: "database/depots.js",               seed: "DB_SEED_DEPOTS" },
   busCatalogue:      { file: "database/bus-catalogue.js",       seed: "DB_SEED_BUS_CATALOGUE" },
   fleetRegistry:     { file: "database/fleet-registry.js",      seed: "DB_SEED_FLEET_REGISTRY" },
-  fares:             { file: "database/fares.js",               seed: "DB_SEED_FARES" },
-  overheads:         { file: "database/overheads.js",           seed: "DB_SEED_OVERHEADS" },
+  fares: { file: "database/fares.js",               seed: "DB_SEED_FARES" },
+  overheads: { file: "database/overheads.js",           seed: "DB_SEED_OVERHEADS" },
+  staffing: { file: "database/staffing.js",            seed: "DB_SEED_STAFFING" },
   workshopQueue:     { file: "database/workshop-queue.js",      seed: "DB_SEED_WORKSHOP_QUEUE" },
   workshopCompleted: { file: "database/workshop-completed.js",  seed: "DB_SEED_WORKSHOP_COMPLETED" },
   mbtOperators:      { file: "database/mybustimes-operators.js", seed: "DB_SEED_MBT_OPERATORS" }
