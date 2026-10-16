@@ -802,6 +802,7 @@
             <div class="text-xs text-slate-500">Est. Daily OpEx / Bus (editable)</div>
             <input id="fare-opex-input" type="number" step="0.01" min="0" onchange="updateFareOpEx(this.value)"
               class="mono text-xl font-extrabold text-rose-700 mt-1 w-full bg-transparent focus:outline-none" />
+            <div id="fare-opex-breakdown" class="text-[11px] text-slate-500 mt-1 leading-relaxed"></div>
           </div>
           <div class="bg-white border border-slate-200 p-4 rounded-md">
             <div class="text-xs text-slate-500">Est. Daily Net Profit (Per Bus)</div>
@@ -2622,9 +2623,9 @@
       }
       const uz = state.fares[UNZONED_FARE_REGION];
       if (uz && uz.opExAuto !== false) {
-        // Auto-track average OpEx across the currently uncovered depots.
-        const avg = avgDepotOpEx(uncoveredFareDepots());
-        if (uz.opExPerBus !== avg) { uz.opExPerBus = avg; }
+        // Auto-track true OpEx across the currently uncovered depots.
+        const t = zoneTrueOpEx(UNZONED_FARE_REGION);
+        if (t.perBus) uz.opExPerBus = t.perBus;
       }
       // One fare table per operating company, calibrated against its own
       // depots (resolved from its depot hints). Renamed automatically if
@@ -2644,14 +2645,23 @@
           state.fares[wantKey] = {
             companyCode: o.code,
             companyName: o.name || o.code,
-            opExPerBus: avgDepotOpEx(companyDepots(o.code)),
+            opExPerBus: 0,
             opExAuto: true,
             tickets: []
           };
+          state.fares[wantKey].opExPerBus = zoneTrueOpEx(wantKey).perBus;
           added = true;
         } else if (state.fares[haveKey].opExAuto !== false) {
-          const avg = avgDepotOpEx(companyDepots(o.code));
-          if (state.fares[haveKey].opExPerBus !== avg) state.fares[haveKey].opExPerBus = avg;
+          const t = zoneTrueOpEx(haveKey);
+          if (t.perBus) state.fares[haveKey].opExPerBus = t.perBus;
+        }
+      });
+      // Zone tables auto-track too unless manually edited (which locks them).
+      Object.keys(state.fares).forEach(k => {
+        const r = state.fares[k];
+        if (r && !r.companyCode && r.opExAuto !== false) {
+          const t = zoneTrueOpEx(k);
+          if (t.perBus && r.opExPerBus !== t.perBus) { r.opExPerBus = t.perBus; added = true; }
         }
       });
       if (added) saveState();
@@ -2707,17 +2717,39 @@
       return fareZoneRevPerBus(depotZoneOf(d.name)) * (d.vehicles || 0);
     }
 
-    function avgDepotOpEx(names) {
-      let v = 0, e = 0;
+    // True OpEx/bus for a zone, built from the depot books: booked operating
+    // costs (staff, fuel, maint) + depot rent + depot-scoped overhead bills,
+    // averaged across its buses, plus an equal share of company-wide
+    // overheads (HQ, insurance) per fleet bus.
+    function zoneTrueOpEx(zoneName) {
+      const region = state.fares[zoneName];
+      let names;
+      if (region && region.companyCode) names = companyDepots(region.companyCode);
+      else if (region && region.unzoned) names = uncoveredFareDepots();
+      else names = FARE_REGION_DEPOTS[zoneName] || [];
+      let v = 0, ops = 0, rent = 0, depotOh = 0;
+      const ohByDepot = overheadsByDepot();
       (state.depots || []).forEach(d => {
-        if (names.includes(d.name)) {
-          const base = INITIAL_STATE.depots.find(x => x.name === d.name);
-          const perBus = d.baseExpenses / Math.max(1, (base && base.vehicles) || d.vehicles);
-          v += d.vehicles || 0;
-          e += perBus * (d.vehicles || 0);
-        }
+        if (!names.includes(d.name)) return;
+        const base = INITIAL_STATE.depots.find(x => x.name === d.name);
+        const perBus = d.baseExpenses / Math.max(1, (base && base.vehicles) || d.vehicles);
+        v += d.vehicles || 0;
+        ops += perBus * (d.vehicles || 0);
+        rent += parseFloat(d.rent) || 0;
+        depotOh += ohByDepot[d.name] || 0;
       });
-      return v ? Math.round(e / v * 100) / 100 : 0;
+      let coOh = 0, fleet = 0;
+      (state.overheads || []).forEach(o => {
+        if (!o.scope || o.scope === "Company-wide") coOh += overheadDaily(o);
+      });
+      (state.depots || []).forEach(d => { fleet += d.vehicles || 0; });
+      const coPerBus = fleet ? coOh / fleet : 0;
+      const perBus = v ? (ops + rent + depotOh) / v + coPerBus : 0;
+      const r2 = n => Math.round(n * 100) / 100;
+      return {
+        perBus: r2(perBus), vehicles: v,
+        parts: { ops: r2(v ? ops / v : 0), rent: r2(v ? rent / v : 0), depotOh: r2(v ? depotOh / v : 0), coOh: r2(coPerBus) }
+      };
     }
 
     function isCompanyTable(regionName) {
@@ -2830,6 +2862,13 @@
       const opexInput = document.getElementById("fare-opex-input");
       if (opexInput && document.activeElement !== opexInput) opexInput.value = region.opExPerBus;
       document.getElementById("fare-profit-bus").textContent = formatGBP(profitPerBus, 2);
+      const breakdown = document.getElementById("fare-opex-breakdown");
+      if (breakdown) {
+        const t = zoneTrueOpEx(regionName);
+        breakdown.textContent = t.vehicles
+          ? `Ops £${t.parts.ops} + rent £${t.parts.rent} + site bills £${t.parts.depotOh} + HQ £${t.parts.coOh} across ${t.vehicles} buses${region.opExAuto === false ? " · manually locked" : ""}`
+          : "No depot data for this table yet.";
+      }
       const addRegion = document.getElementById("fare-add-region");
       if (addRegion) addRegion.textContent = regionName;
       const addWrap = document.getElementById("fare-add-wrap");
