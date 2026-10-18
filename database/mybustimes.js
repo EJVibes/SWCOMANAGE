@@ -116,7 +116,7 @@
     seeds.forEach(function (s) {
       var cur = byCode[s.code];
       if (!cur) { stored.push(clone(s)); changed = true; return; }
-      ["id", "name", "slug", "depotHint", "fallbackDepot"].forEach(function (k) {
+      ["id", "name", "slug", "depotHint", "fallbackDepot", "forceDepot"].forEach(function (k) {
         if (cur[k] === undefined && s[k] !== undefined) { cur[k] = clone(s[k]); changed = true; }
       });
       // Migrate the old shared Yard fallback: Retrofit Yard is now its own location.
@@ -410,16 +410,20 @@
   function groupByDepot(vehicles, includeOutOfService) {
     var groups = {};
     var fallbacks = {};
+    var forced = {};
     try {
       getOperators().forEach(function (o) {
         if (o.fallbackDepot) fallbacks[o.id] = o.fallbackDepot;
+        if (o.forceDepot) forced[o.id] = o.forceDepot;
       });
     } catch (e) {}
     vehicles.forEach(function (v) {
       if (isEquipmentType(v)) return;
       if (!includeOutOfService && v.in_service === false) return;
       var raw = String(v.depot || "").trim();
-      if (!raw && v._mbtOperator && fallbacks[v._mbtOperator.id]) {
+      if (v._mbtOperator && forced[v._mbtOperator.id]) {
+        raw = forced[v._mbtOperator.id]; // operator pinned: all its vehicles go here
+      } else if (!raw && v._mbtOperator && fallbacks[v._mbtOperator.id]) {
         raw = fallbacks[v._mbtOperator.id]; // e.g. blank-depot Yard vehicles -> "Yard"
       }
       var key = normalize(raw) || "__unallocated__";
@@ -498,6 +502,20 @@
 
   function isSkippedType(apiVehicle) { return isEquipmentType(apiVehicle); }
 
+  /* Forced depot: when set on an operator, ALL of its vehicles go there
+   * regardless of the API depot field (e.g. rebuilds physically held at
+   * the Retrofit Yard while the API still lists their home depot). */
+  function forcedDepotFor(opCode) {
+    if (!opCode) return "";
+    try {
+      var ops = getOperators();
+      for (var i = 0; i < ops.length; i++) {
+        if (ops[i].code === opCode && ops[i].forceDepot) return ops[i].forceDepot;
+      }
+    } catch (e) {}
+    return "";
+  }
+
   function drivetrainFor(typeName) {
     var db = window.DB_SEED_DRIVETRAIN_SPECS || {};
     return db[typeName] || null;
@@ -544,7 +562,8 @@
       euro: etm ? "" : (computedEuro || ((dt && dt.euro) || "")),
       euroYear: etm ? null : regYear,
       fuel: (apiVehicle.vehicle_type_data && apiVehicle.vehicle_type_data.fuel) || "",
-      depot: etm ? "" : (String(apiVehicle.depot || "").trim() || UNALLOCATED),
+      depot: etm ? "" : (forcedDepotFor(apiVehicle._mbtOperator && apiVehicle._mbtOperator.code) || String(apiVehicle.depot || "").trim() || UNALLOCATED),
+      depotApi: String(apiVehicle.depot || "").trim(),
       inService: apiVehicle.in_service !== false,
       operatorCode: (apiVehicle._mbtOperator && apiVehicle._mbtOperator.code) || "",
       operatorName: (apiVehicle._mbtOperator && apiVehicle._mbtOperator.name) || ((apiVehicle.operator && apiVehicle.operator.operator_name) || ""),
@@ -674,6 +693,7 @@
         if (m.euro) { existing.euro = m.euro; existing.euroYear = m.euroYear; }
         if (m.engine) existing.engine = m.engine;
         if (m.gearbox) existing.gearbox = m.gearbox;
+        if (m.depotApi !== undefined) existing.depotApi = m.depotApi;
         existing.depot = m.depot;
         existing.operatorCode = m.operatorCode;
         existing.operatorName = m.operatorName;
@@ -698,9 +718,10 @@
           gearbox: m.gearbox,
           euro: m.euro,
           euroYear: m.euroYear,
-          fuel: m.fuel,
-          depot: m.depot,
-          operatorCode: m.operatorCode,
+        fuel: m.fuel,
+        depot: m.depot,
+        depotApi: m.depotApi,
+        operatorCode: m.operatorCode,
           operatorName: m.operatorName,
           inService: m.inService,
           mbtId: m.mbtId,
@@ -760,6 +781,10 @@
           '<td class="py-2 px-3 mono text-slate-400">' + esc(o.id) + '</td>' +
           '<td class="py-2 px-3 mono text-slate-500">' + esc(o.slug || "") + '</td>' +
           '<td class="py-2 px-3 text-slate-400 text-[11px]">' + esc((o.depotHint || []).join(", ")) + '</td>' +
+        '<td class="py-2 px-3"><select onchange="mbtSetForceDepot(\'' + esc(o.code) + '\', this.value)" title="Force ALL of this operator\u2019s vehicles into one depot, overriding the API depot field" class="bg-slate-900 border border-slate-700 rounded-lg px-2 py-1 text-[11px] text-amber-300 max-w-[160px]">' +
+        '<option value="">\u2014 API depot \u2014</option>' +
+        localDepotOptions(o.forceDepot || null) +
+        '</select></td>' +
           '<td class="py-2 px-3 text-right">' +
           '<button onclick="mbtRemoveOperator(\'' + esc(o.code) + '\')" class="text-xs text-rose-400 hover:text-rose-300 px-2 py-1">Remove</button>' +
           '</td></tr>';
@@ -821,6 +846,26 @@
     return depots.map(function (d) {
       return '<option value="' + esc(d.name) + '"' + (d.name === selected ? " selected" : "") + '>' + esc(d.name) + '</option>';
     }).join("");
+  }
+
+  function mbtSetForceDepot(code, depotName) {
+    var ops = getOperators();
+    var found = false;
+    ops.forEach(function (o) {
+      if (o.code !== code) return;
+      o.forceDepot = depotName || "";
+      found = true;
+    });
+    if (!found) { toast("Operator " + code + " not found.", "⚠️"); return; }
+    saveOperators(ops);
+    renderMbtPanel();
+    var o = ops.filter(function (x) { return x.code === code; })[0];
+    mbtLog(o.forceDepot
+      ? ("Force depot set: all " + code + " vehicles will sync into \u201c" + o.forceDepot + "\u201d regardless of API depot.")
+      : ("Force depot cleared for " + code + " — API depots apply again (blank still falls back)."));
+    toast(o.forceDepot
+      ? (code + " vehicles now forced to " + o.forceDepot + "!")
+      : ("Force depot cleared for " + code + "."), "🔗");
   }
 
   function stageResults(res) {
@@ -1051,6 +1096,7 @@
   window.mbtFetchAndApply = mbtFetchAndApply;
   window.mbtApplyStaged = mbtApplyStaged;
   window.mbtSetAlias = mbtSetAlias;
+  window.mbtSetForceDepot = mbtSetForceDepot;
   window.mbtUsePastedJson = mbtUsePastedJson;
   window.mbtClearStaged = mbtClearStaged;
   window.mbtAddOperator = mbtAddOperator;

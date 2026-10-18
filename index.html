@@ -582,7 +582,7 @@
             <p id="fleet-oos-note" class="text-[11px] text-slate-400"></p>
           </div>
           <div class="flex flex-wrap gap-2">
-            <input id="fleet-search" oninput="renderFleetTable()" type="text" placeholder="Search Fleet ID, Reg (e.g. YT26 EFA, OZZ 001) or Model..." class="bg-white border border-slate-300 rounded-md px-3 py-2 text-xs md:text-sm text-slate-900 w-72" />
+            <input id="fleet-search" oninput="renderFleetTable()" type="text" placeholder="Search Fleet ID, Reg (e.g. YT26 EFA, OZZ 001), Model, Depot or Operator..." class="bg-white border border-slate-300 rounded-md px-3 py-2 text-xs md:text-sm text-slate-900 w-72" />
             <select id="fleet-cat-filter" onchange="renderFleetTable()" class="bg-white border border-slate-300 rounded-md px-3 py-2 text-xs md:text-sm text-slate-900">
               <option value="ALL">All Categories (531)</option>
               <option value="Training">Driver Training (100–199)</option>
@@ -615,6 +615,7 @@
                 <th class="py-3 px-3">Category</th>
                 <th class="py-3 px-3">Vehicle Model</th>
                 <th class="py-3 px-3">Depot</th>
+                <th class="py-3 px-3" title="Operating company (from MyBusTimes sync)">Op</th>
                 <th class="py-3 px-3">Livery</th>
                 <th class="py-3 px-3">Engine & Gearbox</th>
                 <th class="py-3 px-3 text-right">Quick Action</th>
@@ -935,6 +936,7 @@
                     <th class="py-2 px-3">ID</th>
                     <th class="py-2 px-3">Slug</th>
                     <th class="py-2 px-3">Depot hint</th>
+                    <th class="py-2 px-3" title="Force ALL of this operator's vehicles into one local depot, overriding the API depot field (e.g. Retrofit Yard for rebuilds)">Force depot</th>
                     <th class="py-2 px-3"></th>
                   </tr>
                 </thead>
@@ -2203,7 +2205,8 @@
           (v.type || "").toLowerCase().includes(q) ||
           (v.livery || "").toLowerCase().includes(q) ||
           (v.depot || "").toLowerCase().includes(q) ||
-          (v.operatorCode || "").toLowerCase().includes(q)
+          (v.operatorCode || "").toLowerCase().includes(q) ||
+          (v.operatorName || "").toLowerCase().includes(q)
         );
       });
 
@@ -2226,7 +2229,8 @@
               <span class="px-2 py-0.5 rounded bg-slate-100 text-slate-600 text-[11px]">${v.cat}</span>
             </td>
             <td class="py-2.5 px-3 font-semibold text-slate-900">${v.type}</td>
-            <td class="py-2.5 px-3 whitespace-nowrap text-slate-600">${v.depot || '<span class="text-slate-400">—</span>'}</td>
+            <td class="py-2.5 px-3 whitespace-nowrap text-slate-600">${v.depot || '<span class="text-slate-400">—</span>'}${v.depotApi && v.depotApi !== v.depot ? `<span class="text-[10px] text-slate-400" title="API depot: ${escAttr(v.depotApi)}">(API: ${escAttr(v.depotApi)})</span>` : ""}</td>
+            <td class="py-2.5 px-3" title="${escAttr(v.operatorName || "")}"><span class="mono text-[11px] font-bold ${v.operatorCode ? "text-indigo-700" : "text-slate-400"}">${v.operatorCode || "—"}</span></td>
             <td class="py-2.5 px-3">${liveryCell(v)}</td>
             <td class="py-2.5 px-3">
               <div class="font-semibold text-slate-900">${engine}</div>

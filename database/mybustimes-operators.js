@@ -7,7 +7,7 @@
 window.DB_SEED_MBT_OPERATORS = [
   { code: "SWSH", id: 978,   name: "Swift Connecting Shropshire",    slug: "swift-connecting-shropshire",    depotHint: ["Hadley", "Shifnal", "Bridgnorth", "Wellington"], fallbackDepot: "" },
   { code: "SWCO", id: 979,   name: "Swift Connect Yard",             slug: "swift-connect-yard",             depotHint: ["Yard"], fallbackDepot: "Yard" },
-  { code: "SWRY", id: 12313, name: "Swift Connect Retrofit Yard",    slug: "swift-connect-retrofit-yard",    depotHint: ["Retrofit Yard"], fallbackDepot: "Retrofit Yard" },
+  { code: "SWRY", id: 12313, name: "Swift Connect Retrofit Yard",    slug: "swift-connect-retrofit-yard",    depotHint: ["Retrofit Yard"], fallbackDepot: "Retrofit Yard", forceDepot: "Retrofit Yard" },
   { code: "SWCE", id: 12314, name: "Swift Connecting East Midlands", slug: "swift-connecting-east-midlands", depotHint: ["Cossall", "Phoenix Park", "Cotes Park"] },
   { code: "SCRY", id: 12080, name: "Swift Connecting Railway",       slug: "swift-connecting-railway",       depotHint: ["Swift Connecting Railway"] },
   { code: "SWCW", id: 9238,  name: "Swift Connecting Wales",         slug: "swift-connecting-wales",         depotHint: ["Talbot Green", "Wrexham", "Colwyn Bay"] },
