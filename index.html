@@ -973,6 +973,11 @@
               <button onclick="mbtClearStaged()" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-600 px-3 py-2 rounded-lg border border-slate-300">Clear</button>
             </div>
             <div id="mbt-last-sync" class="text-[11px] text-slate-500 mono">Not synced yet.</div>
+            <div class="flex flex-wrap items-center gap-2">
+              <input id="mbt-find-input" type="text" placeholder="Find vehicle: fleet no. or reg (e.g. 3091)" class="bg-white border border-slate-300 rounded-lg px-3 py-1.5 text-xs text-slate-900 mono w-56" />
+              <button onclick="mbtFindVehicle()" class="text-xs bg-sky-700 hover:bg-sky-800 text-white font-bold px-3 py-1.5 rounded-lg">🔍 Find vehicle (API + registry)</button>
+            </div>
+            <div id="mbt-find-result" class="text-xs text-slate-600"></div>
             <div id="mbt-log" class="bg-white border border-slate-200 rounded-md p-3 h-28 overflow-y-auto mono text-[11px] text-slate-600 space-y-1"></div>
             <details class="bg-white border border-slate-200 rounded-md p-3">
               <summary class="text-xs font-bold text-sky-700 cursor-pointer select-none">Fallback: paste fleet JSON (if the browser blocks api calls)</summary>
@@ -1098,12 +1103,50 @@
       });
     }
 
+    // Vehicles confirmed on the live MyBusTimes API that must always exist
+    // in the registry, even if a sync was missed or skipped them. Matched
+    // by fleet no. or reg on every boot (no duplicates); later syncs
+    // update them in place as usual.
+    const KNOWN_VEHICLES = [
+      { id: 3091, reg: "MT75 OJC", type: "Wright StreetDeck Ultroliner", cat: "Decker", depot: "Retrofit Yard", depotApi: "Cotes Park", operatorCode: "SWRY", operatorName: "Swift Connect Retrofit Yard", engine: "Cummins ISB 6.7", gearbox: "Voith DIWA.8 NXT", euro: "Euro 6", euroYear: 2025, fuel: "Diesel", livery: "Swift Express by Swift Connect", inService: true, mbtId: 1088378 },
+      { id: 3041, reg: "YX20 YXG", type: "Scania N250UD ADL Enviro400 MMC", cat: "Decker", depot: "Retrofit Yard", depotApi: "Cotes Park", operatorCode: "SWRY", operatorName: "Swift Connect Retrofit Yard", engine: "Scania DC09", gearbox: "ZF EcoLife 6AP1200B", euro: "Euro 6", euroYear: 2020, fuel: "Diesel", livery: "Swift Express by Swift Connect", inService: true, mbtId: 651115 },
+      { id: 4012, reg: "YX73 MUX", type: "Volvo B9R Plaxton Panther 3", cat: "Coach", depot: "Retrofit Yard", depotApi: "", operatorCode: "SWRY", operatorName: "Swift Connect Retrofit Yard", engine: "Volvo D9B", gearbox: "Volvo I-Shift AT2412D", euro: "Euro 6", euroYear: 2023, fuel: "Diesel", livery: "Swift Connect Coach", inService: true, mbtId: 1033671 },
+      { id: 4013, reg: "YX73 MUS", type: "Volvo B9R Plaxton Panther 3", cat: "Coach", depot: "Retrofit Yard", depotApi: "", operatorCode: "SWRY", operatorName: "Swift Connect Retrofit Yard", engine: "Volvo D9B", gearbox: "Volvo I-Shift AT2412D", euro: "Euro 6", euroYear: 2023, fuel: "Diesel", livery: "Swift Connect Coach", inService: true, mbtId: 1033672 },
+      { id: 4014, reg: "YX73 MUT", type: "Volvo B9R Plaxton Panther 3", cat: "Coach", depot: "Retrofit Yard", depotApi: "", operatorCode: "SWRY", operatorName: "Swift Connect Retrofit Yard", engine: "Volvo D9B", gearbox: "Volvo I-Shift AT2412D", euro: "Euro 6", euroYear: 2023, fuel: "Diesel", livery: "Swift Connect Coach", inService: true, mbtId: 1033673 }
+    ];
+
+    function ensureKnownVehicles() {
+      let added = 0;
+      const normReg = r => String(r || "").toUpperCase().replace(/[\s\-_.]/g, "");
+      KNOWN_VEHICLES.forEach(k => {
+        const exists = state.fleetRegistry.some(e =>
+          String(e.id) === String(k.id) || (e.reg && k.reg && normReg(e.reg) === normReg(k.reg)));
+        if (!exists) {
+          state.fleetRegistry.push(Object.assign({}, k));
+          added++;
+        }
+      });
+      if (added) {
+        state.fleetRegistry.sort((a, b) => {
+          const an = typeof a.id === "number", bn = typeof b.id === "number";
+          if (an && bn) return a.id - b.id;
+          if (an) return -1;
+          if (bn) return 1;
+          return String(a.id).localeCompare(String(b.id));
+        });
+        window.DB.save("fleetRegistry", state.fleetRegistry);
+      }
+      return added;
+    }
+
     function loadState() {
       // Pulls live writable database (seeds on first run, localStorage after).
       state = window.DB.loadAllState();
       if (!Array.isArray(state.workshopCompleted)) state.workshopCompleted = [];
       if (!Array.isArray(state.overheads)) state.overheads = [];
       if (!Array.isArray(state.staffing)) state.staffing = [];
+      if (!Array.isArray(state.fleetRegistry)) state.fleetRegistry = [];
+      ensureKnownVehicles();
       // One-time split: staff moved out of the depot lump into the Staffing
       // tab, so pre-split depot rows shed the imputed staff share (~55%).
       let split = false;

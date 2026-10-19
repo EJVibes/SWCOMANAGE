@@ -945,7 +945,13 @@
     fetchAllOperators(ids, mbtLog).then(function (res) {
       mbtLog("Done: " + res.vehicles.length + " vehicles across " + res.perOperator.length + " operators. Review the preview, then Apply.");
       stageResults(res);
-      toast("Fetched " + res.vehicles.length + " vehicles. Review + Apply.", "📥");
+      var failed = res.perOperator.filter(function (p) { return p.error; });
+      if (failed.length) {
+        mbtLog("WARNING: failed operators: " + failed.map(function (p) { return p.code; }).join(", ") + " — totals are incomplete, retry the fetch.");
+        toast("Fetched, BUT " + failed.map(function (p) { return p.code; }).join(", ") + " failed — data incomplete, retry!", "⚠️");
+      } else {
+        toast("Fetched " + res.vehicles.length + " vehicles. Review + Apply.", "📥");
+      }
     }).catch(function (e) {
       console.error(e);
       mbtLog("Fetch failed: " + (e && e.message || e) + " — the API may block this network; use the paste-JSON fallback below.");
@@ -989,12 +995,124 @@
     mbtLog("Fetching fleet for " + ids.length + " operators, will auto-apply to Depot Network + Fleet Registry…");
     fetchAllOperators(ids, mbtLog).then(function (res) {
       stageResults(res);
-      mbtLog("Auto-applying " + res.vehicles.length + " vehicles…");
-      mbtApplyStaged();
+      var failed = res.perOperator.filter(function (p) { return p.error; });
+      if (failed.length) {
+        mbtLog("WARNING: failed operators: " + failed.map(function (p) { return p.code; }).join(", ") + " — totals are incomplete, retry before applying.");
+        toast("Fetched, BUT " + failed.map(function (p) { return p.code; }).join(", ") + " failed — data incomplete!", "⚠️");
+      } else {
+        mbtLog("Auto-applying " + res.vehicles.length + " vehicles…");
+        mbtApplyStaged();
+      }
     }).catch(function (e) {
       console.error(e);
       mbtLog("Fetch failed: " + (e && e.message || e) + " — the API may block this network; use the paste-JSON fallback below.");
       toast("Fetch failed — see log / paste-JSON fallback.", "⚠️");
+    }).then(function () { setBusy(false); });
+  }
+
+  // Find one vehicle across configured operators (live API) and the local
+  // registry, and say exactly where it is — or why it is not showing.
+  function mbtFindVehicle() {
+    var input = (typeof document !== "undefined" && document.getElementById("mbt-find-input")) || null;
+    var qRaw = input ? input.value : "";
+    var qNum = String(qRaw || "").trim().toLowerCase();
+    var qReg = "";
+    try { qReg = normalizeReg(qRaw); } catch (e) {}
+    var out = (typeof document !== "undefined") ? document.getElementById("mbt-find-result") : null;
+    function show(html) { if (out) out.innerHTML = html; }
+    if (!qNum) { toast("Type a fleet number or reg first.", "⚠️"); return; }
+    var ops = getOperators().filter(function (o) { return o.id; });
+    if (!ops.length) { toast("No operators configured.", "⚠️"); return; }
+    setBusy(true);
+    mbtLog("Looking for \u201c" + qRaw + "\u201d across " + ops.length + " operators\u2026");
+    var found = [];
+    var failed = [];
+    var checked = 0;
+    var chain = Promise.resolve();
+    ops.forEach(function (op) {
+      chain = chain.then(function () {
+        mbtLog("Scanning " + op.code + "\u2026");
+        return fetchOperatorFleet(op.id).then(function (r) {
+          checked += r.vehicles.length;
+          r.vehicles.forEach(function (v) {
+            var fn = String(v.fleet_number === undefined || v.fleet_number === null ? "" : v.fleet_number).trim().toLowerCase();
+            var rg = "";
+            try { rg = normalizeReg(v.reg); } catch (e2) {}
+            if ((fn && fn === qNum) || (rg && qReg && rg === qReg)) {
+              found.push({ op: op, v: v });
+            }
+          });
+        }).catch(function (e) {
+          failed.push(op.code);
+          mbtLog("Scan failed for " + op.code + ": " + (e && e.message || e));
+        });
+      });
+    });
+    chain.then(function () {
+      var html;
+      if (found.length) {
+        html = found.map(function (f) {
+          var v = f.v;
+          var status = v.in_service === false
+            ? '<span class="px-1.5 py-0.5 rounded bg-rose-100 text-rose-700 text-[11px] font-bold">WITHDRAWN (not in service — hidden from fleet list)</span>'
+            : '<span class="px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-700 text-[11px] font-bold">In service</span>';
+          var typeName = (v.vehicle_type_data && v.vehicle_type_data.type_name) || v.type_details || "Unknown";
+          return '<div class="bg-white border border-slate-200 rounded-md px-3 py-2 mb-1">'
+            + '<span class="mono font-bold text-slate-900">' + esc(String(v.fleet_number || "?")) + '</span>'
+            + ' <span class="mono text-slate-600">' + esc(String(v.reg || "UNREG")) + '</span>'
+            + ' · ' + esc(typeName)
+            + ' · op <b>' + esc(f.op.code) + '</b>'
+            + ' · API depot: <b>' + esc(String(v.depot || "—")) + '</b>'
+            + ' ' + status + '</div>';
+        }).join("");
+        mbtLog("Found " + found.length + " match(es) on the API. If missing locally, run Fetch & auto-update.");
+        toast("Found " + found.length + " match(es) on the API!", "🔍");
+      } else {
+        html = '<div class="bg-amber-50 border border-amber-500/20 rounded-md px-3 py-2">No match for \u201c'
+          + esc(qRaw) + '\u201d in ' + checked + ' API vehicles across ' + ops.length + ' operator(s)'
+          + (failed.length ? ' (' + failed.join(", ") + ' failed to fetch)' : '')
+          + '. Check the fleet number/reg, and that its operator is configured above.</div>';
+        mbtLog("No match found in " + checked + " vehicles.");
+        toast("No match found on the API.", "⚠️");
+      }
+      // Cross-check the local registry too — including WHY it may be hidden.
+      try {
+        if (typeof state !== "undefined" && state && state.fleetRegistry) {
+          var local = state.fleetRegistry.filter(function (e) {
+            return String(e.id) === String(qRaw).trim() || (e.reg && normalizeReg(e.reg) === qReg);
+          });
+          if (local.length) {
+            var curCat = "ALL", curQ = "";
+            try {
+              var catSel = (typeof document !== "undefined") ? document.getElementById("fleet-cat-filter") : null;
+              var qInput = (typeof document !== "undefined") ? document.getElementById("fleet-search") : null;
+              if (catSel) curCat = catSel.value || "ALL";
+              if (qInput) curQ = (qInput.value || "").trim().toLowerCase();
+            } catch (e3) {}
+            html += local.map(function (e) {
+              var reasons = [];
+              if (e.inService === false) reasons.push("marked out of service (the fleet list hides these)");
+              if (curCat && curCat !== "ALL" && e.cat !== curCat) reasons.push("fleet category filter is \u201c" + curCat + "\u201d but this bus is \u201c" + (e.cat || "?") + "\u201d");
+              if (curQ) {
+                var hay = [e.id, e.reg, e.type, e.livery, e.depot, e.operatorCode, e.operatorName].map(function (x) { return String(x || "").toLowerCase(); });
+                var hit = false;
+                for (var hi = 0; hi < hay.length; hi++) { if (hay[hi].indexOf(curQ) !== -1) { hit = true; break; } }
+                if (!hit) reasons.push("the fleet search box text does not match this bus");
+              }
+              var vis = reasons.length ? ("HIDDEN from the fleet list: " + reasons.join("; ")) : "VISIBLE in the Fleet Registry with current filters";
+              return '<div class="bg-indigo-50 border border-indigo-200 rounded-md px-3 py-2 mt-1">In your registry: <b>#' + esc(String(e.id)) + '</b> '
+                + esc(e.reg || "") + ' · ' + esc(e.type || "") + ' · depot <b>' + esc(e.depot || "?") + '</b> · ' + esc(e.operatorCode || "no operator")
+                + ' · <b>' + vis + '</b></div>';
+            }).join("");
+          } else {
+            html += '<div class="text-[11px] text-slate-500 mt-1">Not in your local Fleet Registry — press <b>Fetch &amp; auto-update</b> above to import it now.</div>';
+          }
+        }
+      } catch (e2) {}
+      show(html);
+    }).catch(function (e) {
+      console.error(e);
+      show('<div class="text-rose-600">Search failed: ' + esc(String((e && e.message) || e)) + '</div>');
     }).then(function () { setBusy(false); });
   }
 
@@ -1098,6 +1216,7 @@
   window.mbtSetAlias = mbtSetAlias;
   window.mbtSetForceDepot = mbtSetForceDepot;
   window.mbtUsePastedJson = mbtUsePastedJson;
+  window.mbtFindVehicle = mbtFindVehicle;
   window.mbtClearStaged = mbtClearStaged;
   window.mbtAddOperator = mbtAddOperator;
   window.mbtRemoveOperator = mbtRemoveOperator;
