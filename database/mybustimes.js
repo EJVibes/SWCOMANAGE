@@ -571,6 +571,37 @@
     };
   }
 
+  /* Registry matching shared by sync + reconcile. Matches by fleet no.
+   * (restricted to the same operator, so two operators using "1" stay as
+   * two buses), then by reg, then by stable mybustimes id (survives
+   * renumbers). Returns the registry entry or null. */
+  function findRegistryMatch(m) {
+    var registry = [];
+    try { registry = (typeof state !== "undefined" && state && state.fleetRegistry) || []; } catch (e) { registry = []; }
+    var i, e;
+    if (m.idNum !== null && m.idNum !== undefined) {
+      for (i = 0; i < registry.length; i++) {
+        e = registry[i];
+        if (String(e.id) === String(m.idNum)) {
+          var eo = e.operatorCode || "", mo = m.operatorCode || "";
+          if (!eo || !mo || eo === mo) return e;
+        }
+      }
+    }
+    if (m.reg) {
+      var nr = normalizeReg(m.reg);
+      for (i = 0; i < registry.length; i++) {
+        if (normalizeReg(registry[i].reg) === nr) return registry[i];
+      }
+    }
+    if (m.mbtId !== undefined && m.mbtId !== null) {
+      for (i = 0; i < registry.length; i++) {
+        if (registry[i].mbtId !== undefined && String(registry[i].mbtId) === String(m.mbtId)) return registry[i];
+      }
+    }
+    return null;
+  }
+
   /* ---------------- apply ---------------- */
 
   function getLastSync() {
@@ -663,20 +694,7 @@
       if (!includeOutOfService && apiV.in_service === false) { skipped++; return; }
       var m = mapVehicle(apiV, specs);
       if (!m.fleetNumberRaw && !m.reg) { skipped++; return; }
-
-      var existing = null;
-      if (m.idNum !== null) {
-        for (var i = 0; i < state.fleetRegistry.length; i++) {
-          var e = state.fleetRegistry[i];
-          if (String(e.id) === String(m.idNum)) { existing = e; break; }
-        }
-      }
-      if (!existing && m.reg) {
-        var nr = normalizeReg(m.reg);
-        for (var j = 0; j < state.fleetRegistry.length; j++) {
-          if (normalizeReg(state.fleetRegistry[j].reg) === nr) { existing = state.fleetRegistry[j]; break; }
-        }
-      }
+      var existing = findRegistryMatch(m);
 
       if (existing) {
         if (m.reg) existing.reg = m.reg;
@@ -1116,6 +1134,67 @@
     }).then(function () { setBusy(false); });
   }
 
+  // Full audit: every fetched vehicle vs the registry, with the reason when
+  // something fetched does not show. Catches skipped (no identity),
+  // out-of-service (hidden), and anything the sync would not import.
+  function mbtReconcile() {
+    var ops = getOperators().filter(function (o) { return o.id; });
+    if (!ops.length) { toast("No operators configured.", "⚠️"); return; }
+    var out = (typeof document !== "undefined") ? document.getElementById("mbt-reconcile-result") : null;
+    function show(html) { if (out) out.innerHTML = html; }
+    setBusy(true);
+    mbtLog("Reconciling: fetching all operators and comparing with the registry…");
+    show("<span class='text-xs text-slate-500'>Fetching and comparing…</span>");
+    var specs = window.DB_SEED_VEHICLE_SPECS || window.VEHICLE_SPECS || window.DB_SEED_OMSI_SPECS || window.OMSI_SPECS || {};
+    var missing = [], hiddenOos = [], noIdentity = [], failed = [], checked = 0, total = 0;
+    var chain = Promise.resolve();
+    ops.forEach(function (op) {
+      chain = chain.then(function () {
+        return fetchOperatorFleet(op.id).then(function (r) {
+          total += r.vehicles.length;
+          r.vehicles.forEach(function (apiV) {
+            checked++;
+            var m = mapVehicle(apiV, specs);
+            if (!m.fleetNumberRaw && !m.reg) {
+              noIdentity.push({ op: op, type: m.type || apiV.type_details || "Unknown" });
+              return;
+            }
+            var ex = findRegistryMatch(m);
+            if (!ex) {
+              missing.push({ op: op, m: m, oos: apiV.in_service === false });
+            } else if (ex.inService === false || apiV.in_service === false) {
+              hiddenOos.push({ op: op, m: m });
+            }
+          });
+        }).catch(function (e) {
+          failed.push(op.code);
+          mbtLog("Reconcile fetch failed for " + op.code + ": " + (e && e.message || e));
+        });
+      });
+    });
+    chain.then(function () {
+      var html = '<div class="text-xs text-slate-200">Checked <b>' + checked + '</b> fetched vehicles. '
+        + 'Missing from registry: <b class="' + (missing.length ? 'text-rose-400' : 'text-emerald-400') + '">' + missing.length + '</b>'
+        + ' · hidden as out-of-service: <b>' + hiddenOos.length + '</b>'
+        + ' · untrackable (no fleet no/reg): <b>' + noIdentity.length + '</b>'
+        + (failed.length ? ' · <span class="text-rose-400">FAILED to fetch: ' + esc(failed.join(", ")) + '</span>' : '') + '.</div>';
+      var rows = missing.slice(0, 40).map(function (x) {
+        return '<div class="bg-white border border-slate-200 rounded-md px-2 py-1 text-xs flex justify-between gap-2">'
+          + '<span class="font-bold text-slate-900">' + esc(String(x.m.fleetNumberRaw || "—")) + ' ' + esc(x.m.reg || "") + '</span>'
+          + '<span class="text-slate-500">' + esc(x.m.type || "") + ' · ' + esc(x.op.code) + (x.oos ? ' · <b class="text-rose-700">out of service</b>' : '') + '</span></div>';
+      }).join("");
+      if (missing.length > 40) rows += '<div class="text-[11px] text-slate-500">…and ' + (missing.length - 40) + ' more.</div>';
+      if (missing.length) html += '<div class="mt-2 font-bold text-xs text-slate-700">Fetched but NOT in registry (sync would add/update these):</div><div class="space-y-1 mt-1">' + rows + '</div>';
+      else html += '<div class="mt-2 text-xs text-emerald-700 font-semibold">Everything fetched is in the registry. If a bus still doesn\u2019t show in the fleet list, check the category filter and search box.</div>';
+      show(html);
+      mbtLog("Reconcile done: " + missing.length + " missing, " + hiddenOos.length + " out-of-service, " + noIdentity.length + " untrackable.");
+      toast(missing.length ? (missing.length + " fetched vehicle(s) missing from registry — sync to import!") : "Registry matches the API fetch.", missing.length ? "⚠️" : "✅");
+    }).catch(function (e) {
+      console.error(e);
+      show('<div class="text-rose-600 text-xs">Reconcile failed: ' + esc(String((e && e.message) || e)) + '</div>');
+    }).then(function () { setBusy(false); });
+  }
+
   function mbtUsePastedJson() {
     var ta = document.getElementById("mbt-paste");
     if (!ta || !ta.value.trim()) { toast("Paste fleet JSON first.", "⚠️"); return; }
@@ -1217,6 +1296,7 @@
   window.mbtSetForceDepot = mbtSetForceDepot;
   window.mbtUsePastedJson = mbtUsePastedJson;
   window.mbtFindVehicle = mbtFindVehicle;
+  window.mbtReconcile = mbtReconcile;
   window.mbtClearStaged = mbtClearStaged;
   window.mbtAddOperator = mbtAddOperator;
   window.mbtRemoveOperator = mbtRemoveOperator;

@@ -976,8 +976,10 @@
             <div class="flex flex-wrap items-center gap-2">
               <input id="mbt-find-input" type="text" placeholder="Find vehicle: fleet no. or reg (e.g. 3091)" class="bg-white border border-slate-300 rounded-lg px-3 py-1.5 text-xs text-slate-900 mono w-56" />
               <button onclick="mbtFindVehicle()" class="text-xs bg-sky-700 hover:bg-sky-800 text-white font-bold px-3 py-1.5 rounded-lg">🔍 Find vehicle (API + registry)</button>
+              <button onclick="mbtReconcile()" title="Compare every fetched vehicle against the registry and list anything fetched but missing, hidden, or untrackable" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded-lg border border-slate-300">Audit missing vehicles</button>
             </div>
             <div id="mbt-find-result" class="text-xs text-slate-600"></div>
+            <div id="mbt-reconcile-result" class="text-xs text-slate-600 space-y-1"></div>
             <div id="mbt-log" class="bg-white border border-slate-200 rounded-md p-3 h-28 overflow-y-auto mono text-[11px] text-slate-600 space-y-1"></div>
             <details class="bg-white border border-slate-200 rounded-md p-3">
               <summary class="text-xs font-bold text-sky-700 cursor-pointer select-none">Fallback: paste fleet JSON (if the browser blocks api calls)</summary>
