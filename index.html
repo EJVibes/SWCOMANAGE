@@ -581,8 +581,12 @@
             <p class="text-xs text-slate-500">Search by Fleet ID (100–4506), UK Registration Plate, or Vehicle Type, and assign liveries.</p>
             <p id="fleet-oos-note" class="text-[11px] text-slate-400"></p>
           </div>
-          <div class="flex flex-wrap gap-2">
-            <input id="fleet-search" oninput="renderFleetTable()" type="text" placeholder="Search Fleet ID, Reg (e.g. YT26 EFA, OZZ 001), Model, Depot or Operator..." class="bg-white border border-slate-300 rounded-md px-3 py-2 text-xs md:text-sm text-slate-900 w-72" />
+        <div class="flex flex-wrap gap-2">
+          <input id="fleet-search" oninput="renderFleetTable()" type="text" placeholder="Search Fleet ID, Reg, Model, Depot or Operator..." class="bg-white border border-slate-300 rounded-md px-3 py-2 text-xs md:text-sm text-slate-900 w-72" />
+          <label class="flex items-center gap-1.5 text-xs text-slate-600 cursor-pointer bg-white border border-slate-200 px-3 py-2 rounded-md" title="Show withdrawn (out of service) vehicles too">
+            <input id="fleet-show-oos" type="checkbox" onchange="renderFleetTable()" class="rounded" />
+            <span>Show withdrawn</span>
+          </label>
             <select id="fleet-cat-filter" onchange="renderFleetTable()" class="bg-white border border-slate-300 rounded-md px-3 py-2 text-xs md:text-sm text-slate-900">
               <option value="ALL">All Categories (531)</option>
               <option value="Training">Driver Training (100–199)</option>
@@ -975,10 +979,12 @@
             <div id="mbt-last-sync" class="text-[11px] text-slate-500 mono">Not synced yet.</div>
             <div class="flex flex-wrap items-center gap-2">
               <input id="mbt-find-input" type="text" placeholder="Find vehicle: fleet no. or reg (e.g. 3091)" class="bg-white border border-slate-300 rounded-lg px-3 py-1.5 text-xs text-slate-900 mono w-56" />
-              <button onclick="mbtFindVehicle()" class="text-xs bg-sky-700 hover:bg-sky-800 text-white font-bold px-3 py-1.5 rounded-lg">🔍 Find vehicle (API + registry)</button>
+              <button onclick="mbtFindVehicle()" class="text-xs bg-sky-700 hover:bg-sky-800 text-white font-bold px-3 py-1.5 rounded-lg">🔍 Find vehicle</button>
+          <button onclick="mbtReconcile()" title="Compare every fetched vehicle against the registry and list anything missing, hidden, or untrackable" class="text-xs bg-white border border-slate-300 hover:bg-slate-100 text-slate-700 font-bold px-3 py-1.5 rounded-lg">Audit missing vehicles</button>
               <button onclick="mbtReconcile()" title="Compare every fetched vehicle against the registry and list anything fetched but missing, hidden, or untrackable" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded-lg border border-slate-300">Audit missing vehicles</button>
             </div>
             <div id="mbt-find-result" class="text-xs text-slate-600"></div>
+        <div id="mbt-reconcile-result" class="text-xs"></div>
             <div id="mbt-reconcile-result" class="text-xs text-slate-600 space-y-1"></div>
             <div id="mbt-log" class="bg-white border border-slate-200 rounded-md p-3 h-28 overflow-y-auto mono text-[11px] text-slate-600 space-y-1"></div>
             <details class="bg-white border border-slate-200 rounded-md p-3">
@@ -2229,10 +2235,11 @@
     function renderFleetTable() {
       const q = (document.getElementById("fleet-search")?.value || "").toLowerCase();
       const cat = document.getElementById("fleet-cat-filter")?.value || "ALL";
+      const showOos = !!(document.getElementById("fleet-show-oos") && document.getElementById("fleet-show-oos").checked);
       const tbody = document.getElementById("fleet-tbody");
 
-      // Vehicles flagged Not In Service are kept in the database but hidden here.
-      const inService = state.fleetRegistry.filter(v => v.inService !== false);
+      // Out-of-service (withdrawn) vehicles are kept in the database but hidden unless asked for.
+      const inService = showOos ? state.fleetRegistry.slice() : state.fleetRegistry.filter(v => v.inService !== false);
       const hiddenCount = state.fleetRegistry.length - inService.length;
       const note = document.getElementById("fleet-oos-note");
       if (note) {
@@ -2270,9 +2277,9 @@
             <td class="py-2.5 px-3 whitespace-nowrap">
               <span class="uk-plate ${isEV ? 'uk-plate-ev' : ''}">${v.reg || 'UNREG'}</span>
             </td>
-            <td class="py-2.5 px-3">
-              <span class="px-2 py-0.5 rounded bg-slate-100 text-slate-600 text-[11px]">${v.cat}</span>
-            </td>
+        <td class="py-2.5 px-3">
+          <span class="px-2 py-0.5 rounded bg-slate-100 text-slate-600 text-[11px]">${v.cat}</span>${v.inService === false ? ' <span class="px-2 py-0.5 rounded bg-rose-50 text-rose-700 text-[11px] font-bold" title="Marked out of service in the API — treated as withdrawn">WITHDRAWN</span>' : ""}
+        </td>
             <td class="py-2.5 px-3 font-semibold text-slate-900">${v.type}</td>
             <td class="py-2.5 px-3 whitespace-nowrap text-slate-600">${v.depot || '<span class="text-slate-400">—</span>'}${v.depotApi && v.depotApi !== v.depot ? `<span class="text-[10px] text-slate-400" title="API depot: ${escAttr(v.depotApi)}">(API: ${escAttr(v.depotApi)})</span>` : ""}</td>
             <td class="py-2.5 px-3" title="${escAttr(v.operatorName || "")}"><span class="mono text-[11px] font-bold ${v.operatorCode ? "text-indigo-700" : "text-slate-400"}">${v.operatorCode || "—"}</span></td>
