@@ -319,20 +319,19 @@
 
         <div class="bg-white border border-slate-200 rounded-lg p-5 space-y-4">
           <div class="flex flex-wrap items-center justify-between gap-2">
-            <div>
-              <h2 class="text-base font-bold text-slate-900">GitHub Sync (cross-device)</h2>
-              <p class="text-xs text-slate-500">Push this browser's database to your repo's <code>database/*.js</code> seeds, or pull them down here — e.g. to carry on on your phone. Token stays in this browser only (never synced or exported).</p>
-            </div>
+          <div>
+            <h2 class="text-base font-bold text-slate-900">GitHub Sync (cross-device)</h2>
+            <p class="text-xs text-slate-500">One button keeps every device on the same database: pulls GitHub first if it has anything newer, otherwise pushes this device up. Repo defaults to EJVibes/SWCOMANAGE — just add your token on each device (it stays in that browser only, never synced, exported, or committed).</p>
+          </div>
             <span id="gh-status" class="text-[11px] text-slate-500 mono">Not configured</span>
           </div>
           <div class="grid grid-cols-1 sm:grid-cols-4 gap-2">
-            <input id="gh-repo" type="text" placeholder="owner/repo (e.g. you/swift-connect)" class="bg-white border border-slate-300 rounded-md px-3 py-2 text-xs text-slate-900 mono" />
+            <input id="gh-repo" type="text" placeholder="EJVibes/SWCOMANAGE" class="bg-white border border-slate-300 rounded-md px-3 py-2 text-xs text-slate-900 mono" />
             <input id="gh-branch" type="text" placeholder="branch (default main)" class="bg-white border border-slate-300 rounded-md px-3 py-2 text-xs text-slate-900 mono" />
             <input id="gh-token" type="password" placeholder="GitHub token (needs repo contents access)" class="bg-white border border-slate-300 rounded-md px-3 py-2 text-xs text-slate-900 mono sm:col-span-2" />
           </div>
           <div class="flex flex-wrap gap-2">
-            <button onclick="githubPush()" class="text-xs bg-indigo-700 hover:bg-indigo-800 text-white font-bold px-4 py-2 rounded-md">⬆ Push to GitHub</button>
-            <button onclick="githubPull()" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2 rounded-md border border-slate-300">⬇ Pull from GitHub</button>
+            <button onclick="githubSync()" class="text-xs bg-indigo-700 hover:bg-indigo-800 text-white font-bold px-4 py-2 rounded-md">Sync to GitHub</button>
           </div>
           <div id="gh-log" class="text-[11px] mono text-slate-500 space-y-0.5 max-h-24 overflow-y-auto"></div>
         </div>
@@ -3750,6 +3749,7 @@
     // so a second device (e.g. phone) can share the same database.
     // Settings live ONLY in this browser's localStorage (never synced/exported).
     // =========================================================================
+    const GH_DEFAULT_REPO = "EJVibes/SWCOMANAGE";
     const GH_TABLE_FILES = {
       meta: "database/meta.js",
       transactions: "database/transactions.js",
@@ -3792,8 +3792,12 @@
       ghStatus(s.repo ? `Configured for ${s.repo}@${s.branch}` : "Not configured");
     }
 
-    function ghSaveSettings(cfg) {
-      try { localStorage.setItem("sc_db_v2_github", JSON.stringify(cfg)); } catch (e) {}
+    function ghSaveSettings(patch) {
+      try {
+        const s = JSON.parse(localStorage.getItem("sc_db_v2_github") || "{}");
+        Object.assign(s, patch);
+        localStorage.setItem("sc_db_v2_github", JSON.stringify(s));
+      } catch (e) {}
     }
 
     function ghConfig() {
@@ -3802,7 +3806,7 @@
       const b = document.getElementById("gh-branch");
       const t = document.getElementById("gh-token");
       const cfg = {
-        repo: ((r && r.value.trim()) || s.repo || "").replace(/\/$/, ""),
+        repo: ((r && r.value.trim()) || s.repo || GH_DEFAULT_REPO).replace(/\/$/, ""),
         branch: ((b && b.value.trim()) || s.branch || "main"),
         token: ((t && t.value) || s.token || "")
       };
@@ -3871,79 +3875,123 @@
       return decodeURIComponent(escape(atob(b64.replace(/\s/g, ""))));
     }
 
-    async function githubPush() {
-      const cfg = ghConfig();
-      if (!cfg.repo || !cfg.token) {
-        ghStatus("Need repo + token");
-        showToast("Enter repo (owner/name) and a GitHub token first.", "⚠️");
-        return;
-      }
+    function ghRememberSync(sha) {
       try {
-        ghStatus("Pushing…");
-        const data = ghCollectState();
-        for (const table of Object.keys(GH_TABLE_FILES)) {
-          ghLog(`Pushing ${GH_TABLE_FILES[table]}…`);
-          let sha = null;
-          try {
-            const cur = await ghApi(`/repos/${cfg.repo}/contents/${GH_TABLE_FILES[table]}?ref=${encodeURIComponent(cfg.branch)}`, "GET", null, cfg.token);
-            sha = cur.sha;
-          } catch (e) {
-            if (!/GitHub 404/.test(String(e.message || ""))) throw e;
-          }
-          const payload = { message: `Sync ${table} from Operations Portal (${state.simDate})`, content: ghB64(ghSeedText(table, data[table])), branch: cfg.branch };
-          if (sha) payload.sha = sha;
-          await ghApi(`/repos/${cfg.repo}/contents/${GH_TABLE_FILES[table]}`, "PUT", payload, cfg.token);
-        }
-        ghStatus(`Pushed ${Object.keys(GH_TABLE_FILES).length} files to ${cfg.repo}@${cfg.branch}`);
-        ghLog("Push complete.");
-        showToast("Pushed database to GitHub!", "✅");
-      } catch (e) {
-        console.error(e);
-        ghStatus("Push failed");
-        ghLog("Push failed: " + (e.message || e));
-        showToast("GitHub push failed — check repo/token/branch.", "⚠️");
-      }
+        const s = JSON.parse(localStorage.getItem("sc_db_v2_github") || "{}");
+        s.lastSeen = sha || null;
+        localStorage.setItem("sc_db_v2_github", JSON.stringify(s));
+      } catch (e) {}
     }
 
-    async function githubPull() {
+    function ghLastSeen() {
+      try { return JSON.parse(localStorage.getItem("sc_db_v2_github") || "{}").lastSeen || null; }
+      catch (e) { return null; }
+    }
+
+    async function ghHeadSha(cfg) {
+      try {
+        const commits = await ghApi(`/repos/${cfg.repo}/commits?path=database&sha=${encodeURIComponent(cfg.branch)}&per_page=1`, "GET", null, cfg.token);
+        if (Array.isArray(commits) && commits.length) return { sha: commits[0].sha, date: commits[0].commit && commits[0].commit.author && commits[0].commit.author.date };
+      } catch (e) {
+        if (!/GitHub 404/.test(String(e && e.message || ""))) throw e;
+      }
+      return null;
+    }
+
+    async function ghDoPush(cfg) {
+      const data = ghCollectState();
+      let lastCommit = null;
+      for (const table of Object.keys(GH_TABLE_FILES)) {
+        ghLog(`Pushing ${GH_TABLE_FILES[table]}…`);
+        let sha = null;
+        try {
+          const cur = await ghApi(`/repos/${cfg.repo}/contents/${GH_TABLE_FILES[table]}?ref=${encodeURIComponent(cfg.branch)}`, "GET", null, cfg.token);
+          sha = cur.sha;
+        } catch (e) {
+          if (!/GitHub 404/.test(String(e.message || ""))) throw e;
+        }
+        const payload = { message: `Sync ${table} from Operations Portal (${state.simDate})`, content: ghB64(ghSeedText(table, data[table])), branch: cfg.branch };
+        if (sha) payload.sha = sha;
+        const done = await ghApi(`/repos/${cfg.repo}/contents/${GH_TABLE_FILES[table]}`, "PUT", payload, cfg.token);
+        if (done && done.commit && done.commit.sha) lastCommit = done.commit.sha;
+      }
+      if (!lastCommit) {
+        const head = await ghHeadSha(cfg);
+        if (head) lastCommit = head.sha;
+      }
+      return lastCommit;
+    }
+
+    async function ghDoPull(cfg) {
+      let count = 0;
+      for (const table of Object.keys(GH_TABLE_FILES)) {
+        let file;
+        try {
+          file = await ghApi(`/repos/${cfg.repo}/contents/${GH_TABLE_FILES[table]}?ref=${encodeURIComponent(cfg.branch)}`, "GET", null, cfg.token);
+        } catch (e) {
+          if (/GitHub 404/.test(String(e.message || ""))) { ghLog(`Skip ${GH_TABLE_FILES[table]}: not in repo yet.`); continue; }
+          throw e;
+        }
+        const value = ghParseSeed(ghUtf8(file.content));
+        if (table === "meta") {
+          state.simDate = value.simDate;
+          state.bankBalance = value.bankBalance;
+          window.DB.save("meta", { simDate: value.simDate, bankBalance: value.bankBalance });
+        } else {
+          window.DB.save(table, value);
+        }
+        count++;
+        ghLog(`Pulled ${GH_TABLE_FILES[table]}.`);
+      }
+      loadState();
+      renderAll();
+      return count;
+    }
+
+    // Single-button sync for a sole operator: if GitHub has anything newer
+    // than our last sync, pull it down; otherwise push this device up.
+    async function githubSync() {
       const cfg = ghConfig();
       if (!cfg.repo || !cfg.token) {
         ghStatus("Need repo + token");
         showToast("Enter repo (owner/name) and a GitHub token first.", "⚠️");
         return;
       }
-      if (!confirm("Replace this browser's database with the GitHub version? Unsaved local changes will be lost.")) return;
       try {
-        ghStatus("Pulling…");
-        let count = 0;
-        for (const table of Object.keys(GH_TABLE_FILES)) {
-          let file;
-          try {
-            file = await ghApi(`/repos/${cfg.repo}/contents/${GH_TABLE_FILES[table]}?ref=${encodeURIComponent(cfg.branch)}`, "GET", null, cfg.token);
-          } catch (e) {
-            if (/GitHub 404/.test(String(e.message || ""))) { ghLog(`Skip ${GH_TABLE_FILES[table]}: not in repo yet.`); continue; }
-            throw e;
+        ghStatus("Checking GitHub…");
+        const head = await ghHeadSha(cfg);
+        const lastSeen = ghLastSeen();
+        if (head && head.sha && head.sha !== lastSeen) {
+          const staleLocal = !lastSeen;
+          if (staleLocal) {
+            const pullIt = confirm("GitHub already has database files, and this browser has never synced. Pull them down (OK), or push THIS device up instead, overwriting GitHub (Cancel)?");
+            if (!pullIt) {
+              ghStatus("Pushing…");
+              const pushed = await ghDoPush(cfg);
+              ghRememberSync(pushed);
+              ghStatus(`Pushed ${Object.keys(GH_TABLE_FILES).length} files to ${cfg.repo}@${cfg.branch}`);
+              showToast("Pushed this device to GitHub!", "✅");
+              return;
+            }
           }
-          const value = ghParseSeed(ghUtf8(file.content));
-          if (table === "meta") {
-            state.simDate = value.simDate;
-            state.bankBalance = value.bankBalance;
-            window.DB.save("meta", { simDate: value.simDate, bankBalance: value.bankBalance });
-          } else {
-            window.DB.save(table, value);
-          }
-          count++;
-          ghLog(`Pulled ${GH_TABLE_FILES[table]}.`);
+          ghStatus("Pulling newer changes…");
+          const count = await ghDoPull(cfg);
+          ghRememberSync(head.sha);
+          ghStatus(`Pulled ${count} files from ${cfg.repo}@${cfg.branch}`);
+          showToast("Synced down from GitHub!", "✅");
+          return;
         }
-        loadState();
-        renderAll();
-        ghStatus(`Pulled ${count} files from ${cfg.repo}@${cfg.branch}`);
-        showToast("Pulled database from GitHub!", "✅");
+        ghStatus("Pushing…");
+        const pushed = await ghDoPush(cfg);
+        ghRememberSync(pushed || (head && head.sha) || lastSeen);
+        ghStatus(`Pushed ${Object.keys(GH_TABLE_FILES).length} files to ${cfg.repo}@${cfg.branch}`);
+        ghLog("Push complete.");
+        showToast("Saved to GitHub!", "✅");
       } catch (e) {
         console.error(e);
-        ghStatus("Pull failed");
-        ghLog("Pull failed: " + (e.message || e));
-        showToast("GitHub pull failed — check repo/token/branch.", "⚠️");
+        ghStatus("Sync failed");
+        ghLog("Sync failed: " + (e.message || e));
+        showToast("GitHub sync failed — check repo/token/branch.", "⚠️");
       }
     }
 
