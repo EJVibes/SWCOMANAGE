@@ -310,9 +310,31 @@
                   <th class="py-2.5 px-3 text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody id="ledger-tbody" class="divide-y divide-slate-200"></tbody>
-            </table>
+                  <tbody id="ledger-tbody" class="divide-y divide-slate-200"></tbody>
+                </table>
+              </div>
+            </div>
           </div>
+        </div>
+
+        <div class="bg-white border border-slate-200 rounded-lg p-5 space-y-4">
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <div>
+              <h2 class="text-base font-bold text-slate-900">GitHub Sync (cross-device)</h2>
+              <p class="text-xs text-slate-500">Push this browser's database to your repo's <code>database/*.js</code> seeds, or pull them down here — e.g. to carry on on your phone. Token stays in this browser only (never synced or exported).</p>
+            </div>
+            <span id="gh-status" class="text-[11px] text-slate-500 mono">Not configured</span>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-4 gap-2">
+            <input id="gh-repo" type="text" placeholder="owner/repo (e.g. you/swift-connect)" class="bg-white border border-slate-300 rounded-md px-3 py-2 text-xs text-slate-900 mono" />
+            <input id="gh-branch" type="text" placeholder="branch (default main)" class="bg-white border border-slate-300 rounded-md px-3 py-2 text-xs text-slate-900 mono" />
+            <input id="gh-token" type="password" placeholder="GitHub token (needs repo contents access)" class="bg-white border border-slate-300 rounded-md px-3 py-2 text-xs text-slate-900 mono sm:col-span-2" />
+          </div>
+          <div class="flex flex-wrap gap-2">
+            <button onclick="githubPush()" class="text-xs bg-indigo-700 hover:bg-indigo-800 text-white font-bold px-4 py-2 rounded-md">⬆ Push to GitHub</button>
+            <button onclick="githubPull()" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2 rounded-md border border-slate-300">⬇ Pull from GitHub</button>
+          </div>
+          <div id="gh-log" class="text-[11px] mono text-slate-500 space-y-0.5 max-h-24 overflow-y-auto"></div>
         </div>
       </div>
     </section>
@@ -722,7 +744,16 @@
               <h2 class="text-base font-bold text-slate-900">Official Swift Connect Vehicle Catalogue & Regional Holdings</h2>
               <p class="text-xs text-slate-500">Owned counts are read live from the Fleet Registry. Click a column header to sort. Click any model to load it into the Valuation & Purchase Calculator</p>
             </div>
-            <div class="flex gap-2">
+            <div class="flex flex-wrap gap-2 items-center">
+              <details class="relative">
+                <summary class="text-xs bg-emerald-700 hover:bg-emerald-800 text-white font-bold px-3 py-1.5 rounded-lg cursor-pointer select-none list-none">+ Add vehicle</summary>
+                <div class="absolute right-0 z-40 mt-1 w-72 bg-white border border-slate-200 rounded-lg shadow-xl p-3 space-y-2">
+                  <input id="new-cat-model" type="text" placeholder="Model (e.g. ADL Enviro400 MMC 11.5m)" class="w-full bg-white border border-slate-300 rounded-md px-2 py-1.5 text-xs text-slate-900" />
+                  <input id="new-cat-value" type="number" step="1" min="0" placeholder="New list value (£)" class="w-full bg-white border border-slate-300 rounded-md px-2 py-1.5 text-xs text-slate-900 mono" />
+                  <input id="new-cat-region" type="text" placeholder="Region (optional, e.g. WM:2)" class="w-full bg-white border border-slate-300 rounded-md px-2 py-1.5 text-xs text-slate-900" />
+                  <button onclick="addCatalogueModel()" class="w-full text-xs bg-emerald-700 hover:bg-emerald-800 text-white font-bold py-1.5 rounded-md">Add to Catalogue</button>
+                </div>
+              </details>
               <input id="dealer-search" oninput="renderDealerCatalogue()" type="text" placeholder="Filter models (e.g. StreetDeck, Enviro400)..." class="bg-white border border-slate-300 rounded-md px-3 py-1.5 text-xs text-slate-900 w-56" />
               <label class="flex items-center gap-1.5 text-xs text-slate-600 cursor-pointer bg-white border border-slate-200 px-3 py-1.5 rounded-md">
                 <input id="dealer-owned-only" onchange="renderDealerCatalogue()" type="checkbox" class="rounded" />
@@ -2381,6 +2412,42 @@
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
 
+    function addCatalogueModel() {
+      const model = (document.getElementById("new-cat-model").value || "").trim();
+      const value = parseFloat(document.getElementById("new-cat-value").value);
+      if (!model) { showToast("Give the new vehicle a model name.", "⚠️"); return; }
+      if (isNaN(value) || value < 0) { showToast("Enter a valid list price (£).", "⚠️"); return; }
+      if (state.busCatalogue.some(b => b.model.toLowerCase() === model.toLowerCase())) {
+        showToast("That model is already in the catalogue.", "⚠️");
+        return;
+      }
+      state.busCatalogue.push({
+        model,
+        value: Math.round(value * 100) / 100,
+        count: 0,
+        regions: (document.getElementById("new-cat-region").value || "").trim()
+      });
+      document.getElementById("new-cat-model").value = "";
+      document.getElementById("new-cat-value").value = "";
+      document.getElementById("new-cat-region").value = "";
+      saveState();
+      populateDealerSelect();
+      renderAll();
+      showToast(`Added "${model}" to the catalogue!`, "✅");
+    }
+
+    function removeCatalogueModel(idx) {
+      const b = state.busCatalogue[idx];
+      if (!b) return;
+      const owned = computeOwnedCounts().counts[idx] || 0;
+      if (!confirm(`Remove "${b.model}" from the catalogue?${owned ? `\n${owned} fleet vehicle(s) use this model — they stay in the registry but lose catalogue pricing.` : ""}`)) return;
+      state.busCatalogue.splice(idx, 1);
+      saveState();
+      populateDealerSelect();
+      renderAll();
+      showToast("Catalogue entry removed.", "✅");
+    }
+
     // ---- Used Bus Valuation: separate SELL (class/fuel depreciation) & BUY (age-band VAT) ----
     // Rates re-roll automatically on any calculator change (or via Re-roll).
     let calcSell = null; // { rate (% p.a.), band }
@@ -2672,6 +2739,7 @@
               <button onclick="selectCatalogueModel(${idx})" class="text-xs bg-sky-100 hover:bg-blue-800 text-sky-800 hover:text-white border border-sky-500/30 px-2.5 py-1 rounded-lg transition">
                 Select
               </button>
+              <button onclick="removeCatalogueModel(${idx})" title="Remove this model from the catalogue" class="text-[11px] font-semibold text-rose-700 hover:underline px-1">Remove</button>
             </td>
           </tr>
         `;
@@ -3677,6 +3745,208 @@
       URL.revokeObjectURL(url);
     }
 
+    // =========================================================================
+    // GitHub Sync — push live DB to repo seed files / pull them back down,
+    // so a second device (e.g. phone) can share the same database.
+    // Settings live ONLY in this browser's localStorage (never synced/exported).
+    // =========================================================================
+    const GH_TABLE_FILES = {
+      meta: "database/meta.js",
+      transactions: "database/transactions.js",
+      depots: "database/depots.js",
+      busCatalogue: "database/bus-catalogue.js",
+      fleetRegistry: "database/fleet-registry.js",
+      fares: "database/fares.js",
+      overheads: "database/overheads.js",
+      workshopQueue: "database/workshop-queue.js",
+      workshopCompleted: "database/workshop-completed.js",
+      mbtOperators: "database/mybustimes-operators.js"
+    };
+    const GH_TABLE_CONSTS = {
+      meta: "DB_SEED_META",
+      transactions: "DB_SEED_TRANSACTIONS",
+      depots: "DB_SEED_DEPOTS",
+      busCatalogue: "DB_SEED_BUS_CATALOGUE",
+      fleetRegistry: "DB_SEED_FLEET_REGISTRY",
+      fares: "DB_SEED_FARES",
+      overheads: "DB_SEED_OVERHEADS",
+      workshopQueue: "DB_SEED_WORKSHOP_QUEUE",
+      workshopCompleted: "DB_SEED_WORKSHOP_COMPLETED",
+      mbtOperators: "DB_SEED_MBT_OPERATORS"
+    };
+
+    function ghReadSettings() {
+      let s = {};
+      try { s = JSON.parse(localStorage.getItem("sc_db_v2_github") || "{}") || {}; } catch (e) { s = {}; }
+      return { repo: s.repo || "", branch: s.branch || "main", token: s.token || "" };
+    }
+
+    function ghFillSettings() {
+      const s = ghReadSettings();
+      const r = document.getElementById("gh-repo");
+      const b = document.getElementById("gh-branch");
+      const t = document.getElementById("gh-token");
+      if (r && !r.value && s.repo) r.value = s.repo;
+      if (b && !b.value && s.branch) b.value = s.branch;
+      if (t && !t.value && s.token) t.value = s.token;
+      ghStatus(s.repo ? `Configured for ${s.repo}@${s.branch}` : "Not configured");
+    }
+
+    function ghSaveSettings(cfg) {
+      try { localStorage.setItem("sc_db_v2_github", JSON.stringify(cfg)); } catch (e) {}
+    }
+
+    function ghConfig() {
+      const s = ghReadSettings();
+      const r = document.getElementById("gh-repo");
+      const b = document.getElementById("gh-branch");
+      const t = document.getElementById("gh-token");
+      const cfg = {
+        repo: ((r && r.value.trim()) || s.repo || "").replace(/\/$/, ""),
+        branch: ((b && b.value.trim()) || s.branch || "main"),
+        token: ((t && t.value) || s.token || "")
+      };
+      ghSaveSettings(cfg);
+      return cfg;
+    }
+
+    function ghLog(msg) {
+      const el = document.getElementById("gh-log");
+      if (!el) return;
+      const div = document.createElement("div");
+      div.textContent = msg;
+      el.appendChild(div);
+      el.scrollTop = el.scrollHeight;
+      while (el.children.length > 40) el.removeChild(el.firstChild);
+    }
+
+    function ghStatus(msg) {
+      const el = document.getElementById("gh-status");
+      if (el) el.textContent = msg;
+    }
+
+    function ghSeedText(table, value) {
+      return `/* Swift Connect — database: ${table} (synced from Operations Portal ${state.simDate}) */\nwindow.${GH_TABLE_CONSTS[table]} = ${JSON.stringify(value, null, 2)};\n`;
+    }
+
+    function ghParseSeed(text) {
+      const m = String(text || "").match(/window\.DB_SEED_\w+\s*=\s*([\s\S]*?);\s*$/);
+      if (!m) throw new Error("not a seed file");
+      return JSON.parse(m[1]);
+    }
+
+    async function ghApi(path, method, body, token) {
+      const res = await fetch("https://api.github.com" + path, {
+        method: method || "GET",
+        headers: Object.assign({ Accept: "application/vnd.github+json" }, token ? { Authorization: "Bearer " + token } : {}),
+        body: body ? JSON.stringify(body) : undefined
+      });
+      if (!res.ok) {
+        const err = await res.text().catch(() => "");
+        throw new Error(`GitHub ${res.status}: ${err.slice(0, 160) || res.statusText}`);
+      }
+      return res.json();
+    }
+
+    function ghCollectState() {
+      return {
+        meta: { simDate: state.simDate, bankBalance: state.bankBalance },
+        transactions: state.transactions,
+        depots: state.depots,
+        busCatalogue: state.busCatalogue,
+        fleetRegistry: state.fleetRegistry,
+        fares: state.fares,
+        overheads: state.overheads,
+        workshopQueue: state.workshopQueue,
+        workshopCompleted: state.workshopCompleted || [],
+        mbtOperators: window.DB.load("mbtOperators")
+      };
+    }
+
+    function ghB64(s) {
+      return btoa(unescape(encodeURIComponent(s)));
+    }
+
+    function ghUtf8(b64) {
+      return decodeURIComponent(escape(atob(b64.replace(/\s/g, ""))));
+    }
+
+    async function githubPush() {
+      const cfg = ghConfig();
+      if (!cfg.repo || !cfg.token) {
+        ghStatus("Need repo + token");
+        showToast("Enter repo (owner/name) and a GitHub token first.", "⚠️");
+        return;
+      }
+      try {
+        ghStatus("Pushing…");
+        const data = ghCollectState();
+        for (const table of Object.keys(GH_TABLE_FILES)) {
+          ghLog(`Pushing ${GH_TABLE_FILES[table]}…`);
+          let sha = null;
+          try {
+            const cur = await ghApi(`/repos/${cfg.repo}/contents/${GH_TABLE_FILES[table]}?ref=${encodeURIComponent(cfg.branch)}`, "GET", null, cfg.token);
+            sha = cur.sha;
+          } catch (e) {
+            if (!/GitHub 404/.test(String(e.message || ""))) throw e;
+          }
+          const payload = { message: `Sync ${table} from Operations Portal (${state.simDate})`, content: ghB64(ghSeedText(table, data[table])), branch: cfg.branch };
+          if (sha) payload.sha = sha;
+          await ghApi(`/repos/${cfg.repo}/contents/${GH_TABLE_FILES[table]}`, "PUT", payload, cfg.token);
+        }
+        ghStatus(`Pushed ${Object.keys(GH_TABLE_FILES).length} files to ${cfg.repo}@${cfg.branch}`);
+        ghLog("Push complete.");
+        showToast("Pushed database to GitHub!", "✅");
+      } catch (e) {
+        console.error(e);
+        ghStatus("Push failed");
+        ghLog("Push failed: " + (e.message || e));
+        showToast("GitHub push failed — check repo/token/branch.", "⚠️");
+      }
+    }
+
+    async function githubPull() {
+      const cfg = ghConfig();
+      if (!cfg.repo || !cfg.token) {
+        ghStatus("Need repo + token");
+        showToast("Enter repo (owner/name) and a GitHub token first.", "⚠️");
+        return;
+      }
+      if (!confirm("Replace this browser's database with the GitHub version? Unsaved local changes will be lost.")) return;
+      try {
+        ghStatus("Pulling…");
+        let count = 0;
+        for (const table of Object.keys(GH_TABLE_FILES)) {
+          let file;
+          try {
+            file = await ghApi(`/repos/${cfg.repo}/contents/${GH_TABLE_FILES[table]}?ref=${encodeURIComponent(cfg.branch)}`, "GET", null, cfg.token);
+          } catch (e) {
+            if (/GitHub 404/.test(String(e.message || ""))) { ghLog(`Skip ${GH_TABLE_FILES[table]}: not in repo yet.`); continue; }
+            throw e;
+          }
+          const value = ghParseSeed(ghUtf8(file.content));
+          if (table === "meta") {
+            state.simDate = value.simDate;
+            state.bankBalance = value.bankBalance;
+            window.DB.save("meta", { simDate: value.simDate, bankBalance: value.bankBalance });
+          } else {
+            window.DB.save(table, value);
+          }
+          count++;
+          ghLog(`Pulled ${GH_TABLE_FILES[table]}.`);
+        }
+        loadState();
+        renderAll();
+        ghStatus(`Pulled ${count} files from ${cfg.repo}@${cfg.branch}`);
+        showToast("Pulled database from GitHub!", "✅");
+      } catch (e) {
+        console.error(e);
+        ghStatus("Pull failed");
+        ghLog("Pull failed: " + (e.message || e));
+        showToast("GitHub pull failed — check repo/token/branch.", "⚠️");
+      }
+    }
+
     // Browsers can't overwrite database/*.js on disk, so this generates an
     // exact depots.js seed file (all live depot rows incl. site survey
     // fields) for download — replace database/depots.js with it to persist.
@@ -3903,9 +4173,10 @@
         const [yyyy, mm, dd] = state.simDate.split("-");
         showToast(`Overnight income posted for ${catchup.days} day(s): ${formatGBP(catchup.totalNet, 2)} — sim date now ${dd}/${mm}/${yyyy}.`, "✅");
       }
-      // Disk backend detection (server.js). Silent when on static hosting.
-      if (window.DB.checkServer) window.DB.checkServer();
-      bootSplash();
+        // Disk backend detection (server.js). Silent when on static hosting.
+        if (window.DB.checkServer) window.DB.checkServer();
+        if (typeof ghFillSettings === "function") ghFillSettings();
+        bootSplash();
       // Automatic midnight rollover: while the app is open, post each new
       // UK day's income (for the day prior) as soon as it begins.
       setInterval(() => {
