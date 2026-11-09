@@ -1,4 +1,4 @@
-/* Swift Connect — database: fleetRegistry (synced from Operations Portal 2026-11-06) */
+/* Swift Connect — database: fleetRegistry (synced from Operations Portal 2026-11-09) */
 window.DB_SEED_FLEET_REGISTRY = [
   {
     "id": 100,
@@ -20,7 +20,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "fuel": "Diesel",
     "inService": true,
     "mbtId": 59759,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2002,
     "depotApi": "Cromer"
   },
@@ -44,7 +44,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "fuel": "Diesel",
     "inService": true,
     "mbtId": 61851,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2007,
     "depotApi": "Hadley"
   },
@@ -68,7 +68,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "fuel": "Diesel",
     "inService": true,
     "mbtId": 639266,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2012,
     "depotApi": "Cotes Park"
   },
@@ -92,7 +92,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "fuel": "Diesel",
     "inService": true,
     "mbtId": 8230,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2008,
     "depotApi": ""
   },
@@ -116,7 +116,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "fuel": "Diesel",
     "inService": true,
     "mbtId": 639443,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2012,
     "depotApi": "Cotes Park"
   },
@@ -140,7 +140,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "fuel": "Diesel",
     "inService": true,
     "mbtId": 665319,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2016,
     "depotApi": ""
   },
@@ -164,7 +164,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "fuel": "Diesel",
     "inService": true,
     "mbtId": 726459,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2010,
     "depotApi": "Talbot Green"
   },
@@ -188,7 +188,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "fuel": "Diesel",
     "inService": true,
     "mbtId": 639444,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2012,
     "depotApi": "Elmers End"
   },
@@ -212,7 +212,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "fuel": "Diesel",
     "inService": true,
     "mbtId": 669246,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2008,
     "depotApi": "Stoke"
   },
@@ -236,7 +236,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "fuel": "Diesel",
     "inService": true,
     "mbtId": 1043828,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2008,
     "depotApi": "Cotes Park"
   },
@@ -260,7 +260,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "fuel": "Diesel",
     "inService": true,
     "mbtId": 25763,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2010,
     "depotApi": "Hadley"
   },
@@ -284,7 +284,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "fuel": "Diesel",
     "inService": true,
     "mbtId": 82923,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2009,
     "depotApi": "Talbot Green"
   },
@@ -308,7 +308,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "fuel": "Diesel",
     "inService": true,
     "mbtId": 28775,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2010,
     "depotApi": "Hadley"
   },
@@ -332,7 +332,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "fuel": "Diesel",
     "inService": true,
     "mbtId": 1607169,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2009,
     "depotApi": "Baschurch"
   },
@@ -356,7 +356,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "fuel": "Diesel",
     "inService": true,
     "mbtId": 1607173,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2009,
     "depotApi": "Baschurch"
   },
@@ -380,7 +380,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Shropshire",
     "inService": true,
     "mbtId": 1607177,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2009,
     "depotApi": "Baschurch"
   },
@@ -404,7 +404,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Shropshire",
     "inService": true,
     "mbtId": 1607174,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2009,
     "depotApi": "Baschurch"
   },
@@ -428,7 +428,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Shropshire",
     "inService": true,
     "mbtId": 1607166,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2009,
     "depotApi": "Baschurch"
   },
@@ -452,7 +452,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Shropshire",
     "inService": true,
     "mbtId": 1607168,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2009,
     "depotApi": "Baschurch"
   },
@@ -476,7 +476,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Wrekin Connect",
     "inService": true,
     "mbtId": 1607172,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2009,
     "depotApi": "Wellington"
   },
@@ -500,7 +500,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Wrekin Connect",
     "inService": true,
     "mbtId": 1607176,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2009,
     "depotApi": "Wellington"
   },
@@ -524,7 +524,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "fuel": "Diesel",
     "inService": true,
     "mbtId": 171541,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2014,
     "depotApi": "Wellington"
   },
@@ -548,7 +548,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "fuel": "Diesel",
     "inService": true,
     "mbtId": 888926,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2014,
     "depotApi": "Elmers End"
   },
@@ -572,7 +572,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "fuel": "Diesel",
     "inService": true,
     "mbtId": 1137771,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2015,
     "depotApi": "Hadley"
   },
@@ -596,7 +596,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "fuel": "Diesel",
     "inService": true,
     "mbtId": 682848,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2017,
     "depotApi": "Elmers End"
   },
@@ -620,7 +620,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connect Retrofit Yard",
     "inService": true,
     "mbtId": 1137769,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2015,
     "depotApi": "Hadley"
   },
@@ -644,7 +644,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Wrekin Connect",
     "inService": true,
     "mbtId": 1107692,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2015,
     "depotApi": "Wellington"
   },
@@ -668,7 +668,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Wrekin Connect",
     "inService": true,
     "mbtId": 1107659,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2015,
     "depotApi": "Wellington"
   },
@@ -692,7 +692,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Wrekin Connect",
     "inService": true,
     "mbtId": 1107680,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2015,
     "depotApi": "Wellington"
   },
@@ -716,7 +716,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Wrekin Connect",
     "inService": true,
     "mbtId": 1107683,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2015,
     "depotApi": "Wellington"
   },
@@ -740,7 +740,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connect Retrofit Yard",
     "inService": true,
     "mbtId": 1137770,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2015,
     "depotApi": "Hadley"
   },
@@ -764,7 +764,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connect Retrofit Yard",
     "inService": true,
     "mbtId": 1137768,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2015,
     "depotApi": "Hadley"
   },
@@ -788,7 +788,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connect Retrofit Yard",
     "inService": true,
     "mbtId": 1137767,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2015,
     "depotApi": "Hadley"
   },
@@ -812,7 +812,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connect Retrofit Yard",
     "inService": true,
     "mbtId": 32459,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2014,
     "depotApi": "Hadley"
   },
@@ -836,7 +836,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connect Retrofit Yard",
     "inService": true,
     "mbtId": 144874,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2013,
     "depotApi": "Hadley"
   },
@@ -860,7 +860,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Shropshire",
     "inService": true,
     "mbtId": 35165,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2018,
     "depotApi": "Baschurch"
   },
@@ -884,7 +884,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Shropshire",
     "inService": true,
     "mbtId": 28682,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2017,
     "depotApi": "Baschurch"
   },
@@ -908,7 +908,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Shropshire",
     "inService": true,
     "mbtId": 107546,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2017,
     "depotApi": "Baschurch"
   },
@@ -932,7 +932,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "fuel": "Diesel",
     "inService": true,
     "mbtId": 909757,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2019,
     "depotApi": "Elmers End"
   },
@@ -956,7 +956,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "fuel": "Diesel",
     "inService": true,
     "mbtId": 1000455,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2021,
     "depotApi": "Elmers End"
   },
@@ -980,7 +980,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "fuel": "Diesel",
     "inService": true,
     "mbtId": 1004320,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2018,
     "depotApi": "Elmers End"
   },
@@ -1004,7 +1004,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Shropshire",
     "inService": true,
     "mbtId": 57632,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2016,
     "depotApi": "Hadley"
   },
@@ -1028,7 +1028,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Shropshire",
     "inService": true,
     "mbtId": 9881,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2023,
     "depotApi": "Hadley"
   },
@@ -1052,7 +1052,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Staffordshire",
     "inService": true,
     "mbtId": 1106275,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2019,
     "depotApi": "Stoke"
   },
@@ -1076,7 +1076,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Staffordshire",
     "inService": true,
     "mbtId": 1122731,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2019,
     "depotApi": "Stoke"
   },
@@ -1100,7 +1100,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Shropshire",
     "inService": true,
     "mbtId": 28382,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2017,
     "depotApi": "Hadley"
   },
@@ -1124,7 +1124,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Shropshire",
     "inService": true,
     "mbtId": 171641,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2024,
     "depotApi": "Hadley"
   },
@@ -1148,7 +1148,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Shropshire",
     "inService": true,
     "mbtId": 171642,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2024,
     "depotApi": "Hadley"
   },
@@ -1172,7 +1172,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connect Yard",
     "inService": true,
     "mbtId": 692960,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2016,
     "depotApi": ""
   },
@@ -1196,7 +1196,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connect Yard",
     "inService": true,
     "mbtId": 692959,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2016,
     "depotApi": ""
   },
@@ -1220,7 +1220,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "fuel": "Diesel",
     "inService": true,
     "mbtId": 632202,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2021,
     "depotApi": "Hadley"
   },
@@ -1244,7 +1244,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "fuel": "Diesel",
     "inService": true,
     "mbtId": 59615,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2025,
     "depotApi": "Wellington"
   },
@@ -1268,7 +1268,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Wrekin Connect",
     "inService": true,
     "mbtId": 312760,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2023,
     "depotApi": "Wellington"
   },
@@ -1292,7 +1292,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Wrekin Connect",
     "inService": true,
     "mbtId": 313188,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2025,
     "depotApi": "Wellington"
   },
@@ -1316,7 +1316,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "fuel": "Diesel",
     "inService": false,
     "mbtId": 1027694,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2005,
     "depotApi": "Cotes Park"
   },
@@ -1342,7 +1342,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Shropshire",
     "inService": true,
     "mbtId": 904006,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z"
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z"
   },
   {
     "id": 1045,
@@ -1364,7 +1364,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting East Midlands",
     "inService": true,
     "mbtId": 159462,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2010,
     "depotApi": "Cotes Park"
   },
@@ -1388,7 +1388,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting East Midlands",
     "inService": true,
     "mbtId": 159463,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2010,
     "depotApi": "Cotes Park"
   },
@@ -1412,7 +1412,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting East Midlands",
     "inService": true,
     "mbtId": 159464,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2010,
     "depotApi": "Cotes Park"
   },
@@ -1436,7 +1436,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Shropshire",
     "inService": true,
     "mbtId": 1027667,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2003,
     "depotApi": "Baschurch"
   },
@@ -1460,7 +1460,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Shropshire",
     "inService": true,
     "mbtId": 151948,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2012,
     "depotApi": "Hadley"
   },
@@ -1484,7 +1484,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Shropshire",
     "inService": true,
     "mbtId": 1027668,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2004,
     "depotApi": "Baschurch"
   },
@@ -1508,7 +1508,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Shropshire",
     "inService": true,
     "mbtId": 1027672,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2004,
     "depotApi": "Baschurch"
   },
@@ -1532,7 +1532,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Shropshire",
     "inService": true,
     "mbtId": 57410,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2007,
     "depotApi": "Shifnal"
   },
@@ -1556,7 +1556,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Shropshire",
     "inService": true,
     "mbtId": 1027673,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2004,
     "depotApi": "Baschurch"
   },
@@ -1580,7 +1580,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting East Midlands",
     "inService": false,
     "mbtId": 1188246,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2005,
     "depotApi": "Cotes Park"
   },
@@ -1606,7 +1606,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Shropshire",
     "inService": true,
     "mbtId": 1027674,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z"
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z"
   },
   {
     "id": 1055,
@@ -1628,7 +1628,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Shropshire",
     "inService": true,
     "mbtId": 1027693,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2004,
     "depotApi": "Baschurch"
   },
@@ -1661,7 +1661,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Shropshire",
     "inService": true,
     "mbtId": 28683,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2013,
     "depotApi": "Hadley"
   },
@@ -1685,7 +1685,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Shropshire",
     "inService": true,
     "mbtId": 206446,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2018,
     "depotApi": "Hadley"
   },
@@ -1709,7 +1709,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Shropshire",
     "inService": true,
     "mbtId": 226680,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2025,
     "depotApi": "Hadley"
   },
@@ -1733,7 +1733,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Shropshire",
     "inService": true,
     "mbtId": 25170,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2024,
     "depotApi": "Hadley"
   },
@@ -1757,7 +1757,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Shropshire",
     "inService": true,
     "mbtId": 25171,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2024,
     "depotApi": "Hadley"
   },
@@ -1781,7 +1781,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Shropshire",
     "inService": true,
     "mbtId": 25172,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2024,
     "depotApi": "Hadley"
   },
@@ -1805,7 +1805,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "fuel": "Diesel",
     "inService": true,
     "mbtId": 1395570,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2026,
     "depotApi": "Cotes Park"
   },
@@ -1831,7 +1831,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Shropshire",
     "inService": false,
     "mbtId": 61283,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z"
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z"
   },
   {
     "id": 1064,
@@ -1853,7 +1853,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting East Midlands",
     "inService": true,
     "mbtId": 1395571,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2026,
     "depotApi": "Cotes Park"
   },
@@ -1877,7 +1877,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting East Midlands",
     "inService": true,
     "mbtId": 1395572,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2026,
     "depotApi": "Cotes Park"
   },
@@ -1901,7 +1901,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Shropshire",
     "inService": true,
     "mbtId": 44438,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2024,
     "depotApi": "Hadley"
   },
@@ -1925,7 +1925,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Shropshire",
     "inService": true,
     "mbtId": 575440,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2025,
     "depotApi": "Bridgnorth"
   },
@@ -1949,7 +1949,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Shropshire",
     "inService": true,
     "mbtId": 44511,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2024,
     "depotApi": "Hadley"
   },
@@ -1973,7 +1973,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Shropshire",
     "inService": true,
     "mbtId": 59667,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2013,
     "depotApi": "Bridgnorth"
   },
@@ -1997,7 +1997,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Shropshire",
     "inService": true,
     "mbtId": 59668,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2013,
     "depotApi": "Bridgnorth"
   },
@@ -2021,7 +2021,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Shropshire",
     "inService": true,
     "mbtId": 62884,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2015,
     "depotApi": "Bridgnorth"
   },
@@ -2045,7 +2045,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Shropshire",
     "inService": true,
     "mbtId": 23232,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2022,
     "depotApi": "Bridgnorth"
   },
@@ -2069,7 +2069,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting East Midlands",
     "inService": true,
     "mbtId": 482224,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2024,
     "depotApi": "Cotes Park"
   },
@@ -2093,7 +2093,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "fuel": "Diesel",
     "inService": true,
     "mbtId": 1395567,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2026,
     "depotApi": "Cotes Park"
   },
@@ -2117,7 +2117,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting East Midlands",
     "inService": true,
     "mbtId": 1395568,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2026,
     "depotApi": "Cotes Park"
   },
@@ -2141,7 +2141,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting East Midlands",
     "inService": true,
     "mbtId": 1395569,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2026,
     "depotApi": "Cotes Park"
   },
@@ -2165,7 +2165,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "fuel": "Diesel",
     "inService": true,
     "mbtId": 313113,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2018,
     "depotApi": "Elmers End"
   },
@@ -2189,7 +2189,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting East Midlands",
     "inService": true,
     "mbtId": 313115,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2018,
     "depotApi": "Cotes Park"
   },
@@ -2213,7 +2213,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting East Midlands",
     "inService": true,
     "mbtId": 313116,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2018,
     "depotApi": "Cotes Park"
   },
@@ -2239,7 +2239,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Shropshire",
     "inService": false,
     "mbtId": 83542,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z"
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z"
   },
   {
     "id": 1080,
@@ -2261,7 +2261,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "fuel": "Diesel",
     "inService": true,
     "mbtId": 876331,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": null,
     "depotApi": "Hadley"
   },
@@ -2285,7 +2285,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Shropshire",
     "inService": true,
     "mbtId": 876328,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": null,
     "depotApi": "Hadley"
   },
@@ -2309,7 +2309,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Shropshire",
     "inService": true,
     "mbtId": 876329,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": null,
     "depotApi": "Hadley"
   },
@@ -2333,7 +2333,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connect Yard",
     "inService": true,
     "mbtId": 876330,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": null,
     "depotApi": ""
   },
@@ -2357,7 +2357,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connect Yard",
     "inService": true,
     "mbtId": 876332,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": null,
     "depotApi": ""
   },
@@ -2381,7 +2381,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connect Yard",
     "inService": true,
     "mbtId": 876333,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": null,
     "depotApi": ""
   },
@@ -2407,7 +2407,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Shropshire",
     "inService": false,
     "mbtId": 59675,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z"
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z"
   },
   {
     "id": 1800,
@@ -2429,7 +2429,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "fuel": "Battery Electric",
     "inService": true,
     "mbtId": 14119,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2010,
     "depotApi": "Dudley"
   },
@@ -2453,7 +2453,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "fuel": "Diesel",
     "inService": true,
     "mbtId": 306819,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2009,
     "depotApi": "Cromer"
   },
@@ -2477,7 +2477,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "fuel": "Diesel",
     "inService": true,
     "mbtId": 59581,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2014,
     "depotApi": "Dudley"
   },
@@ -2503,7 +2503,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting East Midlands",
     "inService": false,
     "mbtId": 306818,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z"
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z"
   },
   {
     "id": 2002,
@@ -2525,7 +2525,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connexions West Midlands",
     "inService": true,
     "mbtId": 59593,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2013,
     "depotApi": "Dudley"
   },
@@ -2549,7 +2549,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connexions West Midlands",
     "inService": true,
     "mbtId": 1090941,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2012,
     "depotApi": "Dudley"
   },
@@ -2573,7 +2573,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connexions West Midlands",
     "inService": true,
     "mbtId": 83554,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2012,
     "depotApi": "Willenhall"
   },
@@ -2597,7 +2597,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "fuel": "Diesel",
     "inService": true,
     "mbtId": 9879,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2022,
     "depotApi": "Willenhall"
   },
@@ -2621,7 +2621,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "fuel": "Diesel",
     "inService": true,
     "mbtId": 387370,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2025,
     "depotApi": "Dudley"
   },
@@ -2645,7 +2645,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connexions West Midlands",
     "inService": true,
     "mbtId": 850423,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2025,
     "depotApi": "Hereford"
   },
@@ -2669,7 +2669,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connexions West Midlands",
     "inService": true,
     "mbtId": 387373,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2025,
     "depotApi": "Dudley"
   },
@@ -2693,7 +2693,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connexions West Midlands",
     "inService": true,
     "mbtId": 850425,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2025,
     "depotApi": "Hereford"
   },
@@ -2717,7 +2717,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connexions West Midlands",
     "inService": true,
     "mbtId": 850426,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2025,
     "depotApi": "Hereford"
   },
@@ -2741,7 +2741,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connexions West Midlands",
     "inService": true,
     "mbtId": 171650,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2024,
     "depotApi": "Dudley"
   },
@@ -2765,7 +2765,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connexions West Midlands",
     "inService": true,
     "mbtId": 850418,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2025,
     "depotApi": "Hereford"
   },
@@ -2789,7 +2789,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connexions West Midlands",
     "inService": true,
     "mbtId": 850419,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2025,
     "depotApi": "Hereford"
   },
@@ -2813,7 +2813,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "fuel": "Diesel",
     "inService": true,
     "mbtId": 1371073,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2026,
     "depotApi": "Dudley"
   },
@@ -2837,7 +2837,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connexions West Midlands",
     "inService": true,
     "mbtId": 1371074,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2026,
     "depotApi": "Dudley"
   },
@@ -2861,7 +2861,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Shropshire",
     "inService": true,
     "mbtId": 1371075,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2026,
     "depotApi": "Hadley"
   },
@@ -2885,7 +2885,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Shropshire",
     "inService": true,
     "mbtId": 1371076,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2026,
     "depotApi": "Hadley"
   },
@@ -2909,7 +2909,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Shropshire",
     "inService": true,
     "mbtId": 1371077,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2026,
     "depotApi": "Hadley"
   },
@@ -2933,7 +2933,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Wales",
     "inService": true,
     "mbtId": 1371078,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2026,
     "depotApi": "Talbot Green"
   },
@@ -2957,7 +2957,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Wales",
     "inService": true,
     "mbtId": 1371079,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2026,
     "depotApi": "Talbot Green"
   },
@@ -2981,7 +2981,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Wales",
     "inService": true,
     "mbtId": 1371080,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2026,
     "depotApi": "Talbot Green"
   },
@@ -3005,7 +3005,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Wales",
     "inService": true,
     "mbtId": 1371081,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2026,
     "depotApi": "Talbot Green"
   },
@@ -3029,7 +3029,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connexions West Midlands",
     "inService": true,
     "mbtId": 61543,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2024,
     "depotApi": "Dudley"
   },
@@ -3053,7 +3053,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connexions West Midlands",
     "inService": true,
     "mbtId": 61544,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2024,
     "depotApi": "Dudley"
   },
@@ -3077,7 +3077,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "fuel": "Diesel",
     "inService": true,
     "mbtId": 1136225,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2018,
     "depotApi": "Elmers End"
   },
@@ -3101,7 +3101,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting South London",
     "inService": true,
     "mbtId": 1136226,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2018,
     "depotApi": "Elmers End"
   },
@@ -3125,7 +3125,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Wales",
     "inService": true,
     "mbtId": 1136227,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2018,
     "depotApi": "Wrexham"
   },
@@ -3149,7 +3149,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Wales",
     "inService": true,
     "mbtId": 1136228,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2018,
     "depotApi": "Talbot Green"
   },
@@ -3173,7 +3173,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Wales",
     "inService": true,
     "mbtId": 1136229,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2018,
     "depotApi": "Talbot Green"
   },
@@ -3197,7 +3197,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connexions West Midlands",
     "inService": true,
     "mbtId": 1136230,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2018,
     "depotApi": "Willenhall"
   },
@@ -3221,7 +3221,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connexions West Midlands",
     "inService": true,
     "mbtId": 1136231,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2018,
     "depotApi": "Willenhall"
   },
@@ -3245,7 +3245,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connexions West Midlands",
     "inService": true,
     "mbtId": 1136232,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2018,
     "depotApi": "Willenhall"
   },
@@ -3269,7 +3269,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Shropshire",
     "inService": true,
     "mbtId": 1136233,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2018,
     "depotApi": "Hadley"
   },
@@ -3293,7 +3293,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Shropshire",
     "inService": true,
     "mbtId": 1136234,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2018,
     "depotApi": "Hadley"
   },
@@ -3317,7 +3317,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Shropshire",
     "inService": true,
     "mbtId": 95234,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2024,
     "depotApi": "Hadley"
   },
@@ -3341,7 +3341,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "fuel": "Diesel",
     "inService": true,
     "mbtId": 171629,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2024,
     "depotApi": "Hadley"
   },
@@ -3365,7 +3365,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connexions West Midlands",
     "inService": true,
     "mbtId": 171630,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2024,
     "depotApi": "Dudley"
   },
@@ -3389,7 +3389,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connexions West Midlands",
     "inService": true,
     "mbtId": 171631,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2024,
     "depotApi": "Dudley"
   },
@@ -3413,7 +3413,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connexions West Midlands",
     "inService": true,
     "mbtId": 171633,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2024,
     "depotApi": "Dudley"
   },
@@ -3437,7 +3437,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Shropshire",
     "inService": true,
     "mbtId": 171634,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2024,
     "depotApi": "Baschurch"
   },
@@ -3461,7 +3461,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Shropshire",
     "inService": true,
     "mbtId": 171635,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2024,
     "depotApi": "Baschurch"
   },
@@ -3485,7 +3485,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connexions West Midlands",
     "inService": true,
     "mbtId": 171636,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2024,
     "depotApi": "Dudley"
   },
@@ -3509,7 +3509,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Shropshire",
     "inService": true,
     "mbtId": 171637,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2024,
     "depotApi": "Bridgnorth"
   },
@@ -3533,7 +3533,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connexions West Midlands",
     "inService": true,
     "mbtId": 171638,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2024,
     "depotApi": "Willenhall"
   },
@@ -3557,7 +3557,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connexions West Midlands",
     "inService": true,
     "mbtId": 171639,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2024,
     "depotApi": "Willenhall"
   },
@@ -3581,7 +3581,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Shropshire",
     "inService": true,
     "mbtId": 171640,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2024,
     "depotApi": "Bridgnorth"
   },
@@ -3605,7 +3605,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "fuel": "Diesel",
     "inService": true,
     "mbtId": 846859,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2006,
     "depotApi": ""
   },
@@ -3629,7 +3629,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "fuel": "Diesel",
     "inService": true,
     "mbtId": 1001322,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2002,
     "depotApi": "Elmers End"
   },
@@ -3653,7 +3653,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "fuel": "Diesel",
     "inService": true,
     "mbtId": 1108155,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2014,
     "depotApi": "Cossall"
   },
@@ -3677,7 +3677,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting East Midlands",
     "inService": true,
     "mbtId": 923401,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2025,
     "depotApi": "Cossall"
   },
@@ -3701,7 +3701,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting East Midlands",
     "inService": true,
     "mbtId": 834077,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2015,
     "depotApi": "Cossall"
   },
@@ -3725,7 +3725,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connexions West Midlands",
     "inService": true,
     "mbtId": 996895,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2012,
     "depotApi": "Willenhall"
   },
@@ -3749,7 +3749,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Wales",
     "inService": true,
     "mbtId": 1044590,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2016,
     "depotApi": "Wrexham"
   },
@@ -3773,7 +3773,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting East Midlands",
     "inService": true,
     "mbtId": 1044588,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2016,
     "depotApi": "Cossall"
   },
@@ -3797,7 +3797,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting East Midlands",
     "inService": true,
     "mbtId": 1044583,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2016,
     "depotApi": "Cossall"
   },
@@ -3821,7 +3821,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting East Midlands",
     "inService": true,
     "mbtId": 1044584,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2016,
     "depotApi": "Cossall"
   },
@@ -3845,7 +3845,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connexions West Midlands",
     "inService": true,
     "mbtId": 1044582,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2016,
     "depotApi": "Willenhall"
   },
@@ -3869,7 +3869,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting East Midlands",
     "inService": true,
     "mbtId": 996897,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2012,
     "depotApi": "Cotes Park"
   },
@@ -3893,7 +3893,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting East Midlands",
     "inService": true,
     "mbtId": 996898,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2012,
     "depotApi": "Cotes Park"
   },
@@ -3917,7 +3917,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting East Midlands",
     "inService": true,
     "mbtId": 996899,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2012,
     "depotApi": "Cotes Park"
   },
@@ -3941,7 +3941,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting East Midlands",
     "inService": true,
     "mbtId": 996896,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2012,
     "depotApi": "Cossall"
   },
@@ -3965,7 +3965,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "fuel": "Diesel",
     "inService": true,
     "mbtId": 851928,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2015,
     "depotApi": "Shifnal"
   },
@@ -3989,7 +3989,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connect Yard",
     "inService": true,
     "mbtId": 834063,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2015,
     "depotApi": ""
   },
@@ -4013,7 +4013,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connect Yard",
     "inService": true,
     "mbtId": 834064,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2015,
     "depotApi": ""
   },
@@ -4037,7 +4037,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Wrekin Connect",
     "inService": true,
     "mbtId": 1044585,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2016,
     "depotApi": "Wellington"
   },
@@ -4061,7 +4061,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "fuel": "Diesel",
     "inService": false,
     "mbtId": 608719,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2014,
     "depotApi": "Stoke"
   },
@@ -4087,7 +4087,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting East Midlands",
     "inService": true,
     "mbtId": 639265,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z"
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z"
   },
   {
     "id": 2068,
@@ -4109,7 +4109,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connexions West Midlands",
     "inService": true,
     "mbtId": 900955,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2012,
     "depotApi": "Willenhall"
   },
@@ -4133,7 +4133,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Wales",
     "inService": false,
     "mbtId": 659335,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2003,
     "depotApi": "Talbot Green"
   },
@@ -4159,7 +4159,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting East Midlands",
     "inService": true,
     "mbtId": 900956,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z"
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z"
   },
   {
     "id": 2070,
@@ -4181,7 +4181,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting East Midlands",
     "inService": true,
     "mbtId": 639436,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2012,
     "depotApi": "Cossall"
   },
@@ -4205,7 +4205,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting East Midlands",
     "inService": true,
     "mbtId": 639438,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2012,
     "depotApi": "Cossall"
   },
@@ -4229,7 +4229,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting East Midlands",
     "inService": true,
     "mbtId": 639425,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2012,
     "depotApi": "Cotes Park"
   },
@@ -4253,7 +4253,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting East Midlands",
     "inService": true,
     "mbtId": 114184,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2013,
     "depotApi": "Cotes Park"
   },
@@ -4277,7 +4277,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting East Midlands",
     "inService": true,
     "mbtId": 639427,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2012,
     "depotApi": "Cotes Park"
   },
@@ -4301,7 +4301,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting East Midlands",
     "inService": true,
     "mbtId": 639430,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2012,
     "depotApi": "Cotes Park"
   },
@@ -4325,7 +4325,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting East Midlands",
     "inService": true,
     "mbtId": 639432,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2012,
     "depotApi": "Cotes Park"
   },
@@ -4349,7 +4349,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting East Midlands",
     "inService": true,
     "mbtId": 639433,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2012,
     "depotApi": "Cossall"
   },
@@ -4373,7 +4373,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting East Midlands",
     "inService": true,
     "mbtId": 639435,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2012,
     "depotApi": "Cossall"
   },
@@ -4397,7 +4397,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting East Midlands",
     "inService": true,
     "mbtId": 639431,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2012,
     "depotApi": "Cossall"
   },
@@ -4421,7 +4421,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "fuel": "Diesel",
     "inService": true,
     "mbtId": 24870,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2020,
     "depotApi": "Stoke"
   },
@@ -4445,7 +4445,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Staffordshire",
     "inService": true,
     "mbtId": 26238,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2019,
     "depotApi": "Stoke"
   },
@@ -4469,7 +4469,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Staffordshire",
     "inService": true,
     "mbtId": 26240,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2020,
     "depotApi": "Stoke"
   },
@@ -4493,7 +4493,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Staffordshire",
     "inService": true,
     "mbtId": 313465,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2021,
     "depotApi": "Stoke"
   },
@@ -4517,7 +4517,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Staffordshire",
     "inService": true,
     "mbtId": 89012,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2015,
     "depotApi": "Stoke"
   },
@@ -4541,7 +4541,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Staffordshire",
     "inService": true,
     "mbtId": 89021,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2015,
     "depotApi": "Stoke"
   },
@@ -4565,7 +4565,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Staffordshire",
     "inService": true,
     "mbtId": 89022,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2015,
     "depotApi": "Stoke"
   },
@@ -4589,7 +4589,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Staffordshire",
     "inService": true,
     "mbtId": 89023,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2015,
     "depotApi": "Stoke"
   },
@@ -4613,7 +4613,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Staffordshire",
     "inService": true,
     "mbtId": 57505,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2009,
     "depotApi": "Stoke"
   },
@@ -4637,7 +4637,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "fuel": "Diesel",
     "inService": true,
     "mbtId": 850177,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2012,
     "depotApi": "Hereford"
   },
@@ -4661,7 +4661,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connexions West Midlands",
     "inService": true,
     "mbtId": 850180,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2012,
     "depotApi": "Hereford"
   },
@@ -4685,7 +4685,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connexions West Midlands",
     "inService": true,
     "mbtId": 850184,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2012,
     "depotApi": "Hereford"
   },
@@ -4709,7 +4709,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "fuel": "Diesel",
     "inService": true,
     "mbtId": 1577744,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2014,
     "depotApi": "Cromer"
   },
@@ -4733,7 +4733,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting East Anglia",
     "inService": true,
     "mbtId": 1577745,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2014,
     "depotApi": "Cromer"
   },
@@ -4757,7 +4757,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting East Anglia",
     "inService": true,
     "mbtId": 1577740,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2014,
     "depotApi": "Cromer"
   },
@@ -4781,7 +4781,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting East Anglia",
     "inService": true,
     "mbtId": 1577741,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2014,
     "depotApi": "Cromer"
   },
@@ -4805,7 +4805,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting East Anglia",
     "inService": true,
     "mbtId": 1577742,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2014,
     "depotApi": "Cromer"
   },
@@ -4831,7 +4831,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting East Midlands",
     "inService": false,
     "mbtId": 524738,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z"
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z"
   },
   {
     "id": 2097,
@@ -4853,7 +4853,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting East Anglia",
     "inService": true,
     "mbtId": 1577743,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2014,
     "depotApi": "Cromer"
   },
@@ -4877,7 +4877,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "fuel": "Diesel",
     "inService": true,
     "mbtId": 907560,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2018,
     "depotApi": "Elmers End"
   },
@@ -4901,7 +4901,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Staffordshire",
     "inService": true,
     "mbtId": 18970,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2011,
     "depotApi": "Stoke"
   },
@@ -4927,7 +4927,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting East Midlands",
     "inService": false,
     "mbtId": 458834,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z"
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z"
   },
   {
     "id": 2100,
@@ -4949,7 +4949,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Staffordshire",
     "inService": true,
     "mbtId": 21610,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2008,
     "depotApi": "Stoke"
   },
@@ -4973,7 +4973,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Staffordshire",
     "inService": true,
     "mbtId": 24874,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2017,
     "depotApi": "Stoke"
   },
@@ -4999,7 +4999,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Wales",
     "inService": false,
     "mbtId": 886655,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z"
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z"
   },
   {
     "id": 2102,
@@ -5021,7 +5021,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Staffordshire",
     "inService": true,
     "mbtId": 48831,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2018,
     "depotApi": "Stoke"
   },
@@ -5047,7 +5047,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Wales",
     "inService": false,
     "mbtId": 886656,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z"
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z"
   },
   {
     "id": 2103,
@@ -5069,7 +5069,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Staffordshire",
     "inService": true,
     "mbtId": 48833,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2018,
     "depotApi": "Stoke"
   },
@@ -5095,7 +5095,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Wales",
     "inService": false,
     "mbtId": 886657,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z"
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z"
   },
   {
     "id": 2104,
@@ -5117,7 +5117,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting East Anglia",
     "inService": true,
     "mbtId": 75584,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2017,
     "depotApi": "Cromer"
   },
@@ -5143,7 +5143,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Wales",
     "inService": false,
     "mbtId": 886658,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z"
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z"
   },
   {
     "id": 2105,
@@ -5165,7 +5165,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Wrekin Connect",
     "inService": true,
     "mbtId": 904303,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2014,
     "depotApi": "Wellington"
   },
@@ -5189,7 +5189,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Wrekin Connect",
     "inService": true,
     "mbtId": 931555,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2017,
     "depotApi": "Wellington"
   },
@@ -5213,7 +5213,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting South London",
     "inService": true,
     "mbtId": 370044,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2012,
     "depotApi": "Elmers End"
   },
@@ -5237,7 +5237,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting South London",
     "inService": true,
     "mbtId": 458135,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2011,
     "depotApi": "Elmers End"
   },
@@ -5261,7 +5261,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting East Anglia",
     "inService": true,
     "mbtId": 313401,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2018,
     "depotApi": "Cromer"
   },
@@ -5285,7 +5285,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "fuel": "Diesel",
     "inService": true,
     "mbtId": 726460,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2010,
     "depotApi": "Cromer"
   },
@@ -5309,7 +5309,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting East Anglia",
     "inService": true,
     "mbtId": 582198,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2011,
     "depotApi": "Cromer"
   },
@@ -5333,7 +5333,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting East Anglia",
     "inService": true,
     "mbtId": 582199,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2011,
     "depotApi": "Cromer"
   },
@@ -5357,7 +5357,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "fuel": "Diesel",
     "inService": true,
     "mbtId": 913819,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2014,
     "depotApi": "Cromer"
   },
@@ -5381,7 +5381,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting East Anglia",
     "inService": true,
     "mbtId": 913831,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2014,
     "depotApi": "Cromer"
   },
@@ -5405,7 +5405,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "fuel": "Diesel",
     "inService": true,
     "mbtId": 965289,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2023,
     "depotApi": "Cossall"
   },
@@ -5429,7 +5429,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting East Midlands",
     "inService": true,
     "mbtId": 965290,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2023,
     "depotApi": "Cossall"
   },
@@ -5453,7 +5453,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting East Midlands",
     "inService": true,
     "mbtId": 965291,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2023,
     "depotApi": "Cossall"
   },
@@ -5477,7 +5477,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting East Midlands",
     "inService": true,
     "mbtId": 965292,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2023,
     "depotApi": "Cossall"
   },
@@ -5501,7 +5501,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connect Yard",
     "inService": true,
     "mbtId": 965293,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2023,
     "depotApi": ""
   },
@@ -5525,7 +5525,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connect Yard",
     "inService": true,
     "mbtId": 965295,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2023,
     "depotApi": ""
   },
@@ -5549,7 +5549,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting South London",
     "inService": true,
     "mbtId": 131382,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2023,
     "depotApi": "Elmers End"
   },
@@ -5573,7 +5573,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "fuel": "Diesel",
     "inService": true,
     "mbtId": 910515,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2012,
     "depotApi": "Cromer"
   },
@@ -5599,7 +5599,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting East Midlands",
     "inService": false,
     "mbtId": 524747,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z"
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z"
   },
   {
     "id": 2123,
@@ -5621,7 +5621,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "fuel": "Diesel",
     "inService": true,
     "mbtId": 259521,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2008,
     "depotApi": "Hadley"
   },
@@ -5645,7 +5645,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Shropshire",
     "inService": true,
     "mbtId": 259514,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2008,
     "depotApi": "Hadley"
   },
@@ -5669,7 +5669,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Staffordshire",
     "inService": true,
     "mbtId": 259512,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2008,
     "depotApi": "Stoke"
   },
@@ -5693,7 +5693,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "fuel": "Diesel",
     "inService": true,
     "mbtId": 79237,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2014,
     "depotApi": "Stoke"
   },
@@ -5717,7 +5717,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Staffordshire",
     "inService": true,
     "mbtId": 713572,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2012,
     "depotApi": "Stoke"
   },
@@ -5741,7 +5741,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Staffordshire",
     "inService": true,
     "mbtId": 213479,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2013,
     "depotApi": "Stoke"
   },
@@ -5765,7 +5765,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Staffordshire",
     "inService": true,
     "mbtId": 214660,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2013,
     "depotApi": "Stoke"
   },
@@ -5789,7 +5789,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting East Anglia",
     "inService": false,
     "mbtId": 1176522,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2012,
     "depotApi": "Cromer"
   },
@@ -5815,7 +5815,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Staffordshire",
     "inService": true,
     "mbtId": 954769,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z"
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z"
   },
   {
     "id": 2131,
@@ -5837,7 +5837,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Staffordshire",
     "inService": true,
     "mbtId": 954774,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2012,
     "depotApi": "Stoke"
   },
@@ -5861,7 +5861,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting East Anglia",
     "inService": false,
     "mbtId": 524753,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2006,
     "depotApi": "Cromer"
   },
@@ -5887,7 +5887,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Staffordshire",
     "inService": true,
     "mbtId": 954770,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z"
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z"
   },
   {
     "id": 2133,
@@ -5909,7 +5909,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting East Anglia",
     "inService": false,
     "mbtId": 691305,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2004,
     "depotApi": "Cromer"
   },
@@ -5935,7 +5935,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Staffordshire",
     "inService": true,
     "mbtId": 954780,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z"
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z"
   },
   {
     "id": 2134,
@@ -5957,7 +5957,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Staffordshire",
     "inService": true,
     "mbtId": 954779,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2012,
     "depotApi": "Stoke"
   },
@@ -5981,7 +5981,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Staffordshire",
     "inService": true,
     "mbtId": 954778,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2012,
     "depotApi": "Stoke"
   },
@@ -6005,7 +6005,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting East Anglia",
     "inService": true,
     "mbtId": 954777,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2012,
     "depotApi": "Cromer"
   },
@@ -6029,7 +6029,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Wales",
     "inService": true,
     "mbtId": 954776,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2012,
     "depotApi": "Talbot Green"
   },
@@ -6053,7 +6053,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting East Midlands",
     "inService": true,
     "mbtId": 954773,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2012,
     "depotApi": "Cotes Park"
   },
@@ -6077,7 +6077,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting East Midlands",
     "inService": true,
     "mbtId": 954771,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2012,
     "depotApi": "Cotes Park"
   },
@@ -6101,7 +6101,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting East Midlands",
     "inService": true,
     "mbtId": 954772,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2012,
     "depotApi": "Cotes Park"
   },
@@ -6125,7 +6125,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting East Anglia",
     "inService": true,
     "mbtId": 1001924,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2014,
     "depotApi": "Cromer"
   },
@@ -6149,7 +6149,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "fuel": "Diesel",
     "inService": true,
     "mbtId": 918654,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2006,
     "depotApi": "Elmers End"
   },
@@ -6173,7 +6173,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting South London",
     "inService": true,
     "mbtId": 918655,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2006,
     "depotApi": "Elmers End"
   },
@@ -6197,7 +6197,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting South London",
     "inService": true,
     "mbtId": 918657,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2006,
     "depotApi": "Elmers End"
   },
@@ -6221,7 +6221,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting South London",
     "inService": true,
     "mbtId": 918653,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2006,
     "depotApi": "Elmers End"
   },
@@ -6245,7 +6245,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting East Anglia",
     "inService": false,
     "mbtId": 908952,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2015,
     "depotApi": "Cromer"
   },
@@ -6271,7 +6271,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting South London",
     "inService": true,
     "mbtId": 918656,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z"
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z"
   },
   {
     "id": 2147,
@@ -6293,7 +6293,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "fuel": "Diesel",
     "inService": true,
     "mbtId": 1534906,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2026,
     "depotApi": "Fakenham"
   },
@@ -6317,7 +6317,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting East Anglia",
     "inService": true,
     "mbtId": 1081056,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2025,
     "depotApi": "Fakenham"
   },
@@ -6341,7 +6341,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting East Anglia",
     "inService": true,
     "mbtId": 1534907,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2026,
     "depotApi": "Fakenham"
   },
@@ -6365,7 +6365,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting East Anglia",
     "inService": false,
     "mbtId": 77046,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2007,
     "depotApi": "Cromer"
   },
@@ -6391,7 +6391,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Shropshire",
     "inService": true,
     "mbtId": 1155103,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z"
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z"
   },
   {
     "id": 2151,
@@ -6413,7 +6413,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Shropshire",
     "inService": true,
     "mbtId": 1155139,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2025,
     "depotApi": "Hadley"
   },
@@ -6437,7 +6437,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting East Midlands",
     "inService": true,
     "mbtId": 1081057,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2025,
     "depotApi": "Cotes Park"
   },
@@ -6463,7 +6463,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Shropshire",
     "inService": false,
     "mbtId": 7981,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z"
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z"
   },
   {
     "id": 2153,
@@ -6485,7 +6485,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting East Midlands",
     "inService": true,
     "mbtId": 1081058,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2025,
     "depotApi": "Cotes Park"
   },
@@ -6511,7 +6511,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Shropshire",
     "inService": false,
     "mbtId": 59600,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z"
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z"
   },
   {
     "id": 2154,
@@ -6533,7 +6533,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting East Midlands",
     "inService": true,
     "mbtId": 1081059,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2025,
     "depotApi": "Cossall"
   },
@@ -6559,7 +6559,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Shropshire",
     "inService": false,
     "mbtId": 59601,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z"
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z"
   },
   {
     "id": 2155,
@@ -6581,7 +6581,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting East Midlands",
     "inService": true,
     "mbtId": 1081060,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2025,
     "depotApi": "Cossall"
   },
@@ -6607,7 +6607,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Shropshire",
     "inService": false,
     "mbtId": 59602,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z"
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z"
   },
   {
     "id": 2156,
@@ -6629,7 +6629,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Wales",
     "inService": true,
     "mbtId": 1081061,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2025,
     "depotApi": "Talbot Green"
   },
@@ -6655,7 +6655,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Shropshire",
     "inService": false,
     "mbtId": 680083,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z"
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z"
   },
   {
     "id": 2157,
@@ -6677,7 +6677,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Wales",
     "inService": true,
     "mbtId": 1081062,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2025,
     "depotApi": "Talbot Green"
   },
@@ -6701,7 +6701,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Wales",
     "inService": true,
     "mbtId": 1081063,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2025,
     "depotApi": "Talbot Green"
   },
@@ -6725,7 +6725,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Wales",
     "inService": true,
     "mbtId": 1081064,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2025,
     "depotApi": "Talbot Green"
   },
@@ -6749,7 +6749,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Wales",
     "inService": true,
     "mbtId": 1081065,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2025,
     "depotApi": "Talbot Green"
   },
@@ -6773,7 +6773,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting East Anglia",
     "inService": true,
     "mbtId": 1534908,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2026,
     "depotApi": "Fakenham"
   },
@@ -6797,7 +6797,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting East Anglia",
     "inService": true,
     "mbtId": 1534909,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2026,
     "depotApi": "Fakenham"
   },
@@ -6821,7 +6821,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting East Anglia",
     "inService": true,
     "mbtId": 1534910,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2026,
     "depotApi": "Fakenham"
   },
@@ -6845,7 +6845,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting East Anglia",
     "inService": true,
     "mbtId": 1534911,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2026,
     "depotApi": "Fakenham"
   },
@@ -6869,7 +6869,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting East Anglia",
     "inService": true,
     "mbtId": 1534912,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2026,
     "depotApi": "Fakenham"
   },
@@ -6893,7 +6893,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting East Anglia",
     "inService": true,
     "mbtId": 1534913,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2026,
     "depotApi": "Fakenham"
   },
@@ -6917,7 +6917,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting East Anglia",
     "inService": true,
     "mbtId": 1534914,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2026,
     "depotApi": "Fakenham"
   },
@@ -6941,7 +6941,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "fuel": "Diesel",
     "inService": true,
     "mbtId": 260465,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2016,
     "depotApi": "Wrexham"
   },
@@ -6965,7 +6965,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting East Midlands",
     "inService": true,
     "mbtId": 1156786,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2016,
     "depotApi": "Cossall"
   },
@@ -6989,7 +6989,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Wales",
     "inService": true,
     "mbtId": 260458,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2016,
     "depotApi": "Wrexham"
   },
@@ -7013,7 +7013,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Wales",
     "inService": true,
     "mbtId": 260459,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2016,
     "depotApi": "Wrexham"
   },
@@ -7039,7 +7039,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting East Midlands",
     "inService": false,
     "mbtId": 608678,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z"
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z"
   },
   {
     "id": 2172,
@@ -7061,7 +7061,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Wales",
     "inService": true,
     "mbtId": 260460,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2016,
     "depotApi": "Wrexham"
   },
@@ -7087,7 +7087,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting East Midlands",
     "inService": false,
     "mbtId": 608677,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z"
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z"
   },
   {
     "id": 2173,
@@ -7109,7 +7109,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting East Anglia",
     "inService": false,
     "mbtId": 676248,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2009,
     "depotApi": ""
   },
@@ -7135,7 +7135,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Wales",
     "inService": true,
     "mbtId": 260461,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z"
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z"
   },
   {
     "id": 2174,
@@ -7157,7 +7157,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting East Anglia",
     "inService": false,
     "mbtId": 1176523,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2012,
     "depotApi": "Cromer"
   },
@@ -7183,7 +7183,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Wales",
     "inService": true,
     "mbtId": 260462,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z"
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z"
   },
   {
     "id": 2175,
@@ -7205,7 +7205,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting East Anglia",
     "inService": false,
     "mbtId": 1176524,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2012,
     "depotApi": "Cromer"
   },
@@ -7231,7 +7231,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Wales",
     "inService": true,
     "mbtId": 260463,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z"
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z"
   },
   {
     "id": 2176,
@@ -7253,7 +7253,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Wales",
     "inService": true,
     "mbtId": 260464,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2016,
     "depotApi": "Wrexham"
   },
@@ -7277,7 +7277,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Wales",
     "inService": true,
     "mbtId": 260466,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2016,
     "depotApi": "Talbot Green"
   },
@@ -7301,7 +7301,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting East Midlands",
     "inService": true,
     "mbtId": 260467,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2016,
     "depotApi": "Cotes Park"
   },
@@ -7325,7 +7325,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting East Midlands",
     "inService": true,
     "mbtId": 260468,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2016,
     "depotApi": "Cotes Park"
   },
@@ -7349,7 +7349,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting East Midlands",
     "inService": true,
     "mbtId": 260469,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2016,
     "depotApi": "Cotes Park"
   },
@@ -7373,7 +7373,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting East Midlands",
     "inService": true,
     "mbtId": 260470,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2016,
     "depotApi": "Cotes Park"
   },
@@ -7397,7 +7397,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting East Midlands",
     "inService": true,
     "mbtId": 260471,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2016,
     "depotApi": "Cotes Park"
   },
@@ -7421,7 +7421,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Wales",
     "inService": true,
     "mbtId": 260472,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2016,
     "depotApi": "Talbot Green"
   },
@@ -7445,7 +7445,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Wales",
     "inService": true,
     "mbtId": 260473,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2016,
     "depotApi": "Talbot Green"
   },
@@ -7469,7 +7469,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Wales",
     "inService": true,
     "mbtId": 260474,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2016,
     "depotApi": "Wrexham"
   },
@@ -7493,7 +7493,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Wales",
     "inService": true,
     "mbtId": 260475,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2016,
     "depotApi": "Wrexham"
   },
@@ -7517,7 +7517,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Wales",
     "inService": true,
     "mbtId": 260476,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2016,
     "depotApi": "Talbot Green"
   },
@@ -7541,7 +7541,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Wales",
     "inService": true,
     "mbtId": 260477,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2016,
     "depotApi": "Talbot Green"
   },
@@ -7565,7 +7565,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting East Anglia",
     "inService": true,
     "mbtId": 260478,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2016,
     "depotApi": "Cromer"
   },
@@ -7589,7 +7589,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting East Anglia",
     "inService": true,
     "mbtId": 260479,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2016,
     "depotApi": "Cromer"
   },
@@ -7613,7 +7613,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting East Anglia",
     "inService": true,
     "mbtId": 260480,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2016,
     "depotApi": "Cromer"
   },
@@ -7637,7 +7637,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting East Anglia",
     "inService": true,
     "mbtId": 260481,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2016,
     "depotApi": "Cromer"
   },
@@ -7661,7 +7661,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting East Midlands",
     "inService": true,
     "mbtId": 23299,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2016,
     "depotApi": "Cossall"
   },
@@ -7685,7 +7685,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connexions West Midlands",
     "inService": true,
     "mbtId": 149264,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2016,
     "depotApi": "Willenhall"
   },
@@ -7709,7 +7709,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connexions West Midlands",
     "inService": true,
     "mbtId": 149260,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2016,
     "depotApi": "Willenhall"
   },
@@ -7733,7 +7733,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "fuel": "Diesel",
     "inService": true,
     "mbtId": 217,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2013,
     "depotApi": "Cromer"
   },
@@ -7757,7 +7757,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Shropshire",
     "inService": true,
     "mbtId": 94196,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2024,
     "depotApi": "Hadley"
   },
@@ -7781,7 +7781,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Shropshire",
     "inService": true,
     "mbtId": 94197,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2024,
     "depotApi": "Hadley"
   },
@@ -7805,7 +7805,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connect Yard",
     "inService": true,
     "mbtId": 94210,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2024,
     "depotApi": ""
   },
@@ -7829,7 +7829,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connect Yard",
     "inService": true,
     "mbtId": 94211,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2024,
     "depotApi": ""
   },
@@ -7853,7 +7853,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "fuel": "Diesel",
     "inService": true,
     "mbtId": 37364,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2024,
     "depotApi": "Hadley"
   },
@@ -7877,7 +7877,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Shropshire",
     "inService": true,
     "mbtId": 37365,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2024,
     "depotApi": "Hadley"
   },
@@ -7901,7 +7901,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Shropshire",
     "inService": true,
     "mbtId": 37366,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2024,
     "depotApi": "Bridgnorth"
   },
@@ -7925,7 +7925,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Shropshire",
     "inService": true,
     "mbtId": 37367,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2024,
     "depotApi": "Bridgnorth"
   },
@@ -7949,7 +7949,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Shropshire",
     "inService": true,
     "mbtId": 282,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2024,
     "depotApi": "Bridgnorth"
   },
@@ -7973,7 +7973,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting South London",
     "inService": true,
     "mbtId": 62663,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2015,
     "depotApi": "Elmers End"
   },
@@ -7997,7 +7997,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting South London",
     "inService": true,
     "mbtId": 41496,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2015,
     "depotApi": "Elmers End"
   },
@@ -8021,7 +8021,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "fuel": "Diesel",
     "inService": true,
     "mbtId": 22927,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2017,
     "depotApi": "Cossall"
   },
@@ -8045,7 +8045,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting East Midlands",
     "inService": true,
     "mbtId": 22928,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2017,
     "depotApi": "Cossall"
   },
@@ -8069,7 +8069,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "fuel": "Diesel",
     "inService": true,
     "mbtId": 1698610,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2026,
     "depotApi": "Derby"
   },
@@ -8093,7 +8093,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting East Midlands",
     "inService": true,
     "mbtId": 1698611,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2026,
     "depotApi": "Derby"
   },
@@ -8117,7 +8117,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting East Midlands",
     "inService": true,
     "mbtId": 1698612,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2026,
     "depotApi": "Derby"
   },
@@ -8141,7 +8141,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting East Midlands",
     "inService": true,
     "mbtId": 1698613,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2026,
     "depotApi": "Derby"
   },
@@ -8165,7 +8165,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting East Midlands",
     "inService": true,
     "mbtId": 1698614,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2026,
     "depotApi": "Derby"
   },
@@ -8189,7 +8189,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "fuel": "Diesel",
     "inService": true,
     "mbtId": 1790397,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2026,
     "depotApi": "Baschurch"
   },
@@ -8213,7 +8213,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Shropshire",
     "inService": true,
     "mbtId": 1790398,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2026,
     "depotApi": "Baschurch"
   },
@@ -8237,7 +8237,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Shropshire",
     "inService": true,
     "mbtId": 1790399,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2026,
     "depotApi": "Baschurch"
   },
@@ -8261,7 +8261,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Shropshire",
     "inService": true,
     "mbtId": 1790400,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2026,
     "depotApi": "Baschurch"
   },
@@ -8285,7 +8285,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Shropshire",
     "inService": true,
     "mbtId": 1790401,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2026,
     "depotApi": "Baschurch"
   },
@@ -8309,7 +8309,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "fuel": "Diesel",
     "inService": true,
     "mbtId": 656552,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2018,
     "depotApi": "Derby"
   },
@@ -8333,7 +8333,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting East Midlands",
     "inService": true,
     "mbtId": 656921,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2018,
     "depotApi": "Derby"
   },
@@ -8357,7 +8357,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting East Midlands",
     "inService": true,
     "mbtId": 656922,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2018,
     "depotApi": "Derby"
   },
@@ -8381,7 +8381,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting East Midlands",
     "inService": true,
     "mbtId": 912493,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2014,
     "depotApi": "Cossall"
   },
@@ -8405,7 +8405,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connect Yard",
     "inService": true,
     "mbtId": 1180354,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2019,
     "depotApi": ""
   },
@@ -8429,7 +8429,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connect Yard",
     "inService": true,
     "mbtId": 912494,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2014,
     "depotApi": ""
   },
@@ -8453,7 +8453,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connect Yard",
     "inService": true,
     "mbtId": 912496,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2014,
     "depotApi": ""
   },
@@ -8477,7 +8477,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connect Yard",
     "inService": true,
     "mbtId": 912495,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2014,
     "depotApi": ""
   },
@@ -8501,7 +8501,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connect Yard",
     "inService": false,
     "mbtId": 656549,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2018,
     "depotApi": ""
   },
@@ -8525,7 +8525,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connect Yard",
     "inService": true,
     "mbtId": 1718731,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2019,
     "depotApi": ""
   },
@@ -8551,7 +8551,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Shropshire",
     "inService": true,
     "mbtId": 1806530,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z"
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z"
   },
   {
     "id": 2231,
@@ -8575,7 +8575,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Shropshire",
     "inService": true,
     "mbtId": 1806532,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z"
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z"
   },
   {
     "id": 2232,
@@ -8599,7 +8599,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Shropshire",
     "inService": true,
     "mbtId": 1806531,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z"
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z"
   },
   {
     "id": 2233,
@@ -8623,7 +8623,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Shropshire",
     "inService": true,
     "mbtId": 1806529,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z"
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z"
   },
   {
     "id": 2700,
@@ -8645,7 +8645,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "fuel": "Battery Electric",
     "inService": true,
     "mbtId": 1266778,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2026,
     "depotApi": "Phoenix Park"
   },
@@ -8669,7 +8669,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "fuel": "Battery Electric",
     "inService": true,
     "mbtId": 1266779,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2026,
     "depotApi": "Phoenix Park"
   },
@@ -8693,7 +8693,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting East Midlands",
     "inService": true,
     "mbtId": 1266780,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2026,
     "depotApi": "Phoenix Park"
   },
@@ -8717,7 +8717,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting East Midlands",
     "inService": true,
     "mbtId": 1266781,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2026,
     "depotApi": "Phoenix Park"
   },
@@ -8741,7 +8741,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting East Midlands",
     "inService": true,
     "mbtId": 1266782,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2026,
     "depotApi": "Phoenix Park"
   },
@@ -8765,7 +8765,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "fuel": "Battery Electric",
     "inService": true,
     "mbtId": 57622,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2018,
     "depotApi": "Dudley"
   },
@@ -8789,7 +8789,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connexions West Midlands",
     "inService": true,
     "mbtId": 57629,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2018,
     "depotApi": "Dudley"
   },
@@ -8813,7 +8813,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connexions West Midlands",
     "inService": true,
     "mbtId": 57630,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2018,
     "depotApi": "Dudley"
   },
@@ -8837,7 +8837,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connexions West Midlands",
     "inService": true,
     "mbtId": 57633,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2018,
     "depotApi": "Dudley"
   },
@@ -8870,7 +8870,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "fuel": "Electric",
     "inService": true,
     "mbtId": 1327550,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2025,
     "depotApi": "Talbot Green"
   },
@@ -8894,7 +8894,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Wales",
     "inService": true,
     "mbtId": 1327552,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2025,
     "depotApi": "Talbot Green"
   },
@@ -8918,7 +8918,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Wales",
     "inService": true,
     "mbtId": 1327553,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2025,
     "depotApi": "Talbot Green"
   },
@@ -8942,7 +8942,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Wales",
     "inService": true,
     "mbtId": 1327521,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2025,
     "depotApi": "Talbot Green"
   },
@@ -8966,7 +8966,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Wales",
     "inService": true,
     "mbtId": 1327522,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2025,
     "depotApi": "Talbot Green"
   },
@@ -8990,7 +8990,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Wales",
     "inService": true,
     "mbtId": 1327523,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2025,
     "depotApi": "Talbot Green"
   },
@@ -9014,7 +9014,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Wales",
     "inService": true,
     "mbtId": 1327524,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2025,
     "depotApi": "Talbot Green"
   },
@@ -9038,7 +9038,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Wales",
     "inService": true,
     "mbtId": 1327525,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2025,
     "depotApi": "Talbot Green"
   },
@@ -9062,7 +9062,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Wales",
     "inService": true,
     "mbtId": 1327543,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2025,
     "depotApi": "Talbot Green"
   },
@@ -9086,7 +9086,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Wales",
     "inService": true,
     "mbtId": 1327544,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2025,
     "depotApi": "Talbot Green"
   },
@@ -9110,7 +9110,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connect Yard",
     "inService": true,
     "mbtId": 1327545,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2025,
     "depotApi": ""
   },
@@ -9134,7 +9134,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connect Yard",
     "inService": true,
     "mbtId": 1327546,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2025,
     "depotApi": ""
   },
@@ -9158,7 +9158,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "fuel": "Electric",
     "inService": true,
     "mbtId": 1559703,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2024,
     "depotApi": "Hadley"
   },
@@ -9182,7 +9182,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "fuel": "Electric",
     "inService": true,
     "mbtId": 1559704,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2024,
     "depotApi": "Hadley"
   },
@@ -9206,7 +9206,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "fuel": "Electric",
     "inService": true,
     "mbtId": 1559706,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2024,
     "depotApi": "Hadley"
   },
@@ -9230,7 +9230,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "fuel": "Diesel",
     "inService": true,
     "mbtId": 1141421,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2013,
     "depotApi": "Elmers End"
   },
@@ -9254,7 +9254,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting South London",
     "inService": true,
     "mbtId": 1141422,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2013,
     "depotApi": "Elmers End"
   },
@@ -9278,7 +9278,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Shropshire",
     "inService": true,
     "mbtId": 1153442,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2015,
     "depotApi": "Hadley"
   },
@@ -9302,7 +9302,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Shropshire",
     "inService": true,
     "mbtId": 1153439,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2015,
     "depotApi": "Hadley"
   },
@@ -9326,7 +9326,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connect Yard",
     "inService": true,
     "mbtId": 1153440,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2015,
     "depotApi": ""
   },
@@ -9350,7 +9350,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "fuel": "Diesel",
     "inService": true,
     "mbtId": 6550,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2015,
     "depotApi": "Dudley"
   },
@@ -9374,7 +9374,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connexions West Midlands",
     "inService": true,
     "mbtId": 35201,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2013,
     "depotApi": "Dudley"
   },
@@ -9398,7 +9398,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connect Yard",
     "inService": true,
     "mbtId": 6552,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2012,
     "depotApi": ""
   },
@@ -9422,7 +9422,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connect Yard",
     "inService": true,
     "mbtId": 59329,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2012,
     "depotApi": ""
   },
@@ -9446,7 +9446,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connect Yard",
     "inService": true,
     "mbtId": 59332,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2013,
     "depotApi": ""
   },
@@ -9470,7 +9470,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connect Yard",
     "inService": true,
     "mbtId": 59339,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2012,
     "depotApi": ""
   },
@@ -9494,7 +9494,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting East Midlands",
     "inService": true,
     "mbtId": 75596,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2014,
     "depotApi": "Cossall"
   },
@@ -9518,7 +9518,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connexions West Midlands",
     "inService": true,
     "mbtId": 871463,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2015,
     "depotApi": "Dudley"
   },
@@ -9542,7 +9542,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connexions West Midlands",
     "inService": true,
     "mbtId": 871464,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2015,
     "depotApi": "Dudley"
   },
@@ -9566,7 +9566,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connexions West Midlands",
     "inService": true,
     "mbtId": 871465,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2015,
     "depotApi": "Dudley"
   },
@@ -9590,7 +9590,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connexions West Midlands",
     "inService": true,
     "mbtId": 871466,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2015,
     "depotApi": "Dudley"
   },
@@ -9614,7 +9614,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "fuel": "Diesel",
     "inService": true,
     "mbtId": 313172,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2019,
     "depotApi": "Cossall"
   },
@@ -9638,7 +9638,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting East Midlands",
     "inService": true,
     "mbtId": 313269,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2021,
     "depotApi": "Cossall"
   },
@@ -9662,7 +9662,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting East Midlands",
     "inService": true,
     "mbtId": 313270,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2021,
     "depotApi": "Cotes Park"
   },
@@ -9686,7 +9686,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Wales",
     "inService": true,
     "mbtId": 313169,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2023,
     "depotApi": "Talbot Green"
   },
@@ -9710,7 +9710,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting East Midlands",
     "inService": true,
     "mbtId": 313317,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2022,
     "depotApi": "Cotes Park"
   },
@@ -9734,7 +9734,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "fuel": "Diesel",
     "inService": true,
     "mbtId": 850504,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2025,
     "depotApi": "Talbot Green"
   },
@@ -9758,7 +9758,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Wales",
     "inService": true,
     "mbtId": 850505,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2025,
     "depotApi": "Talbot Green"
   },
@@ -9782,7 +9782,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Wales",
     "inService": true,
     "mbtId": 850506,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2025,
     "depotApi": "Talbot Green"
   },
@@ -9806,7 +9806,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connect Yard",
     "inService": true,
     "mbtId": 850507,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2025,
     "depotApi": ""
   },
@@ -9830,7 +9830,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Wales",
     "inService": true,
     "mbtId": 1137252,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2018,
     "depotApi": "Talbot Green"
   },
@@ -9854,7 +9854,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting East Midlands",
     "inService": true,
     "mbtId": 360325,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2024,
     "depotApi": "Cotes Park"
   },
@@ -9878,7 +9878,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Wales",
     "inService": true,
     "mbtId": 360358,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2024,
     "depotApi": "Wrexham"
   },
@@ -9902,7 +9902,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting South London",
     "inService": true,
     "mbtId": 1137249,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2018,
     "depotApi": "Elmers End"
   },
@@ -9926,7 +9926,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting East Midlands",
     "inService": true,
     "mbtId": 1137250,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2018,
     "depotApi": "Cotes Park"
   },
@@ -9950,7 +9950,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting East Midlands",
     "inService": true,
     "mbtId": 1137251,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2018,
     "depotApi": "Cotes Park"
   },
@@ -9974,7 +9974,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "fuel": "Diesel",
     "inService": true,
     "mbtId": 969821,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2025,
     "depotApi": "Wrexham"
   },
@@ -9998,7 +9998,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Wales",
     "inService": true,
     "mbtId": 969819,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2025,
     "depotApi": "Wrexham"
   },
@@ -10022,7 +10022,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Wales",
     "inService": true,
     "mbtId": 969820,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2025,
     "depotApi": "Wrexham"
   },
@@ -10046,7 +10046,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Wales",
     "inService": true,
     "mbtId": 975537,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2025,
     "depotApi": "Wrexham"
   },
@@ -10070,7 +10070,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Wales",
     "inService": true,
     "mbtId": 975538,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2025,
     "depotApi": "Wrexham"
   },
@@ -10094,7 +10094,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Wales",
     "inService": true,
     "mbtId": 981309,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2025,
     "depotApi": "Wrexham"
   },
@@ -10118,7 +10118,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "fuel": "Diesel",
     "inService": true,
     "mbtId": 659440,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2016,
     "depotApi": ""
   },
@@ -10142,7 +10142,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "fuel": "Diesel",
     "inService": true,
     "mbtId": 909150,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2012,
     "depotApi": "Cossall"
   },
@@ -10166,7 +10166,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting East Midlands",
     "inService": true,
     "mbtId": 909161,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2012,
     "depotApi": "Cossall"
   },
@@ -10190,7 +10190,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "fuel": "Diesel",
     "inService": true,
     "mbtId": 864480,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2020,
     "depotApi": "Cossall"
   },
@@ -10214,7 +10214,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connect Yard",
     "inService": true,
     "mbtId": 651115,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2020,
     "depotApi": "Cotes Park"
   },
@@ -10238,7 +10238,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "fuel": "Diesel",
     "inService": true,
     "mbtId": 1317888,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2015,
     "depotApi": ""
   },
@@ -10262,7 +10262,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connect Yard",
     "inService": true,
     "mbtId": 1317893,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2015,
     "depotApi": ""
   },
@@ -10286,7 +10286,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connect Yard",
     "inService": true,
     "mbtId": 1317894,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2015,
     "depotApi": ""
   },
@@ -10310,7 +10310,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connect Yard",
     "inService": true,
     "mbtId": 1317896,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2015,
     "depotApi": ""
   },
@@ -10334,7 +10334,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "fuel": "Diesel",
     "inService": true,
     "mbtId": 1592274,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2015,
     "depotApi": "Cromer"
   },
@@ -10358,7 +10358,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting East Anglia",
     "inService": true,
     "mbtId": 1592273,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2015,
     "depotApi": "Cromer"
   },
@@ -10382,7 +10382,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting East Anglia",
     "inService": true,
     "mbtId": 1592275,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2015,
     "depotApi": "Cromer"
   },
@@ -10406,7 +10406,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting East Anglia",
     "inService": true,
     "mbtId": 1592278,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2015,
     "depotApi": "Cromer"
   },
@@ -10430,7 +10430,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting East Anglia",
     "inService": true,
     "mbtId": 1592277,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2015,
     "depotApi": "Cromer"
   },
@@ -10454,7 +10454,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting East Anglia",
     "inService": true,
     "mbtId": 1592276,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2015,
     "depotApi": "Cromer"
   },
@@ -10478,7 +10478,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting East Anglia",
     "inService": true,
     "mbtId": 1592272,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2015,
     "depotApi": "Cromer"
   },
@@ -10502,7 +10502,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "fuel": "Diesel",
     "inService": true,
     "mbtId": 1595684,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2003,
     "depotApi": ""
   },
@@ -10526,7 +10526,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connect Yard",
     "inService": true,
     "mbtId": 1595685,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2003,
     "depotApi": ""
   },
@@ -10550,7 +10550,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connect Yard",
     "inService": true,
     "mbtId": 1595686,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2003,
     "depotApi": ""
   },
@@ -10574,7 +10574,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connect Yard",
     "inService": true,
     "mbtId": 1595687,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2003,
     "depotApi": ""
   },
@@ -10598,7 +10598,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "fuel": "Diesel",
     "inService": true,
     "mbtId": 1159882,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2020,
     "depotApi": "Cotes Park"
   },
@@ -10622,7 +10622,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting East Midlands",
     "inService": true,
     "mbtId": 1159884,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2020,
     "depotApi": "Cotes Park"
   },
@@ -10646,7 +10646,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting East Midlands",
     "inService": true,
     "mbtId": 1159883,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2020,
     "depotApi": "Cotes Park"
   },
@@ -10670,7 +10670,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting East Midlands",
     "inService": true,
     "mbtId": 1159885,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2020,
     "depotApi": "Cotes Park"
   },
@@ -10694,7 +10694,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting East Midlands",
     "inService": true,
     "mbtId": 1159886,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2020,
     "depotApi": "Cotes Park"
   },
@@ -10718,7 +10718,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting East Midlands",
     "inService": true,
     "mbtId": 1159887,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2020,
     "depotApi": "Cotes Park"
   },
@@ -10742,7 +10742,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting East Midlands",
     "inService": true,
     "mbtId": 1159877,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2020,
     "depotApi": "Cossall"
   },
@@ -10766,7 +10766,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting East Midlands",
     "inService": true,
     "mbtId": 1159878,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2020,
     "depotApi": "Cossall"
   },
@@ -10790,7 +10790,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting East Midlands",
     "inService": true,
     "mbtId": 1159879,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2020,
     "depotApi": "Cossall"
   },
@@ -10814,7 +10814,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting East Midlands",
     "inService": true,
     "mbtId": 1159881,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2020,
     "depotApi": "Cossall"
   },
@@ -10838,7 +10838,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting East Midlands",
     "inService": true,
     "mbtId": 1159880,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2020,
     "depotApi": "Cossall"
   },
@@ -10862,7 +10862,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "fuel": "Diesel",
     "inService": true,
     "mbtId": 1159149,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2008,
     "depotApi": "Cotes Park"
   },
@@ -10886,7 +10886,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting East Midlands",
     "inService": true,
     "mbtId": 1159115,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2008,
     "depotApi": "Cotes Park"
   },
@@ -10910,7 +10910,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "fuel": "Diesel",
     "inService": true,
     "mbtId": 1160019,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2014,
     "depotApi": "Cossall"
   },
@@ -10934,7 +10934,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting East Midlands",
     "inService": true,
     "mbtId": 1160018,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2014,
     "depotApi": "Cossall"
   },
@@ -10958,7 +10958,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting East Midlands",
     "inService": true,
     "mbtId": 1160020,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2014,
     "depotApi": "Cossall"
   },
@@ -10982,7 +10982,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connect Yard",
     "inService": true,
     "mbtId": 1160017,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2014,
     "depotApi": ""
   },
@@ -11006,7 +11006,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connexions West Midlands",
     "inService": true,
     "mbtId": 1164726,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2012,
     "depotApi": "Dudley"
   },
@@ -11030,7 +11030,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connexions West Midlands",
     "inService": true,
     "mbtId": 1164725,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2012,
     "depotApi": "Dudley"
   },
@@ -11054,7 +11054,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connexions West Midlands",
     "inService": true,
     "mbtId": 1164727,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2012,
     "depotApi": "Dudley"
   },
@@ -11078,7 +11078,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "fuel": "Diesel",
     "inService": true,
     "mbtId": 1434772,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2022,
     "depotApi": "Colwyn Bay"
   },
@@ -11102,7 +11102,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Wales",
     "inService": true,
     "mbtId": 1434773,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2022,
     "depotApi": "Colwyn Bay"
   },
@@ -11126,7 +11126,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Wales",
     "inService": true,
     "mbtId": 1434774,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2022,
     "depotApi": "Colwyn Bay"
   },
@@ -11150,7 +11150,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Wales",
     "inService": true,
     "mbtId": 1434775,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2022,
     "depotApi": "Colwyn Bay"
   },
@@ -11174,7 +11174,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Wales",
     "inService": true,
     "mbtId": 1434776,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2022,
     "depotApi": "Colwyn Bay"
   },
@@ -11198,7 +11198,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Wales",
     "inService": true,
     "mbtId": 1434777,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2022,
     "depotApi": "Colwyn Bay"
   },
@@ -11222,7 +11222,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "fuel": "Diesel",
     "inService": true,
     "mbtId": 271768,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2025,
     "depotApi": "Elmers End"
   },
@@ -11246,7 +11246,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting East Midlands",
     "inService": true,
     "mbtId": 271770,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2025,
     "depotApi": "Cossall"
   },
@@ -11270,7 +11270,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting East Midlands",
     "inService": true,
     "mbtId": 271772,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2025,
     "depotApi": "Cossall"
   },
@@ -11294,7 +11294,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting East Midlands",
     "inService": false,
     "mbtId": 1091024,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2008,
     "depotApi": "Cossall"
   },
@@ -11318,7 +11318,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "fuel": "Diesel",
     "inService": true,
     "mbtId": 6897,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2015,
     "depotApi": "Cossall"
   },
@@ -11342,7 +11342,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "fuel": "Diesel",
     "inService": true,
     "mbtId": 1088376,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2025,
     "depotApi": "Cossall"
   },
@@ -11366,7 +11366,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting East Midlands",
     "inService": false,
     "mbtId": 833163,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2005,
     "depotApi": "Cossall"
   },
@@ -11391,7 +11391,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "fuel": "Diesel",
     "inService": false,
     "mbtId": 833171,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "depotApi": "Cossall"
   },
   {
@@ -11439,7 +11439,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connect Yard",
     "inService": true,
     "mbtId": 1088378,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z"
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z"
   },
   {
     "id": 3092,
@@ -11461,7 +11461,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting East Midlands",
     "inService": true,
     "mbtId": 1088379,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2025,
     "depotApi": "Cossall"
   },
@@ -11485,7 +11485,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting East Midlands",
     "inService": true,
     "mbtId": 1088380,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2025,
     "depotApi": "Cossall"
   },
@@ -11509,7 +11509,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting East Midlands",
     "inService": true,
     "mbtId": 1088381,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2025,
     "depotApi": "Cossall"
   },
@@ -11533,7 +11533,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting East Midlands",
     "inService": true,
     "mbtId": 1088382,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2025,
     "depotApi": "Cossall"
   },
@@ -11557,7 +11557,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting East Midlands",
     "inService": true,
     "mbtId": 1088383,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2025,
     "depotApi": "Cossall"
   },
@@ -11581,7 +11581,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting East Midlands",
     "inService": true,
     "mbtId": 1088384,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2025,
     "depotApi": "Cossall"
   },
@@ -11605,7 +11605,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting East Midlands",
     "inService": true,
     "mbtId": 1088385,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2025,
     "depotApi": "Cossall"
   },
@@ -11629,7 +11629,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "fuel": "Diesel",
     "inService": true,
     "mbtId": 313098,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2025,
     "depotApi": ""
   },
@@ -11653,7 +11653,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connect Yard",
     "inService": true,
     "mbtId": 229911,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2025,
     "depotApi": ""
   },
@@ -11677,7 +11677,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "fuel": "Electric",
     "inService": true,
     "mbtId": 1161389,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2025,
     "depotApi": "Hadley"
   },
@@ -11701,7 +11701,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Shropshire",
     "inService": true,
     "mbtId": 1161375,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2025,
     "depotApi": "Hadley"
   },
@@ -11725,7 +11725,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Shropshire",
     "inService": true,
     "mbtId": 1161382,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2025,
     "depotApi": "Hadley"
   },
@@ -11749,7 +11749,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connect Yard",
     "inService": true,
     "mbtId": 1161365,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2025,
     "depotApi": ""
   },
@@ -11773,7 +11773,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "fuel": "Electric",
     "inService": true,
     "mbtId": 1293821,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2021,
     "depotApi": "Elmers End"
   },
@@ -11797,7 +11797,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting South London",
     "inService": true,
     "mbtId": 1138884,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2022,
     "depotApi": "Elmers End"
   },
@@ -11821,7 +11821,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting South London",
     "inService": true,
     "mbtId": 1293822,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2021,
     "depotApi": "Elmers End"
   },
@@ -11845,7 +11845,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting South London",
     "inService": true,
     "mbtId": 1293823,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2021,
     "depotApi": "Elmers End"
   },
@@ -11869,7 +11869,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting South London",
     "inService": true,
     "mbtId": 1138885,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2022,
     "depotApi": "Elmers End"
   },
@@ -11893,7 +11893,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "fuel": "Electric",
     "inService": true,
     "mbtId": 216934,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2022,
     "depotApi": "Stoke"
   },
@@ -11917,7 +11917,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connect Yard",
     "inService": true,
     "mbtId": 1137870,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2025,
     "depotApi": ""
   },
@@ -11941,7 +11941,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connect Yard",
     "inService": true,
     "mbtId": 1162292,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2024,
     "depotApi": ""
   },
@@ -11965,7 +11965,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connect Yard",
     "inService": true,
     "mbtId": 1137881,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2025,
     "depotApi": ""
   },
@@ -11989,7 +11989,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "fuel": "Battery Electric",
     "inService": true,
     "mbtId": 220392,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2023,
     "depotApi": "Willenhall"
   },
@@ -12013,7 +12013,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connexions West Midlands",
     "inService": true,
     "mbtId": 220393,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2023,
     "depotApi": "Willenhall"
   },
@@ -12037,7 +12037,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connexions West Midlands",
     "inService": true,
     "mbtId": 226282,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2023,
     "depotApi": "Willenhall"
   },
@@ -12061,7 +12061,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connexions West Midlands",
     "inService": true,
     "mbtId": 228687,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2023,
     "depotApi": "Willenhall"
   },
@@ -12085,7 +12085,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "fuel": "Battery Electric",
     "inService": true,
     "mbtId": 220396,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": null,
     "depotApi": "Willenhall"
   },
@@ -12109,7 +12109,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "fuel": "Battery Electric",
     "inService": true,
     "mbtId": 220397,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": null,
     "depotApi": "Willenhall"
   },
@@ -12133,7 +12133,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "fuel": "Battery Electric",
     "inService": true,
     "mbtId": 228278,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": null,
     "depotApi": "Willenhall"
   },
@@ -12157,7 +12157,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "fuel": "Battery Electric",
     "inService": true,
     "mbtId": 220395,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2024,
     "depotApi": "Willenhall"
   },
@@ -12181,7 +12181,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connexions West Midlands",
     "inService": true,
     "mbtId": 226279,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2024,
     "depotApi": "Willenhall"
   },
@@ -12205,7 +12205,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connect Yard",
     "inService": true,
     "mbtId": 226284,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2024,
     "depotApi": ""
   },
@@ -12229,7 +12229,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connect Yard",
     "inService": true,
     "mbtId": 226281,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2024,
     "depotApi": ""
   },
@@ -12253,7 +12253,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connect Yard",
     "inService": true,
     "mbtId": 220394,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2024,
     "depotApi": ""
   },
@@ -12277,7 +12277,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connect Yard",
     "inService": true,
     "mbtId": 226283,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2024,
     "depotApi": ""
   },
@@ -12301,7 +12301,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "fuel": "Diesel",
     "inService": true,
     "mbtId": 1304947,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2026,
     "depotApi": "Dudley"
   },
@@ -12325,7 +12325,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connexions West Midlands",
     "inService": true,
     "mbtId": 1304948,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2026,
     "depotApi": "Dudley"
   },
@@ -12349,7 +12349,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connexions West Midlands",
     "inService": true,
     "mbtId": 1304949,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2026,
     "depotApi": "Dudley"
   },
@@ -12373,7 +12373,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connexions West Midlands",
     "inService": true,
     "mbtId": 1304950,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2026,
     "depotApi": "Dudley"
   },
@@ -12397,7 +12397,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connexions West Midlands",
     "inService": true,
     "mbtId": 1304951,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2026,
     "depotApi": "Dudley"
   },
@@ -12421,7 +12421,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connexions West Midlands",
     "inService": true,
     "mbtId": 1304952,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2026,
     "depotApi": "Dudley"
   },
@@ -12445,7 +12445,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "fuel": "Diesel",
     "inService": true,
     "mbtId": 1561425,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2026,
     "depotApi": "Derby"
   },
@@ -12469,7 +12469,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting East Midlands",
     "inService": true,
     "mbtId": 1561426,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2026,
     "depotApi": "Derby"
   },
@@ -12493,7 +12493,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting East Midlands",
     "inService": true,
     "mbtId": 1561427,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2026,
     "depotApi": "Derby"
   },
@@ -12517,7 +12517,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting East Midlands",
     "inService": true,
     "mbtId": 1561428,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2026,
     "depotApi": "Derby"
   },
@@ -12541,7 +12541,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting East Midlands",
     "inService": true,
     "mbtId": 1561429,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2026,
     "depotApi": "Derby"
   },
@@ -12565,7 +12565,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting East Midlands",
     "inService": true,
     "mbtId": 1576920,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2026,
     "depotApi": "Derby"
   },
@@ -12589,7 +12589,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "fuel": "Diesel",
     "inService": true,
     "mbtId": 1033671,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2023,
     "depotApi": ""
   },
@@ -12613,7 +12613,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connect Yard",
     "inService": true,
     "mbtId": 1033672,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2023,
     "depotApi": ""
   },
@@ -12637,7 +12637,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connect Yard",
     "inService": true,
     "mbtId": 1033673,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2023,
     "depotApi": ""
   },
@@ -12661,7 +12661,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "fuel": "Diesel",
     "inService": true,
     "mbtId": 946877,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2025,
     "depotApi": ""
   },
@@ -12685,7 +12685,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connect Yard",
     "inService": true,
     "mbtId": 297208,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2025,
     "depotApi": ""
   },
@@ -12709,7 +12709,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connect Yard",
     "inService": true,
     "mbtId": 1076239,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2025,
     "depotApi": ""
   },
@@ -12733,7 +12733,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connect Yard",
     "inService": true,
     "mbtId": 1076241,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2025,
     "depotApi": ""
   },
@@ -12757,7 +12757,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Wales",
     "inService": true,
     "mbtId": 1076240,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2025,
     "depotApi": "Talbot Green"
   },
@@ -12781,7 +12781,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Wales",
     "inService": true,
     "mbtId": 297210,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2025,
     "depotApi": "Talbot Green"
   },
@@ -12805,7 +12805,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Wales",
     "inService": true,
     "mbtId": 297211,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2025,
     "depotApi": "Talbot Green"
   },
@@ -12829,7 +12829,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connect Yard",
     "inService": true,
     "mbtId": 697275,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2025,
     "depotApi": "Cossall"
   },
@@ -12853,7 +12853,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connect Yard",
     "inService": true,
     "mbtId": 582803,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2025,
     "depotApi": "Cossall"
   },
@@ -12877,7 +12877,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connect Yard",
     "inService": true,
     "mbtId": 1266863,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2025,
     "depotApi": "Cossall"
   },
@@ -12901,7 +12901,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connect Yard",
     "inService": true,
     "mbtId": 1266861,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2025,
     "depotApi": "Cossall"
   },
@@ -12925,7 +12925,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connect Yard",
     "inService": true,
     "mbtId": 1266862,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2025,
     "depotApi": "Cossall"
   },
@@ -12949,7 +12949,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connect Yard",
     "inService": true,
     "mbtId": 1048775,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2025,
     "depotApi": "Cossall"
   },
@@ -12973,7 +12973,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "fuel": "Diesel",
     "inService": true,
     "mbtId": 1778285,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2026,
     "depotApi": "Stoke"
   },
@@ -12997,7 +12997,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Staffordshire",
     "inService": true,
     "mbtId": 1778286,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2026,
     "depotApi": "Stoke"
   },
@@ -13021,7 +13021,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Staffordshire",
     "inService": true,
     "mbtId": 1778287,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2026,
     "depotApi": "Stoke"
   },
@@ -13045,7 +13045,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Staffordshire",
     "inService": true,
     "mbtId": 1778288,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2026,
     "depotApi": "Stoke"
   },
@@ -13069,7 +13069,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Staffordshire",
     "inService": true,
     "mbtId": 1778289,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2026,
     "depotApi": "Stoke"
   },
@@ -13093,7 +13093,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Staffordshire",
     "inService": true,
     "mbtId": 1778290,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2026,
     "depotApi": "Stoke"
   },
@@ -13117,7 +13117,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connect Yard",
     "inService": true,
     "mbtId": 1778291,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2026,
     "depotApi": ""
   },
@@ -13141,7 +13141,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connect Yard",
     "inService": true,
     "mbtId": 1778292,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2026,
     "depotApi": ""
   },
@@ -13165,7 +13165,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "fuel": "Diesel",
     "inService": true,
     "mbtId": 700698,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2024,
     "depotApi": "Cotes Park"
   },
@@ -13198,7 +13198,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "fuel": "Diesel",
     "inService": true,
     "mbtId": 890121,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2009,
     "depotApi": "Cossall"
   },
@@ -13222,7 +13222,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "fuel": "Diesel",
     "inService": true,
     "mbtId": 57619,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 1976,
     "depotApi": "Hadley"
   },
@@ -13246,7 +13246,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "fuel": "Diesel",
     "inService": true,
     "mbtId": 57611,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2006,
     "depotApi": "Hadley"
   },
@@ -13270,7 +13270,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "fuel": "Diesel",
     "inService": true,
     "mbtId": 1329666,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2005,
     "depotApi": ""
   },
@@ -13294,7 +13294,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "fuel": "Diesel",
     "inService": true,
     "mbtId": 95527,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2017,
     "depotApi": ""
   },
@@ -13318,7 +13318,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Railway",
     "inService": true,
     "mbtId": 923812,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": null,
     "depotApi": "Oxley"
   },
@@ -13342,7 +13342,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Railway",
     "inService": true,
     "mbtId": 923811,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": null,
     "depotApi": "Oxley"
   },
@@ -13366,7 +13366,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Railway",
     "inService": true,
     "mbtId": 923804,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": null,
     "depotApi": "Oxley"
   },
@@ -13390,7 +13390,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Railway",
     "inService": true,
     "mbtId": 923806,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": null,
     "depotApi": "Oxley"
   },
@@ -13466,7 +13466,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connect Yard",
     "inService": true,
     "mbtId": 1595558,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2008,
     "depotApi": ""
   },
@@ -13490,7 +13490,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connect Yard",
     "inService": true,
     "mbtId": 1595561,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2008,
     "depotApi": ""
   },
@@ -13514,7 +13514,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connect Yard",
     "inService": true,
     "mbtId": 1595556,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2008,
     "depotApi": ""
   },
@@ -13538,7 +13538,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connect Yard",
     "inService": true,
     "mbtId": 1595560,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2008,
     "depotApi": ""
   },
@@ -13562,7 +13562,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Railway",
     "inService": false,
     "mbtId": 304810,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2014,
     "depotApi": "Telford"
   },
@@ -13586,7 +13586,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Railway",
     "inService": false,
     "mbtId": 304809,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "euroYear": 2014,
     "depotApi": "Telford"
   },
@@ -13610,7 +13610,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Shropshire",
     "inService": true,
     "mbtId": 60498,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "depotApi": ""
   },
   {
@@ -13633,7 +13633,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting East Midlands",
     "inService": true,
     "mbtId": 40046,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "depotApi": "Cotes Park"
   },
   {
@@ -13656,7 +13656,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connect Yard",
     "inService": true,
     "mbtId": 171543,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "depotApi": ""
   },
   {
@@ -13679,7 +13679,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Staffordshire",
     "inService": true,
     "mbtId": 6551,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "depotApi": "Stoke"
   },
   {
@@ -13702,7 +13702,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting East Midlands",
     "inService": true,
     "mbtId": 1104663,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "depotApi": "Cossall"
   },
   {
@@ -13725,7 +13725,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Wrekin Connect",
     "inService": true,
     "mbtId": 1329761,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "depotApi": ""
   },
   {
@@ -13748,7 +13748,7 @@ window.DB_SEED_FLEET_REGISTRY = [
     "operatorName": "Swift Connecting Shropshire",
     "inService": true,
     "mbtId": 1058812,
-    "mbtUpdatedAt": "2026-11-06T01:31:21.439Z",
+    "mbtUpdatedAt": "2026-11-09T17:20:21.939Z",
     "depotApi": ""
   },
   {
