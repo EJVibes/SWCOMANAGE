@@ -823,5 +823,13 @@ window.DB_SEED_OVERHEADS = [
     "scope": "Hereford",
     "amount": 13258,
     "freq": "monthly"
+  },
+  {
+    "id": "oh-mw9l21l25rb",
+    "name": "Business Rates (surveyed 2,773 m², RV ≈ £194,110 × 48p)",
+    "category": "Business Rates",
+    "scope": "Derby",
+    "amount": 7764.4,
+    "freq": "monthly"
   }
 ];
