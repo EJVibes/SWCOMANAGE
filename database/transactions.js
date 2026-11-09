@@ -2,6 +2,20 @@
 window.DB_SEED_TRANSACTIONS = [
   {
     "date": "2026-11-09",
+    "amount": -51250,
+    "type": "Expense",
+    "category": "Repair & Conversion",
+    "notes": "5x Double Decker: Exterior Livery Repaint + Air Conditioning Installation (Fleet: 3004, 3007, 3008, 3009, 3010)"
+  },
+  {
+    "date": "2026-11-09",
+    "amount": -39050,
+    "type": "Expense",
+    "category": "Repaint",
+    "notes": "4x Single: Exterior Livery Repaint + Interior Decoration Refurb + Seat Re-Upholstery (Fleet: , , , )"
+  },
+  {
+    "date": "2026-11-09",
     "amount": -2775,
     "type": "Expense",
     "category": "Repaint",
