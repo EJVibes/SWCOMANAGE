@@ -102,7 +102,7 @@ window.DB_SEED_FARES = {
     ]
   },
   "Telford & Wrekin (Hadley / Wellington / PRH)": {
-    "opExPerBus": 415.74,
+    "opExPerBus": 413.04,
     "tickets": [
       {
         "name": "Adult Single",
@@ -455,7 +455,7 @@ window.DB_SEED_FARES = {
     "tickets": []
   },
   "Other Depots (Unzoned)": {
-    "opExPerBus": 427.14,
+    "opExPerBus": 410.25,
     "opExAuto": true,
     "unzoned": true,
     "tickets": []
@@ -594,7 +594,7 @@ window.DB_SEED_FARES = {
   "Swift Connect Yard (SWCO)": {
     "companyCode": "SWCO",
     "companyName": "Swift Connect Yard",
-    "opExPerBus": 421.34,
+    "opExPerBus": 428.44,
     "opExAuto": true,
     "tickets": [],
     "competitors": []
@@ -602,7 +602,7 @@ window.DB_SEED_FARES = {
   "Swift Connect Retrofit Yard (SWRY)": {
     "companyCode": "SWRY",
     "companyName": "Swift Connect Retrofit Yard",
-    "opExPerBus": 204.27,
+    "opExPerBus": 191.11,
     "opExAuto": true,
     "tickets": [],
     "competitors": []
@@ -1569,7 +1569,7 @@ window.DB_SEED_FARES = {
   "Wrekin Connect (WRCO)": {
     "companyCode": "WRCO",
     "companyName": "Wrekin Connect",
-    "opExPerBus": 426.03,
+    "opExPerBus": 421.57,
     "opExAuto": true,
     "tickets": [
       {
