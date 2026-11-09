@@ -335,10 +335,17 @@ window.DB_SEED_DEPOTS = [
     "vehicles": 14,
     "baseIncome": 19692.5,
     "baseExpenses": 5886.06,
-    "rent": 0,
+    "rent": 532,
     "source": "mybustimes",
     "mbtUpdatedAt": "2026-11-09T17:21:12.137Z",
-    "staffSplit": true
+    "staffSplit": true,
+    "lat": 52.92374904775527,
+    "lng": -1.4673721790313723,
+    "address": "Meadow Road, Little Chester, Derby, East Midlands, England, DE1 2BH, United Kingdom",
+    "siteAreaM2": 2773,
+    "maxVehicles": 40,
+    "assessedRent": 532,
+    "rentRate": 70
   },
   {
     "name": "Hereford",
