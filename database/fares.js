@@ -1,7 +1,7 @@
-/* Swift Connect — database: fares (synced from Operations Portal 2026-11-06) */
+/* Swift Connect — database: fares (synced from Operations Portal 2026-11-09) */
 window.DB_SEED_FARES = {
   "Notts & Derby (Purple Line / Robin Hood)": {
-    "opExPerBus": 475.74,
+    "opExPerBus": 417.57,
     "tickets": [
       {
         "name": "Adult Single",
@@ -102,7 +102,7 @@ window.DB_SEED_FARES = {
     ]
   },
   "Telford & Wrekin (Hadley / Wellington / PRH)": {
-    "opExPerBus": 450.77,
+    "opExPerBus": 415.74,
     "tickets": [
       {
         "name": "Adult Single",
@@ -191,7 +191,7 @@ window.DB_SEED_FARES = {
     ]
   },
   "West Midlands & Black Country (Dudley / Willenhall / X807)": {
-    "opExPerBus": 452.13,
+    "opExPerBus": 460.54,
     "tickets": [
       {
         "name": "Adult Single",
@@ -321,7 +321,7 @@ window.DB_SEED_FARES = {
     ]
   },
   "Wales & UT Coach (Talbot Green / Wrexham / Colwyn Bay)": {
-    "opExPerBus": 506.4,
+    "opExPerBus": 476.8,
     "tickets": [
       {
         "name": "Adult Single",
@@ -451,7 +451,7 @@ window.DB_SEED_FARES = {
     ]
   },
   "East Anglia (Cromer / Fakenham / Lincs)": {
-    "opExPerBus": 456.16,
+    "opExPerBus": 403.19,
     "tickets": []
   },
   "Other Depots (Unzoned)": {
@@ -610,7 +610,7 @@ window.DB_SEED_FARES = {
   "Swift Connecting East Midlands (SWCE)": {
     "companyCode": "SWCE",
     "companyName": "Swift Connecting East Midlands",
-    "opExPerBus": 475.74,
+    "opExPerBus": 417.57,
     "opExAuto": true,
     "tickets": [
       {
@@ -872,7 +872,7 @@ window.DB_SEED_FARES = {
   "Swift Connecting Wales (SWCW)": {
     "companyCode": "SWCW",
     "companyName": "Swift Connecting Wales",
-    "opExPerBus": 506.4,
+    "opExPerBus": 476.8,
     "opExAuto": true,
     "tickets": [
       {
@@ -1015,7 +1015,7 @@ window.DB_SEED_FARES = {
   "Swift Connecting Staffordshire (SWST)": {
     "companyCode": "SWST",
     "companyName": "Swift Connecting Staffordshire",
-    "opExPerBus": 414.86,
+    "opExPerBus": 436.09,
     "opExAuto": true,
     "tickets": [
       {
@@ -1438,7 +1438,7 @@ window.DB_SEED_FARES = {
   "Swift Connecting East Anglia (SWEA)": {
     "companyCode": "SWEA",
     "companyName": "Swift Connecting East Anglia",
-    "opExPerBus": 456.16,
+    "opExPerBus": 403.19,
     "opExAuto": true,
     "tickets": [
       {
@@ -1569,7 +1569,7 @@ window.DB_SEED_FARES = {
   "Wrekin Connect (WRCO)": {
     "companyCode": "WRCO",
     "companyName": "Wrekin Connect",
-    "opExPerBus": 432.18,
+    "opExPerBus": 426.03,
     "opExAuto": true,
     "tickets": [
       {
