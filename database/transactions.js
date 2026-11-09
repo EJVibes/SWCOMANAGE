@@ -2,6 +2,20 @@
 window.DB_SEED_TRANSACTIONS = [
   {
     "date": "2026-11-09",
+    "amount": -2775,
+    "type": "Expense",
+    "category": "Repaint",
+    "notes": "2x MINI/MIDI: Exterior Livery Repaint (Fleet: 1038, 1039)"
+  },
+  {
+    "date": "2026-11-09",
+    "amount": -3725,
+    "type": "Expense",
+    "category": "Repaint",
+    "notes": "2x Single: Exterior Livery Repaint (Fleet: 2119, 2120)"
+  },
+  {
+    "date": "2026-11-09",
     "amount": 140030.55575856153,
     "type": "Income",
     "category": "Depot Operations",
