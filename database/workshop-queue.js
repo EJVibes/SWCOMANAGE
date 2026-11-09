@@ -48,5 +48,15 @@ window.DB_SEED_WORKSHOP_QUEUE = [
       "3009",
       "3010"
     ]
+  },
+  {
+    "vehicleClass": "Double Decker",
+    "serviceName": "Exterior Livery Repaint",
+    "count": 1,
+    "daysLeft": 5,
+    "ref": "3092",
+    "vehicleIds": [
+      "3092"
+    ]
   }
 ];
