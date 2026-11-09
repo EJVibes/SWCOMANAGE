@@ -2,6 +2,13 @@
 window.DB_SEED_TRANSACTIONS = [
   {
     "date": "2026-11-09",
+    "amount": -11000,
+    "type": "Expense",
+    "category": "Repaint",
+    "notes": "4x Double Decker: Exterior Livery Repaint (Fleet: 3042, 3043, 3044, 3045)"
+  },
+  {
+    "date": "2026-11-09",
     "amount": -2750,
     "type": "Expense",
     "category": "Repaint",
