@@ -1,4 +1,4 @@
-/* Swift Connect — database: overheads (synced from Operations Portal 2026-11-06) */
+/* Swift Connect — database: overheads (synced from Operations Portal 2026-11-09) */
 window.DB_SEED_OVERHEADS = [
   {
     "id": "oh-seed-ins",
