@@ -455,7 +455,7 @@ window.DB_SEED_FARES = {
     "tickets": []
   },
   "Other Depots (Unzoned)": {
-    "opExPerBus": 420.92,
+    "opExPerBus": 427.14,
     "opExAuto": true,
     "unzoned": true,
     "tickets": []
