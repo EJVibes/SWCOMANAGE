@@ -1,5 +1,40 @@
-/* Swift Connect — database: transactions (synced from Operations Portal 2026-11-09) */
+/* Swift Connect — database: transactions (synced from Operations Portal 2026-11-14) */
 window.DB_SEED_TRANSACTIONS = [
+  {
+    "date": "2026-11-14",
+    "amount": 144543.68013356155,
+    "type": "Income",
+    "category": "Depot Operations",
+    "notes": "Daily net profit for 2026-11-13 (after 25% tax) — Inc £557,206.71 / Exp £364,481.81"
+  },
+  {
+    "date": "2026-11-13",
+    "amount": 144543.68013356155,
+    "type": "Income",
+    "category": "Depot Operations",
+    "notes": "Daily net profit for 2026-11-12 (after 25% tax) — Inc £557,206.71 / Exp £364,481.81"
+  },
+  {
+    "date": "2026-11-12",
+    "amount": 144543.68013356155,
+    "type": "Income",
+    "category": "Depot Operations",
+    "notes": "Daily net profit for 2026-11-11 (after 25% tax) — Inc £557,206.71 / Exp £364,481.81"
+  },
+  {
+    "date": "2026-11-11",
+    "amount": 144543.68013356155,
+    "type": "Income",
+    "category": "Depot Operations",
+    "notes": "Daily net profit for 2026-11-10 (after 25% tax) — Inc £557,206.71 / Exp £364,481.81"
+  },
+  {
+    "date": "2026-11-10",
+    "amount": 144543.68013356155,
+    "type": "Income",
+    "category": "Depot Operations",
+    "notes": "Daily net profit for 2026-11-09 (after 25% tax) — Inc £557,206.71 / Exp £364,481.81"
+  },
   {
     "date": "2026-11-09",
     "amount": -11000,
