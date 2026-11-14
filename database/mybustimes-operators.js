@@ -1,4 +1,4 @@
-/* Swift Connect — database: mbtOperators (synced from Operations Portal 2026-11-09) */
+/* Swift Connect — database: mbtOperators (synced from Operations Portal 2026-11-14) */
 window.DB_SEED_MBT_OPERATORS = [
   {
     "code": "SWSH",
