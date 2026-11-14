@@ -1,4 +1,4 @@
-/* Swift Connect — database: busCatalogue (synced from Operations Portal 2026-11-09) */
+/* Swift Connect — database: busCatalogue (synced from Operations Portal 2026-11-14) */
 window.DB_SEED_BUS_CATALOGUE = [
   {
     "model": "ADL Enviro100EV 8.5m",
