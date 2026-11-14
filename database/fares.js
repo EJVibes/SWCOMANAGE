@@ -1,7 +1,7 @@
-/* Swift Connect — database: fares (synced from Operations Portal 2026-11-09) */
+/* Swift Connect — database: fares (synced from Operations Portal 2026-11-14) */
 window.DB_SEED_FARES = {
   "Notts & Derby (Purple Line / Robin Hood)": {
-    "opExPerBus": 417.57,
+    "opExPerBus": 418.11,
     "tickets": [
       {
         "name": "Adult Single",
@@ -102,7 +102,7 @@ window.DB_SEED_FARES = {
     ]
   },
   "Telford & Wrekin (Hadley / Wellington / PRH)": {
-    "opExPerBus": 413.04,
+    "opExPerBus": 383.17,
     "tickets": [
       {
         "name": "Adult Single",
@@ -455,7 +455,7 @@ window.DB_SEED_FARES = {
     "tickets": []
   },
   "Other Depots (Unzoned)": {
-    "opExPerBus": 410.25,
+    "opExPerBus": 464.53,
     "opExAuto": true,
     "unzoned": true,
     "tickets": []
@@ -594,7 +594,7 @@ window.DB_SEED_FARES = {
   "Swift Connect Yard (SWCO)": {
     "companyCode": "SWCO",
     "companyName": "Swift Connect Yard",
-    "opExPerBus": 428.44,
+    "opExPerBus": 574.32,
     "opExAuto": true,
     "tickets": [],
     "competitors": []
@@ -602,7 +602,7 @@ window.DB_SEED_FARES = {
   "Swift Connect Retrofit Yard (SWRY)": {
     "companyCode": "SWRY",
     "companyName": "Swift Connect Retrofit Yard",
-    "opExPerBus": 191.11,
+    "opExPerBus": 87.1,
     "opExAuto": true,
     "tickets": [],
     "competitors": []
@@ -610,7 +610,7 @@ window.DB_SEED_FARES = {
   "Swift Connecting East Midlands (SWCE)": {
     "companyCode": "SWCE",
     "companyName": "Swift Connecting East Midlands",
-    "opExPerBus": 417.57,
+    "opExPerBus": 418.11,
     "opExAuto": true,
     "tickets": [
       {
@@ -1569,7 +1569,7 @@ window.DB_SEED_FARES = {
   "Wrekin Connect (WRCO)": {
     "companyCode": "WRCO",
     "companyName": "Wrekin Connect",
-    "opExPerBus": 421.57,
+    "opExPerBus": 383.6,
     "opExAuto": true,
     "tickets": [
       {
